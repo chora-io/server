@@ -1,0 +1,30 @@
+#
+# Codecov Docs:
+# https://docs.codecov.com/docs
+#
+# Codecov Reports:
+# https://app.codecov.io/gh/choraio/server
+#
+coverage:
+  precision: 2
+  round: down
+  range: 70...100
+  status:
+    project:
+      default:
+        threshold: 1%
+      app:
+        paths:
+          - "app/"
+      db:
+        paths:
+          - "db/"
+    changes: false
+
+comment:
+  layout: "diff, flags, files"
+  behavior: default
+  require_changes: true
+
+ignore:
+  - "**/mocks"

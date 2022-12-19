@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:15
+    container_name: db_container
+    user: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 10s
+      retries: 100
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app_container
+    environment:
+      APP_DATABASE_URL: "postgres://postgres:password@db:5432/postgres?sslmode=disable"
+    entrypoint: [ "/bin/sh", "-c", "app" ]
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    networks:
+      - default
+    depends_on:
+      db:
+        condition: service_healthy
+
+networks:
+  default:
+    driver: bridge
