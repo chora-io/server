@@ -2,4 +2,4 @@ package db
 
 import "testing"
 
-func TestReader_GetContent(t *testing.T) {}
+func TestReader_GetData(t *testing.T) {}

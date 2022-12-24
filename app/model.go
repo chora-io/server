@@ -1,31 +1,47 @@
 package app
 
-type GetContentResponse struct {
-	// Id is the unique identifier of the content.
-	Id int64 `json:"id"`
+type GetDataResponse struct {
+	// Id is the unique identifier of the data.
+	Id int32 `json:"id"`
 
-	// Body is body of the content.
-	Body string `json:"body"`
+	// Canon is the canonicalization of the data.
+	Canon string `json:"canon"`
+
+	// Context is the schema context of the data.
+	Context string `json:"context"`
+
+	// Jsonld is the JSON-LD representation of the data.
+	Jsonld string `json:"jsonld"`
 }
 
-func NewGetContentResponse(id int64, body string) GetContentResponse {
-	return GetContentResponse{
-		Id:   id,
-		Body: body,
+func NewGetDataResponse(id int32, canon, context, jsonld string) GetDataResponse {
+	return GetDataResponse{
+		Id:      id,
+		Canon:   canon,
+		Context: context,
+		Jsonld:  jsonld,
 	}
 }
 
-type PostContentResponse struct {
-	// Id is the unique identifier of the content.
-	Id int64 `json:"id"`
+type PostDataResponse struct {
+	// Id is the unique identifier of the data.
+	Id int32 `json:"id"`
 
-	// Body is body of the content.
-	Body string `json:"body"`
+	// Canon is the canonicalization of the data.
+	Canon string `json:"canon"`
+
+	// Context is the schema context of the data.
+	Context string `json:"context"`
+
+	// Jsonld is the JSON-LD representation of the data.
+	Jsonld string `json:"jsonld"`
 }
 
-func NewPostContentResponse(id int64, body string) PostContentResponse {
-	return PostContentResponse{
-		Id:   id,
-		Body: body,
+func NewPostDataResponse(id int32, canon, context, jsonld string) PostDataResponse {
+	return PostDataResponse{
+		Id:      id,
+		Canon:   canon,
+		Context: context,
+		Jsonld:  jsonld,
 	}
 }

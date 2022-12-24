@@ -9,15 +9,20 @@ import (
 	"context"
 )
 
-const getContent = `-- name: GetContent :one
-SELECT (body)
-FROM content
-WHERE (id=$1)
+const getData = `-- name: GetData :one
+SELECT id, canon, context, jsonld
+FROM data
+WHERE id=$1
 `
 
-func (q *Queries) GetContent(ctx context.Context, id int64) (string, error) {
-	row := q.db.QueryRowContext(ctx, getContent, id)
-	var body string
-	err := row.Scan(&body)
-	return body, err
+func (q *Queries) GetData(ctx context.Context, id int32) (Datum, error) {
+	row := q.db.QueryRowContext(ctx, getData, id)
+	var i Datum
+	err := row.Scan(
+		&i.ID,
+		&i.Canon,
+		&i.Context,
+		&i.Jsonld,
+	)
+	return i, err
 }

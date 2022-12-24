@@ -9,15 +9,21 @@ import (
 	"context"
 )
 
-const postContent = `-- name: PostContent :one
-INSERT INTO content (body)
-VALUES ($1)
+const postData = `-- name: PostData :one
+INSERT INTO data (canon, context, jsonld)
+VALUES ($1, $2, $3)
 RETURNING (id)
 `
 
-func (q *Queries) PostContent(ctx context.Context, body string) (int64, error) {
-	row := q.db.QueryRowContext(ctx, postContent, body)
-	var id int64
+type PostDataParams struct {
+	Canon   string
+	Context string
+	Jsonld  string
+}
+
+func (q *Queries) PostData(ctx context.Context, arg PostDataParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, postData, arg.Canon, arg.Context, arg.Jsonld)
+	var id int32
 	err := row.Scan(&id)
 	return id, err
 }

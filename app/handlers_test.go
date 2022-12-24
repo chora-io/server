@@ -2,6 +2,6 @@ package app
 
 import "testing"
 
-func TestGetContent(t *testing.T) {}
+func TestGetData(t *testing.T) {}
 
-func TestPostContent(t *testing.T) {}
+func TestPostData(t *testing.T) {}

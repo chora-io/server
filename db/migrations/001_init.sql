@@ -1,10 +1,12 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE content
+CREATE TABLE data
 (
-    id      bigint      primary key,
-    body    text        not null
+    id          serial          primary key,
+    canon       varchar(16)     not null,
+    context     varchar(64)     not null,
+    jsonld      varchar(1024)   unique not null
 );
 
-COMMENT ON TABLE content IS 'the content table stores content';
+COMMENT ON TABLE data IS 'the data table stores linked data';
 -- +goose StatementEnd

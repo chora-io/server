@@ -2,4 +2,4 @@ package db
 
 import "testing"
 
-func TestWriter_PostContent(t *testing.T) {}
+func TestWriter_PostData(t *testing.T) {}

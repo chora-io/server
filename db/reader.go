@@ -7,8 +7,8 @@ import (
 // Reader is the interface that wraps database reads.
 type Reader interface {
 
-	// GetContent reads content from the database.
-	GetContent(ctx context.Context, id int64) (string, error)
+	// GetData reads data from the database.
+	GetData(ctx context.Context, id int32) (Datum, error)
 }
 
 var _ Reader = &reader{}
@@ -17,7 +17,7 @@ type reader struct {
 	q *Queries
 }
 
-// GetContent reads content from the database.
-func (r *reader) GetContent(ctx context.Context, id int64) (string, error) {
-	return r.q.GetContent(ctx, id)
+// GetData reads data from the database.
+func (r *reader) GetData(ctx context.Context, id int32) (Datum, error) {
+	return r.q.GetData(ctx, id)
 }

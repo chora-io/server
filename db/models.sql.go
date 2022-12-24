@@ -6,8 +6,10 @@ package db
 
 import ()
 
-// the content table stores content
-type Content struct {
-	ID   int64
-	Body string
+// the data table stores linked data
+type Datum struct {
+	ID      int32
+	Canon   string
+	Context string
+	Jsonld  string
 }

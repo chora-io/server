@@ -7,8 +7,8 @@ import (
 // Writer is the interface that wraps database writes.
 type Writer interface {
 
-	// PostContent writes content to the database.
-	PostContent(ctx context.Context, content string) (int64, error)
+	// PostData writes data to the database.
+	PostData(ctx context.Context, canon string, context string, jsonld string) (int32, error)
 }
 
 var _ Writer = &writer{}
@@ -17,7 +17,11 @@ type writer struct {
 	q *Queries
 }
 
-// PostContent writes content to the database.
-func (w *writer) PostContent(ctx context.Context, body string) (int64, error) {
-	return w.q.PostContent(ctx, body)
+// PostData writes data to the database.
+func (w *writer) PostData(ctx context.Context, canon string, context string, jsonld string) (int32, error) {
+	return w.q.PostData(ctx, PostDataParams{
+		Canon:   canon,
+		Context: context,
+		Jsonld:  jsonld,
+	})
 }
