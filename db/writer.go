@@ -8,7 +8,7 @@ import (
 type Writer interface {
 
 	// PostData writes data to the database.
-	PostData(ctx context.Context, canon string, context string, jsonld string) (int32, error)
+	PostData(ctx context.Context, iri, context, jsonld string) error
 }
 
 var _ Writer = &writer{}
@@ -18,9 +18,9 @@ type writer struct {
 }
 
 // PostData writes data to the database.
-func (w *writer) PostData(ctx context.Context, canon string, context string, jsonld string) (int32, error) {
+func (w *writer) PostData(ctx context.Context, iri, context, jsonld string) error {
 	return w.q.PostData(ctx, PostDataParams{
-		Canon:   canon,
+		Iri:     iri,
 		Context: context,
 		Jsonld:  jsonld,
 	})

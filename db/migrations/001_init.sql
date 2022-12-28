@@ -2,8 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE data
 (
-    id          serial          primary key,
-    canon       varchar(16)     not null,
+    iri         varchar         primary key,
     context     varchar(64)     not null,
     jsonld      varchar(1024)   unique not null
 );

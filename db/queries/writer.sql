@@ -1,4 +1,3 @@
--- name: PostData :one
-INSERT INTO data (canon, context, jsonld)
-VALUES ($1, $2, $3)
-RETURNING (id);
+-- name: PostData :exec
+INSERT INTO data (iri, context, jsonld)
+VALUES ($1, $2, $3);

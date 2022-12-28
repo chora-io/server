@@ -8,7 +8,7 @@ import (
 type Reader interface {
 
 	// GetData reads data from the database.
-	GetData(ctx context.Context, id int32) (Datum, error)
+	GetData(ctx context.Context, iri string) (Datum, error)
 }
 
 var _ Reader = &reader{}
@@ -18,6 +18,6 @@ type reader struct {
 }
 
 // GetData reads data from the database.
-func (r *reader) GetData(ctx context.Context, id int32) (Datum, error) {
-	return r.q.GetData(ctx, id)
+func (r *reader) GetData(ctx context.Context, iri string) (Datum, error) {
+	return r.q.GetData(ctx, iri)
 }

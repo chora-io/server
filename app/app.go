@@ -33,7 +33,7 @@ func Initialize(cfg Config, dbr db.Reader, dbw db.Writer, log zerolog.Logger) *A
 	}
 
 	// get requests
-	app.Get("/data/{id}", app.handleGetRequest(GetData))
+	app.Get("/data/{iri}", app.handleGetRequest(GetData))
 
 	// post requests
 	app.Post("/data", app.handlePostRequest(PostData))

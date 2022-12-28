@@ -1,4 +1,4 @@
 -- name: GetData :one
-SELECT id, canon, context, jsonld
+SELECT iri, context, jsonld
 FROM data
-WHERE id=$1;
+WHERE iri=$1;

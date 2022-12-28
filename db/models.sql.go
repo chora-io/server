@@ -8,8 +8,7 @@ import ()
 
 // the data table stores linked data
 type Datum struct {
-	ID      int32
-	Canon   string
+	Iri     string
 	Context string
 	Jsonld  string
 }

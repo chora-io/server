@@ -1,11 +1,8 @@
 package app
 
 type GetDataResponse struct {
-	// Id is the unique identifier of the data.
-	Id int32 `json:"id"`
-
-	// Canon is the canonicalization of the data.
-	Canon string `json:"canon"`
+	// Iri is the unique identifier of the data.
+	Iri string `json:"iri"`
 
 	// Context is the schema context of the data.
 	Context string `json:"context"`
@@ -14,21 +11,23 @@ type GetDataResponse struct {
 	Jsonld string `json:"jsonld"`
 }
 
-func NewGetDataResponse(id int32, canon, context, jsonld string) GetDataResponse {
+func NewGetDataResponse(iri, context, jsonld string) GetDataResponse {
 	return GetDataResponse{
-		Id:      id,
-		Canon:   canon,
+		Iri:     iri,
 		Context: context,
 		Jsonld:  jsonld,
 	}
 }
 
-type PostDataResponse struct {
-	// Id is the unique identifier of the data.
-	Id int32 `json:"id"`
+type PostDataRequest struct {
+	// Digest is the digest algorithm used to generate an IRI.
+	Digest string `json:"digest"`
 
-	// Canon is the canonicalization of the data.
+	// Canon is the canonicalization algorithm used to generate an IRI.
 	Canon string `json:"canon"`
+
+	// Merkle is the merkle tree type used to generate an IRI.
+	Merkle string `json:"merkle"`
 
 	// Context is the schema context of the data.
 	Context string `json:"context"`
@@ -37,10 +36,20 @@ type PostDataResponse struct {
 	Jsonld string `json:"jsonld"`
 }
 
-func NewPostDataResponse(id int32, canon, context, jsonld string) PostDataResponse {
+type PostDataResponse struct {
+	// Iri is the unique identifier of the data.
+	Iri string `json:"iri"`
+
+	// Context is the schema context of the data.
+	Context string `json:"context"`
+
+	// Jsonld is the JSON-LD representation of the data.
+	Jsonld string `json:"jsonld"`
+}
+
+func NewPostDataResponse(iri, context, jsonld string) PostDataResponse {
 	return PostDataResponse{
-		Id:      id,
-		Canon:   canon,
+		Iri:     iri,
 		Context: context,
 		Jsonld:  jsonld,
 	}
