@@ -33,17 +33,24 @@ func Initialize(cfg Config, dbr db.Reader, dbw db.Writer, log zerolog.Logger) *A
 	}
 
 	// get requests
-	app.Get("/data/{iri}", app.handleGetRequest(GetData))
+	app.Get("/{iri}", app.handleGetRequest(GetData))
 
 	// post requests
-	app.Post("/data", app.handlePostRequest(PostData))
+	app.Post("/", app.handlePostRequest(PostData))
 
 	return app
 }
 
 // Run blocks the current thread of execution and serves the API.
 func (a *App) Run(host string) {
+
+	// add handler for static app index request
+	a.rtr.HandleFunc("/", a.handleIndexRequest())
+
+	// add allowed origins for get and post requests
 	aos := handlers.AllowedOrigins(strings.Split(a.aos, ","))
+
+	// start listening for and serving requests
 	log.Fatal(http.ListenAndServe(host, handlers.CORS(aos)(a.rtr)))
 }
 
@@ -55,6 +62,12 @@ func (a *App) Get(path string, f func(w http.ResponseWriter, r *http.Request)) {
 // Post wraps the router for POST method
 func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.rtr.HandleFunc(path, f).Methods("POST")
+}
+
+func (a *App) handleIndexRequest() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./app/index.html")
+	}
 }
 
 func (a *App) handleGetRequest(handler GetRequestHandlerFunction) http.HandlerFunc {
