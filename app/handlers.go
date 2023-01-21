@@ -12,8 +12,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/piprate/json-gold/ld"
-
-	// TODO: propose module without sdk dependencies
 	"github.com/regen-network/regen-ledger/x/data/v2"
 
 	"github.com/choraio/server/db"
@@ -136,6 +134,13 @@ func PostData(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 
 	err = dbw.PostData(r.Context(), iri, context, jsonld)
 	if err != nil {
+
+		// a duplicate IRI means the exact same data is already stored, so we return the data
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint \"data_pkey\"") {
+			respondJSON(rw, http.StatusOK, NewPostDataResponse(iri, context, jsonld))
+			return
+		}
+
 		respondError(rw, http.StatusInternalServerError, err.Error())
 		return
 	}
