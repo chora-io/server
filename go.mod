@@ -10,7 +10,7 @@ require (
 	github.com/pressly/goose/v3 v3.8.0
 	// TODO: propose module without sdk dependencies
 	github.com/regen-network/regen-ledger/x/data/v2 v2.0.0
-	github.com/rs/zerolog v1.28.0
+	github.com/rs/zerolog v1.29.0
 	github.com/simukti/sqldb-logger v0.0.0-20220521163925-faf2f2be0eb6
 	github.com/simukti/sqldb-logger/logadapter/zerologadapter v0.0.0-20220521163925-faf2f2be0eb6
 	github.com/spf13/viper v1.14.0
