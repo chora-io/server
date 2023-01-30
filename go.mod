@@ -7,7 +7,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.7
 	github.com/piprate/json-gold v0.5.0
-	github.com/pressly/goose/v3 v3.8.0
+	github.com/pressly/goose/v3 v3.9.0
 	// TODO: propose module without sdk dependencies
 	github.com/regen-network/regen-ledger/x/data/v2 v2.0.0
 	github.com/rs/zerolog v1.28.0
