@@ -10,7 +10,7 @@ import (
 )
 
 const getData = `-- name: GetData :one
-SELECT iri, context, jsonld
+SELECT iri, jsonld
 FROM data
 WHERE iri=$1
 `
@@ -18,6 +18,6 @@ WHERE iri=$1
 func (q *Queries) GetData(ctx context.Context, iri string) (Datum, error) {
 	row := q.db.QueryRowContext(ctx, getData, iri)
 	var i Datum
-	err := row.Scan(&i.Iri, &i.Context, &i.Jsonld)
+	err := row.Scan(&i.Iri, &i.Jsonld)
 	return i, err
 }

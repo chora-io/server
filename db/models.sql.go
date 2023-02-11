@@ -4,11 +4,12 @@
 
 package db
 
-import ()
+import (
+	"encoding/json"
+)
 
 // the data table stores linked data
 type Datum struct {
-	Iri     string
-	Context string
-	Jsonld  string
+	Iri    string
+	Jsonld json.RawMessage
 }

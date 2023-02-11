@@ -2,13 +2,14 @@ package db
 
 import (
 	"context"
+	"encoding/json"
 )
 
 // Writer is the interface that wraps database writes.
 type Writer interface {
 
 	// PostData writes data to the database.
-	PostData(ctx context.Context, iri, context, jsonld string) error
+	PostData(ctx context.Context, iri string, jsonld json.RawMessage) error
 }
 
 var _ Writer = &writer{}
@@ -18,10 +19,9 @@ type writer struct {
 }
 
 // PostData writes data to the database.
-func (w *writer) PostData(ctx context.Context, iri, context, jsonld string) error {
+func (w *writer) PostData(ctx context.Context, iri string, jsonld json.RawMessage) error {
 	return w.q.PostData(ctx, PostDataParams{
-		Iri:     iri,
-		Context: context,
-		Jsonld:  jsonld,
+		Iri:    iri,
+		Jsonld: jsonld,
 	})
 }

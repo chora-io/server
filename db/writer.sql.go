@@ -7,20 +7,20 @@ package db
 
 import (
 	"context"
+	"encoding/json"
 )
 
 const postData = `-- name: PostData :exec
-INSERT INTO data (iri, context, jsonld)
-VALUES ($1, $2, $3)
+INSERT INTO data (iri, jsonld)
+VALUES ($1, $2)
 `
 
 type PostDataParams struct {
-	Iri     string
-	Context string
-	Jsonld  string
+	Iri    string
+	Jsonld json.RawMessage
 }
 
 func (q *Queries) PostData(ctx context.Context, arg PostDataParams) error {
-	_, err := q.db.ExecContext(ctx, postData, arg.Iri, arg.Context, arg.Jsonld)
+	_, err := q.db.ExecContext(ctx, postData, arg.Iri, arg.Jsonld)
 	return err
 }

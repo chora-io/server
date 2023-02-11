@@ -48,7 +48,7 @@ func GetData(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(rw, http.StatusOK, NewGetDataResponse(iri, d.Context, d.Jsonld))
+	respondJSON(rw, http.StatusOK, NewGetDataResponse(iri, string(d.Jsonld)))
 }
 
 type PostRequestHandlerFunction func(dbw db.Writer, rw http.ResponseWriter, r *http.Request)
@@ -129,15 +129,14 @@ func PostData(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	context := strings.TrimSpace(req.Context)
 	jsonld := compactJSONString(req.Jsonld)
 
-	err = dbw.PostData(r.Context(), iri, context, jsonld)
+	err = dbw.PostData(r.Context(), iri, json.RawMessage(jsonld))
 	if err != nil {
 
 		// a duplicate IRI means the exact same data is already stored, so we return the data
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint \"data_pkey\"") {
-			respondJSON(rw, http.StatusOK, NewPostDataResponse(iri, context, jsonld))
+			respondJSON(rw, http.StatusOK, NewPostDataResponse(iri, jsonld))
 			return
 		}
 
@@ -145,5 +144,5 @@ func PostData(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(rw, http.StatusOK, NewPostDataResponse(iri, context, jsonld))
+	respondJSON(rw, http.StatusOK, NewPostDataResponse(iri, jsonld))
 }
