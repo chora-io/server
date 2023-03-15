@@ -7,8 +7,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.7
 	github.com/piprate/json-gold v0.5.0
-	github.com/pressly/goose/v3 v3.9.0
-	// TODO: propose module without sdk dependencies
+	github.com/pressly/goose/v3 v3.10.0
 	github.com/regen-network/regen-ledger/x/data/v2 v2.0.0
 	github.com/rs/zerolog v1.29.0
 	github.com/simukti/sqldb-logger v0.0.0-20220521163925-faf2f2be0eb6
@@ -71,7 +70,7 @@ require (
 	github.com/hdevalence/ed25519consensus v0.0.0-20220222234857-c00d1f31bab3 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jmhodges/levigo v1.0.0 // indirect
-	github.com/klauspost/compress v1.15.11 // indirect
+	github.com/klauspost/compress v1.16.0 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -108,12 +107,12 @@ require (
 	github.com/zondax/hid v0.9.1 // indirect
 	github.com/zondax/ledger-go v0.14.0 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
-	golang.org/x/crypto v0.5.0 // indirect
+	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
-	golang.org/x/net v0.5.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
-	golang.org/x/term v0.4.0 // indirect
-	golang.org/x/text v0.6.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/term v0.6.0 // indirect
+	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/genproto v0.0.0-20221227171554-f9683d7f8bef // indirect
 	google.golang.org/grpc v1.52.0 // indirect
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8 // indirect
@@ -127,13 +126,7 @@ require (
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 // NOTE: use same version of cosmos-sdk as regen-ledger v5.0.0
-replace github.com/cosmos/cosmos-sdk => github.com/regen-network/cosmos-sdk v0.46.7-regen-1
-
-// NOTE: use custom version based on latest release branch
-replace github.com/regen-network/regen-ledger/api/v2 => github.com/regen-network/regen-ledger/api/v2 v2.0.0-20221221161107-55084f775499
-
-// NOTE: use custom version based on latest release branch
-replace github.com/regen-network/regen-ledger/types/v2 => github.com/regen-network/regen-ledger/types/v2 v2.0.0-20221221161107-55084f775499
+replace github.com/cosmos/cosmos-sdk => github.com/regen-network/cosmos-sdk v0.46.7-regen-2
 
 // NOTE: use custom version with configurable data module
 replace github.com/regen-network/regen-ledger/x/data/v2 => github.com/regen-network/regen-ledger/x/data/v2 v2.0.0-20221216204149-fcf6a0740861
