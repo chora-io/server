@@ -9,7 +9,7 @@ require (
 	github.com/piprate/json-gold v0.5.0
 	github.com/pressly/goose/v3 v3.10.0
 	github.com/regen-network/regen-ledger/x/data/v2 v2.0.0
-	github.com/rs/zerolog v1.29.0
+	github.com/rs/zerolog v1.29.1
 	github.com/simukti/sqldb-logger v0.0.0-20220521163925-faf2f2be0eb6
 	github.com/simukti/sqldb-logger/logadapter/zerologadapter v0.0.0-20220521163925-faf2f2be0eb6
 	github.com/spf13/viper v1.15.0
