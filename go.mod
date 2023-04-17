@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
-	github.com/lib/pq v1.10.7
+	github.com/lib/pq v1.10.8
 	github.com/piprate/json-gold v0.5.0
 	github.com/pressly/goose/v3 v3.10.0
 	github.com/regen-network/regen-ledger/x/data/v2 v2.0.0
