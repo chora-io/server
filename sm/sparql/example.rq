@@ -1,0 +1,7 @@
+PREFIX chora: <https://schema.chora.io#>
+ASK {
+    GRAPH $event {
+        ?x a chora:ApplicationStatus .
+        ?x chora:address $address
+    }
+}

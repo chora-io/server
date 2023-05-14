@@ -24,11 +24,11 @@ type App struct {
 // Initialize initializes the app.
 func Initialize(cfg Config, dbr db.Reader, dbw db.Writer, log zerolog.Logger) *App {
 	app := &App{
-		env: cfg.AppEnv,
+		env: cfg.ServerEnv,
 		dbr: dbr,
 		dbw: dbw,
 		rtr: mux.NewRouter(),
-		aos: cfg.AppAllowedOrigins,
+		aos: cfg.ApiAllowedOrigins,
 		log: log,
 	}
 

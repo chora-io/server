@@ -44,11 +44,11 @@ jobs:
         if: matrix.module == 'api'
       - uses: actions/setup-go@v4
         with:
-          go-version-file: 'api/go.mod'
+          go-version-file: api/go.mod
         if: env.GIT_DIFF
       - uses: golangci/golangci-lint-action@v3
         with:
-          working-directory: "api"
+          working-directory: api
         if: steps.git-diff-api.outputs.diff
 
       # db module
@@ -63,9 +63,47 @@ jobs:
         if: matrix.module == 'db'
       - uses: actions/setup-go@v4
         with:
-          go-version-file: 'db/go.mod'
+          go-version-file: db/go.mod
         if: env.GIT_DIFF
       - uses: golangci/golangci-lint-action@v3
         with:
-          working-directory: "db"
+          working-directory: db
+        if: steps.git-diff-api.outputs.diff
+
+      # idx module
+
+      - uses: technote-space/get-diff-action@v6
+        id: git-diff-idx
+        with:
+          PATTERNS: |
+            idx/**/**.go
+            idx/go.mod
+            idx/go.sum
+        if: matrix.module == 'idx'
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: idx/go.mod
+        if: env.GIT_DIFF
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: idx
+        if: steps.git-diff-api.outputs.diff
+
+      # sm module
+
+      - uses: technote-space/get-diff-action@v6
+        id: git-diff-sm
+        with:
+          PATTERNS: |
+            sm/**/**.go
+            sm/go.mod
+            sm/go.sum
+        if: matrix.module == 'sm'
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: sm/go.mod
+        if: env.GIT_DIFF
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: sm
         if: steps.git-diff-api.outputs.diff

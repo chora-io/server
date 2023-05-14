@@ -110,6 +110,14 @@ test-db:
 	@echo "Testing Module ./db"
 	@cd db && go test ./... -coverprofile=../coverage-db.out -covermode=atomic
 
+test-idx:
+	@echo "Testing Module ./idx"
+	@cd idx && go test ./... -coverprofile=../coverage-idx.out -covermode=atomic
+
+test-sm:
+	@echo "Testing Module ./sm"
+	@cd sm && go test ./... -coverprofile=../coverage-sm.out -covermode=atomic
+
 test-coverage:
 	@cat coverage*.out | grep -v "mode: atomic" >> coverage.txt
 
@@ -118,7 +126,7 @@ test-clean:
 	@find . -name 'coverage.txt' -delete
 	@find . -name 'coverage*.out' -delete
 
-.PHONY: test test-all test-api test-db test-coverage test-clean
+.PHONY: test test-all test-api test-db test-idx test-sm test-coverage test-clean
 
 ###############################################################################
 ###                               Go Version                                ###

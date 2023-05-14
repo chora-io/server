@@ -1,16 +1,29 @@
 services:
-  db:
+  fuseki:
+    image: stain/jena-fuseki:jena4
+    ports:
+      - 3030:3030
+    networks:
+      - default
+    volumes:
+      - ./data/fuseki:/fuseki
+    environment:
+      - ADMIN_PASSWORD=fuseki
+      - FUSEKI_DATASET_1=resources
+
+  postgres:
     image: postgres:15
-    container_name: db_container
     user: postgres
     environment:
-      POSTGRES_PASSWORD: password
+      - POSTGRES_PASSWORD=password
     expose:
       - 5432
     ports:
       - 5432:5432
     networks:
       - default
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 1s
@@ -19,12 +32,10 @@ services:
 
   api:
     build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: api_container
+      context: api
     environment:
       APP_DATABASE_URL: "postgres://postgres:password@db:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "api" ]
+    entrypoint: [ "/bin/sh", "-c", "cmd" ]
     expose:
       - 3000
     ports:
@@ -32,7 +43,23 @@ services:
     networks:
       - default
     depends_on:
-      db:
+      postgres:
+        condition: service_healthy
+
+  idx:
+    build:
+      context: idx
+    environment:
+      APP_DATABASE_URL: "postgres://postgres:password@db:5432/postgres?sslmode=disable"
+    entrypoint: [ "/bin/sh", "-c", "cmd" ]
+    expose:
+      - 3001
+    ports:
+      - 3001:3001
+    networks:
+      - default
+    depends_on:
+      postgres:
         condition: service_healthy
 
 networks:
