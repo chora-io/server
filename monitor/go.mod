@@ -1,4 +1,4 @@
-module github.com/choraio/server/idx
+module github.com/choraio/server/monitor
 
 go 1.19
 

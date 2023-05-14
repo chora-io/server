@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/choraio/server/idx/app"
+	"github.com/choraio/server/monitor/app"
 )
 
 // nolint

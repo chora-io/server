@@ -28,7 +28,7 @@ jobs:
       pull-requests: read  # for technote-space/get-diff-action to get git reference
     strategy:
       matrix:
-        module: ["api", "db"]
+        module: ["api", "db", "indexer", "monitor", "state"]
     steps:
       - uses: actions/checkout@v3
 
@@ -70,40 +70,59 @@ jobs:
           working-directory: db
         if: steps.git-diff-api.outputs.diff
 
-      # idx module
+      # indexer module
 
       - uses: technote-space/get-diff-action@v6
-        id: git-diff-idx
+        id: git-diff-indexer
         with:
           PATTERNS: |
-            idx/**/**.go
-            idx/go.mod
-            idx/go.sum
-        if: matrix.module == 'idx'
+            indexer/**/**.go
+            indexer/go.mod
+            indexer/go.sum
+        if: matrix.module == 'indexer'
       - uses: actions/setup-go@v4
         with:
-          go-version-file: idx/go.mod
+          go-version-file: indexer/go.mod
         if: env.GIT_DIFF
       - uses: golangci/golangci-lint-action@v3
         with:
-          working-directory: idx
+          working-directory: indexer
         if: steps.git-diff-api.outputs.diff
 
-      # sm module
+      # monitor module
 
       - uses: technote-space/get-diff-action@v6
-        id: git-diff-sm
+        id: git-diff-monitor
         with:
           PATTERNS: |
-            sm/**/**.go
-            sm/go.mod
-            sm/go.sum
-        if: matrix.module == 'sm'
+            monitor/**/**.go
+            monitor/go.mod
+            monitor/go.sum
+        if: matrix.module == 'monitor'
       - uses: actions/setup-go@v4
         with:
-          go-version-file: sm/go.mod
+          go-version-file: monitor/go.mod
         if: env.GIT_DIFF
       - uses: golangci/golangci-lint-action@v3
         with:
-          working-directory: sm
+          working-directory: monitor
+        if: steps.git-diff-api.outputs.diff
+
+      # state module
+
+      - uses: technote-space/get-diff-action@v6
+        id: git-diff-state
+        with:
+          PATTERNS: |
+            state/**/**.go
+            state/go.mod
+            state/go.sum
+        if: matrix.module == 'state'
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: state/go.mod
+        if: env.GIT_DIFF
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: state
         if: steps.git-diff-api.outputs.diff

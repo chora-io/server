@@ -11,4 +11,4 @@ WORKDIR /home
 
 COPY .. /home
 
-RUN cd /home/idx/cmd && go build -o /bin/idx
+RUN cd /home/indexer/cmd && go build -o /bin/indexer

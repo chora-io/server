@@ -1,6 +1,4 @@
-//go:generate mockgen -source=client.go -package mocks -destination=mocks/client.go
-
-package client
+package app
 
 import (
 	"bytes"
@@ -9,19 +7,19 @@ import (
 	"net/http"
 )
 
-type client struct {
+type App struct {
 	url  string
 	http *http.Client
 }
 
-func NewClient(url string) client {
-	return client{
+func NewApp(url string) App {
+	return App{
 		url:  url,
 		http: &http.Client{},
 	}
 }
 
-func (c client) Get() (string, error) {
+func (c App) Get() (string, error) {
 	res, err := c.http.Get(c.url)
 	if err != nil {
 		return "", fmt.Errorf("error: %s", err)
@@ -39,7 +37,7 @@ func (c client) Get() (string, error) {
 	return string(body), nil
 }
 
-func (c client) Post(bz []byte) (string, error) {
+func (c App) Post(bz []byte) (string, error) {
 	buf := bytes.NewBuffer(bz)
 
 	res, err := c.http.Post(c.url, "text/turtle", buf)
