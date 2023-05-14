@@ -3,7 +3,7 @@
 //   sqlc v1.16.0
 // source: reader.sql
 
-package db
+package client
 
 import (
 	"context"

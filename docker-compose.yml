@@ -17,14 +17,14 @@ services:
       timeout: 10s
       retries: 100
 
-  app:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app_container
+    container_name: api_container
     environment:
       APP_DATABASE_URL: "postgres://postgres:password@db:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "app" ]
+    entrypoint: [ "/bin/sh", "-c", "api" ]
     expose:
       - 3000
     ports:

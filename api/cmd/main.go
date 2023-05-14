@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/choraio/server/api/app"
 	"github.com/rs/zerolog"
 
-	"github.com/choraio/server/app"
 	"github.com/choraio/server/db"
 )
 

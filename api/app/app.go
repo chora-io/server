@@ -66,7 +66,7 @@ func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) 
 
 func (a *App) handleIndexRequest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./app/index.html")
+		http.ServeFile(w, r, "../html/index.html")
 	}
 }
 

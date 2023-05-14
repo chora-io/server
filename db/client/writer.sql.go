@@ -3,7 +3,7 @@
 //   sqlc v1.16.0
 // source: writer.sql
 
-package db
+package client
 
 import (
 	"context"

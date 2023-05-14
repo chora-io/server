@@ -20,13 +20,13 @@ db:
 .PHONY: db
 
 ###############################################################################
-###                                   App                                   ###
+###                                   Api                                   ###
 ###############################################################################
 
-app:
-	@go run ./cmd/app
+api:
+	@go run ./cmd/api
 
-.PHONY: app
+.PHONY: api
 
 ###############################################################################
 ###                                  Local                                  ###
@@ -34,7 +34,7 @@ app:
 
 local:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up --abort-on-container-exit --exit-code-from app
+	@docker-compose up --abort-on-container-exit --exit-code-from api
 
 .PHONY: local
 
@@ -102,10 +102,13 @@ test-all:
 		go test ./...; \
 	done
 
-test-app:
-	@echo "Testing Module ."
-	@go test ./... \
-		-coverprofile=coverage-app.out -covermode=atomic
+test-api:
+	@echo "Testing Module ./api"
+	@cd api && go test ./... -coverprofile=../coverage-api.out -covermode=atomic
+
+test-db:
+	@echo "Testing Module ./db"
+	@cd db && go test ./... -coverprofile=../coverage-db.out -covermode=atomic
 
 test-coverage:
 	@cat coverage*.out | grep -v "mode: atomic" >> coverage.txt
@@ -115,7 +118,7 @@ test-clean:
 	@find . -name 'coverage.txt' -delete
 	@find . -name 'coverage*.out' -delete
 
-.PHONY: test test-all test-app test-coverage test-clean
+.PHONY: test test-all test-api test-db test-coverage test-clean
 
 ###############################################################################
 ###                               Go Version                                ###

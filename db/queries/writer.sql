@@ -1,3 +1,2 @@
 -- name: PostData :exec
-INSERT INTO data (iri, jsonld)
-VALUES ($1, $2);
+insert into data (iri, jsonld) values ($1, $2);

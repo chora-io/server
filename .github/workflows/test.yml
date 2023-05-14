@@ -27,29 +27,56 @@ jobs:
       pull-requests: read  # for technote-space/get-diff-action to get git reference
     strategy:
       matrix:
-        module: ["app"]
+        module: ["api", "db"]
     steps:
       - uses: actions/checkout@v3
+
+      # api module
+
       - uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
-            **/**.go
-            go.mod
-            go.sum
+            api/**/**.go
+            api/go.mod
+            api/go.sum
       - uses: actions/setup-go@v4
         with:
-          go-version-file: 'go.mod'
+          go-version-file: 'api/go.mod'
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
-      - run: make test-app
+      - run: make test-api
         if: |
-          (env.GIT_DIFF && matrix.module == 'app') ||
+          (env.GIT_DIFF && matrix.module == 'api') ||
           github.ref == 'refs/heads/main'
       - uses: actions/upload-artifact@v3
         with:
-          name: coverage-app
-          path: coverage-app.out
+          name: coverage-api
+          path: coverage-api.out
         if: |
-          (env.GIT_DIFF && matrix.module == 'app') ||
+          (env.GIT_DIFF && matrix.module == 'api') ||
+          github.ref == 'refs/heads/main'
+
+      # db module
+
+      - uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            db/**/**.go
+            db/go.mod
+            db/go.sum
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: 'db/go.mod'
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - run: make test-db
+        if: |
+          (env.GIT_DIFF && matrix.module == 'db') ||
+          github.ref == 'refs/heads/main'
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage-db
+          path: coverage-db.out
+        if: |
+          (env.GIT_DIFF && matrix.module == 'db') ||
           github.ref == 'refs/heads/main'
 
   coverage:
@@ -67,7 +94,7 @@ jobs:
             **/go.sum
       - uses: actions/download-artifact@v3
         with:
-          name: coverage-app
+          name: coverage-api
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
       - run: make test-coverage
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'

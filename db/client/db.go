@@ -1,8 +1,7 @@
-package db
+package client
 
 import (
 	"database/sql"
-	"embed"
 	"fmt"
 	"io"
 
@@ -11,10 +10,9 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/simukti/sqldb-logger"
 	"github.com/simukti/sqldb-logger/logadapter/zerologadapter"
-)
 
-//go:embed migrations/*.sql
-var migrations embed.FS
+	"github.com/choraio/server/db/migrations"
+)
 
 //go:generate sqlc generate
 
@@ -51,7 +49,7 @@ func NewDatabase(postgresUrl string, logger zerolog.Logger) (Database, error) {
 		return nil, err
 	}
 
-	goose.SetBaseFS(migrations)
+	goose.SetBaseFS(migrations.Migrations)
 	err = goose.Up(sqlDb, "migrations")
 
 	goose.SetLogger(gooseLogger{logger})

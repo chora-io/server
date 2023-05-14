@@ -1,6 +1,6 @@
 # server
 
-server application and postgres database
+server modules and postgres database
 
 ## Prerequisites
 

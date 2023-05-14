@@ -1,4 +1,2 @@
 -- name: GetData :one
-SELECT iri, jsonld
-FROM data
-WHERE iri=$1;
+select iri, jsonld from data where iri=$1;
