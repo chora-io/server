@@ -33,10 +33,10 @@ func Initialize(cfg Config, dbr db.Reader, dbw db.Writer, log zerolog.Logger) *A
 	}
 
 	// get requests
-	app.Get("/{iri}", app.handleGetRequest(GetData))
+	app.Get("/data/{iri}", app.handleGetRequest(GetData))
 
 	// post requests
-	app.Post("/", app.handlePostRequest(PostData))
+	app.Post("/data/", app.handlePostRequest(PostData))
 
 	return app
 }
@@ -66,7 +66,7 @@ func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) 
 
 func (a *App) handleIndexRequest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../html/index.html")
+		http.ServeFile(w, r, "./html/index.html")
 	}
 }
 

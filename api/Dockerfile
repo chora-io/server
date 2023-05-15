@@ -5,10 +5,7 @@ FROM golang:1.19
 # time any of the source files change. It will only repeat if there is a change to go.mod.
 COPY go.mod /home
 COPY go.sum /home
-RUN cd /home && go mod download
-
 WORKDIR /home
+RUN go mod download
 
-COPY .. /home
-
-RUN cd /home/api/cmd && go build -o /bin/api
+COPY . /home

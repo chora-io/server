@@ -10,23 +10,51 @@ gen:
 .PHONY: gen
 
 ###############################################################################
-###                                Database                                 ###
+###                                 Fuseki                                  ###
 ###############################################################################
 
-db:
+fuseki:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up db
+	@docker-compose up fuseki
 
-.PHONY: db
+.PHONY: fuseki
+
+###############################################################################
+###                                Postgres                                 ###
+###############################################################################
+
+postgres:
+	@docker-compose down -v --remove-orphans
+	@docker-compose up postgres
+
+.PHONY: postgres
 
 ###############################################################################
 ###                                   Api                                   ###
 ###############################################################################
 
 api:
-	@go run ./cmd/api
+	@go run ./api/cmd
 
 .PHONY: api
+
+###############################################################################
+###                                 Indexer                                 ###
+###############################################################################
+
+indexer:
+	@go run ./indexer/cmd
+
+.PHONY: indexer
+
+###############################################################################
+###                                 Monitor                                 ###
+###############################################################################
+
+monitor:
+	@go run ./monitor/cmd
+
+.PHONY: indexer
 
 ###############################################################################
 ###                                  Local                                  ###
@@ -34,7 +62,7 @@ api:
 
 local:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up --abort-on-container-exit --exit-code-from api
+	@docker-compose up --abort-on-container-exit --exit-code-from api indexer monitor
 
 .PHONY: local
 

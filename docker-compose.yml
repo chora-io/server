@@ -1,12 +1,12 @@
 services:
   fuseki:
     image: stain/jena-fuseki:jena4
+    expose:
+      - 3030
     ports:
       - 3030:3030
     networks:
       - default
-    volumes:
-      - ./data/fuseki:/fuseki
     environment:
       - ADMIN_PASSWORD=fuseki
       - FUSEKI_DATASET_1=resources
@@ -15,6 +15,7 @@ services:
     image: postgres:15
     user: postgres
     environment:
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
     expose:
       - 5432
@@ -22,8 +23,6 @@ services:
       - 5432:5432
     networks:
       - default
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 1s
@@ -34,8 +33,8 @@ services:
     build:
       context: api
     environment:
-      APP_DATABASE_URL: "postgres://postgres:password@db:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "cmd" ]
+      DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd" ]
     expose:
       - 3000
     ports:
@@ -50,8 +49,8 @@ services:
     build:
       context: indexer
     environment:
-      APP_DATABASE_URL: "postgres://postgres:password@db:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "cmd" ]
+      DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd" ]
     networks:
       - default
     depends_on:
@@ -62,8 +61,8 @@ services:
     build:
       context: monitor
     environment:
-      APP_DATABASE_URL: "postgres://postgres:password@db:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "cmd" ]
+      DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd" ]
     networks:
       - default
     depends_on:
