@@ -14,10 +14,10 @@ import (
 	"github.com/piprate/json-gold/ld"
 	"github.com/regen-network/regen-ledger/x/data/v2"
 
-	"github.com/choraio/server/db"
+	db "github.com/choraio/server/db/client"
 )
 
-type GetRequestHandlerFunction func(dbr db.Reader, rw http.ResponseWriter, r *http.Request)
+type GetHandler func(dbr db.Reader, rw http.ResponseWriter, r *http.Request)
 
 func GetData(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -51,7 +51,7 @@ func GetData(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
 	respondJSON(rw, http.StatusOK, NewGetDataResponse(iri, string(d.Jsonld)))
 }
 
-type PostRequestHandlerFunction func(dbw db.Writer, rw http.ResponseWriter, r *http.Request)
+type PostHandler func(dbw db.Writer, rw http.ResponseWriter, r *http.Request)
 
 func PostData(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 	var req PostDataRequest

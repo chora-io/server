@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"fmt"
@@ -7,7 +7,6 @@ import (
 	"github.com/choraio/server/state/app"
 )
 
-// nolint
 func main() {
 	app := app.NewApp("http://localhost:3030/resources")
 

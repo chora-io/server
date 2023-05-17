@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog"
 
-	"github.com/choraio/server/db"
+	db "github.com/choraio/server/db/client"
 )
 
 type App struct {
@@ -70,13 +70,13 @@ func (a *App) handleIndexRequest() http.HandlerFunc {
 	}
 }
 
-func (a *App) handleGetRequest(handler GetRequestHandlerFunction) http.HandlerFunc {
+func (a *App) handleGetRequest(handler GetHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		handler(a.dbr, w, r)
 	}
 }
 
-func (a *App) handlePostRequest(handler PostRequestHandlerFunction) http.HandlerFunc {
+func (a *App) handlePostRequest(handler PostHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		handler(a.dbw, w, r)
 	}

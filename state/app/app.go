@@ -19,8 +19,8 @@ func NewApp(url string) App {
 	}
 }
 
-func (c App) Get() (string, error) {
-	res, err := c.http.Get(c.url)
+func (a *App) Get() (string, error) {
+	res, err := a.http.Get(a.url)
 	if err != nil {
 		return "", fmt.Errorf("error: %s", err)
 	}
@@ -37,10 +37,10 @@ func (c App) Get() (string, error) {
 	return string(body), nil
 }
 
-func (c App) Post(bz []byte) (string, error) {
+func (a *App) Post(bz []byte) (string, error) {
 	buf := bytes.NewBuffer(bz)
 
-	res, err := c.http.Post(c.url, "text/turtle", buf)
+	res, err := a.http.Post(a.url, "text/turtle", buf)
 	if err != nil {
 		return "", fmt.Errorf("error: %s", err)
 	}

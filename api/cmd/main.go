@@ -7,10 +7,9 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/choraio/server/api/app"
-	"github.com/choraio/server/db"
+	db "github.com/choraio/server/db/client"
 )
 
-// nolint
 func main() {
 	cfg := app.LoadConfig()
 	log := zerolog.New(os.Stdout)
