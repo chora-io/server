@@ -50,7 +50,7 @@ func NewDatabase(postgresUrl string, logger zerolog.Logger) (Database, error) {
 	}
 
 	goose.SetBaseFS(migrations.Migrations)
-	err = goose.Up(sqlDb, "migrations")
+	err = goose.Up(sqlDb, ".")
 
 	goose.SetLogger(gooseLogger{logger})
 	if err != nil {

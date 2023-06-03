@@ -32,6 +32,9 @@ func Initialize(cfg Config, dbr db.Reader, dbw db.Writer, log zerolog.Logger) *A
 		log: log,
 	}
 
+	// authenticate
+	app.Get("/auth", app.handleGetRequest(Auth))
+
 	// get requests
 	app.Get("/data/{iri}", app.handleGetRequest(GetData))
 

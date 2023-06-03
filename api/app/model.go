@@ -1,5 +1,16 @@
 package app
 
+type AuthResponse struct {
+	// Token is the authentication token.
+	Token string `json:"token"`
+}
+
+func NewAuthResponse(token string) AuthResponse {
+	return AuthResponse{
+		Token: token,
+	}
+}
+
 type GetDataResponse struct {
 	// Iri is the unique identifier of the data.
 	Iri string `json:"iri"`

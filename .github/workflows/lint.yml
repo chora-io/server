@@ -28,7 +28,7 @@ jobs:
       pull-requests: read  # for technote-space/get-diff-action to get git reference
     strategy:
       matrix:
-        module: ["api", "db", "indexer", "monitor", "state"]
+        module: ["api", "db", "idx", "state"]
     steps:
       - uses: actions/checkout@v3
 
@@ -70,42 +70,23 @@ jobs:
           working-directory: db
         if: steps.git-diff-api.outputs.diff
 
-      # indexer module
+      # idx module
 
       - uses: technote-space/get-diff-action@v6
-        id: git-diff-indexer
+        id: git-diff-idx
         with:
           PATTERNS: |
-            indexer/**/**.go
-            indexer/go.mod
-            indexer/go.sum
-        if: matrix.module == 'indexer'
+            idx/**/**.go
+            idx/go.mod
+            idx/go.sum
+        if: matrix.module == 'idx'
       - uses: actions/setup-go@v4
         with:
-          go-version-file: indexer/go.mod
+          go-version-file: idx/go.mod
         if: env.GIT_DIFF
       - uses: golangci/golangci-lint-action@v3
         with:
-          working-directory: indexer
-        if: steps.git-diff-api.outputs.diff
-
-      # monitor module
-
-      - uses: technote-space/get-diff-action@v6
-        id: git-diff-monitor
-        with:
-          PATTERNS: |
-            monitor/**/**.go
-            monitor/go.mod
-            monitor/go.sum
-        if: matrix.module == 'monitor'
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: monitor/go.mod
-        if: env.GIT_DIFF
-      - uses: golangci/golangci-lint-action@v3
-        with:
-          working-directory: monitor
+          working-directory: idx
         if: steps.git-diff-api.outputs.diff
 
       # state module

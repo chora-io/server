@@ -42,19 +42,10 @@ api:
 ###                                 Indexer                                 ###
 ###############################################################################
 
-indexer:
-	@go run ./indexer/cmd
+idx:
+	@go run ./idx/cmd
 
-.PHONY: indexer
-
-###############################################################################
-###                                 Monitor                                 ###
-###############################################################################
-
-monitor:
-	@go run ./monitor/cmd
-
-.PHONY: indexer
+.PHONY: idx
 
 ###############################################################################
 ###                                  Local                                  ###
@@ -62,7 +53,7 @@ monitor:
 
 local:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up --abort-on-container-exit --exit-code-from api indexer monitor
+	@docker-compose up
 
 .PHONY: local
 
@@ -138,13 +129,9 @@ test-db:
 	@echo "Testing Module ./db"
 	@cd db && go test ./... -coverprofile=../coverage-db.out -covermode=atomic
 
-test-indexer:
-	@echo "Testing Module ./indexer"
-	@cd indexer && go test ./... -coverprofile=../coverage-indexer.out -covermode=atomic
-
-test-monitor:
-	@echo "Testing Module ./monitor"
-	@cd monitor && go test ./... -coverprofile=../coverage-monitor.out -covermode=atomic
+test-idx:
+	@echo "Testing Module ./idx"
+	@cd idx && go test ./... -coverprofile=../coverage-idx.out -covermode=atomic
 
 test-state:
 	@echo "Testing Module ./state"
@@ -158,7 +145,7 @@ test-clean:
 	@find . -name 'coverage.txt' -delete
 	@find . -name 'coverage*.out' -delete
 
-.PHONY: test test-all test-api test-db test-indexer test-monitor test-state test-coverage test-clean
+.PHONY: test test-all test-api test-db test-idx test-state test-coverage test-clean
 
 ###############################################################################
 ###                               Go Version                                ###

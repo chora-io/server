@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/choraio/server/monitor/app"
+	"github.com/choraio/server/idx/app"
 )
 
 func main() {

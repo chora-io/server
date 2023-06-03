@@ -45,21 +45,9 @@ services:
       postgres:
         condition: service_healthy
 
-  indexer:
+  idx:
     build:
-      context: indexer
-    environment:
-      DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "go run ./cmd" ]
-    networks:
-      - default
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  monitor:
-    build:
-      context: monitor
+      context: idx
     environment:
       DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
     entrypoint: [ "/bin/sh", "-c", "go run ./cmd" ]

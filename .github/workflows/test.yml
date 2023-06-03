@@ -27,7 +27,7 @@ jobs:
       pull-requests: read  # for technote-space/get-diff-action to get git reference
     strategy:
       matrix:
-        module: ["api", "db", "indexer", "monitor", "state"]
+        module: ["api", "db", "idx", "state"]
     steps:
       - uses: actions/checkout@v3
 
@@ -79,52 +79,28 @@ jobs:
           (env.GIT_DIFF && matrix.module == 'db') ||
           github.ref == 'refs/heads/main'
 
-      # indexer module
+      # idx module
 
       - uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
-            indexer/**/**.go
-            indexer/go.mod
-            indexer/go.sum
+            idx/**/**.go
+            idx/go.mod
+            idx/go.sum
       - uses: actions/setup-go@v4
         with:
-          go-version-file: 'indexer/go.mod'
+          go-version-file: 'idx/go.mod'
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
-      - run: make test-indexer
+      - run: make test-idx
         if: |
-          (env.GIT_DIFF && matrix.module == 'indexer') ||
+          (env.GIT_DIFF && matrix.module == 'idx') ||
           github.ref == 'refs/heads/main'
       - uses: actions/upload-artifact@v3
         with:
-          name: coverage-indexer
-          path: coverage-indexer.out
+          name: coverage-idx
+          path: coverage-idx.out
         if: |
-          (env.GIT_DIFF && matrix.module == 'indexer') ||
-          github.ref == 'refs/heads/main'
-
-      # monitor module
-
-      - uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            monitor/**/**.go
-            monitor/go.mod
-            monitor/go.sum
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: 'monitor/go.mod'
-        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
-      - run: make test-monitor
-        if: |
-          (env.GIT_DIFF && matrix.module == 'monitor') ||
-          github.ref == 'refs/heads/main'
-      - uses: actions/upload-artifact@v3
-        with:
-          name: coverage-monitor
-          path: coverage-monitor.out
-        if: |
-          (env.GIT_DIFF && matrix.module == 'monitor') ||
+          (env.GIT_DIFF && matrix.module == 'idx') ||
           github.ref == 'refs/heads/main'
 
       # state module
