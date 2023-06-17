@@ -13,3 +13,10 @@ type Datum struct {
 	Iri    string
 	Jsonld json.RawMessage
 }
+
+// the idx process table stores information about a process
+type IdxProcess struct {
+	ChainID     string
+	ProcessName string
+	LastBlock   int64
+}

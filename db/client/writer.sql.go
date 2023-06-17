@@ -23,3 +23,18 @@ func (q *Queries) PostData(ctx context.Context, arg PostDataParams) error {
 	_, err := q.db.ExecContext(ctx, postData, arg.Iri, arg.Jsonld)
 	return err
 }
+
+const updateIdxProcessLastBlock = `-- name: UpdateIdxProcessLastBlock :exec
+update idx_process set last_block=$3 where chain_id=$1 and process_name=$2
+`
+
+type UpdateIdxProcessLastBlockParams struct {
+	ChainID     string
+	ProcessName string
+	LastBlock   int64
+}
+
+func (q *Queries) UpdateIdxProcessLastBlock(ctx context.Context, arg UpdateIdxProcessLastBlockParams) error {
+	_, err := q.db.ExecContext(ctx, updateIdxProcessLastBlock, arg.ChainID, arg.ProcessName, arg.LastBlock)
+	return err
+}

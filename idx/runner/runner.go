@@ -6,39 +6,46 @@ import (
 	"sync"
 	"time"
 
-	idxcontext "github.com/choraio/server/idx/context"
+	"github.com/choraio/server/idx/client"
+	"github.com/choraio/server/idx/config"
 )
 
 // Runner runs continuous background processes.
 type Runner struct {
 	// Context is the context used for cancellation and shutdown of the runner.
-	Context context.Context
+	ctx context.Context
 
-	// IdxContext is the indexer context, which includes the database client.
-	IdxContext idxcontext.Context
+	// backoffDuration is the duration between advancing processes.
+	backoffDuration time.Duration
+
+	// backoffMaxRetries
+	backoffMaxRetries uint64
+
+	// client is the client used to interact with the database and network.
+	client client.Client
 
 	// waitGroup tracks running processes and is used to coordinate a shutdown.
 	waitGroup sync.WaitGroup
 }
 
 // NewRunner creates a new runner.
-func NewRunner(ctx context.Context, idxCtx idxcontext.Context) Runner {
+func NewRunner(ctx context.Context, cfg config.Config, client client.Client) Runner {
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	return Runner{
-		Context:    ctx,
-		IdxContext: idxCtx,
+		ctx:               ctx,
+		backoffDuration:   cfg.IdxBackoffDuration,
+		backoffMaxRetries: cfg.IdxBackoffMaxRetries,
+		client:            client,
 	}
 }
 
 // ProcessFunc is the function used to advance the process.
-type ProcessFunc func(ctx context.Context, idxCtx idxcontext.Context) error
+type ProcessFunc func(ctx context.Context, c client.Client, chainId string) error
 
 // RunProcess runs a process using the provided process function.
-func (r *Runner) RunProcess(processName string, processFunc ProcessFunc) {
-	ctx := r.Context
-	if ctx == nil {
-		ctx = context.Background()
-	}
-
+func (r *Runner) RunProcess(chainId string, processName string, processFunc ProcessFunc) {
 	// add process to wait group
 	r.waitGroup.Add(1)
 
@@ -52,8 +59,8 @@ func (r *Runner) RunProcess(processName string, processFunc ProcessFunc) {
 		}()
 
 		// set and initialize backoff
-		backoffDuration := r.IdxContext.BackoffDuration
-		backoffMaxRetries := r.IdxContext.BackoffMaxRetries
+		backoffDuration := r.backoffDuration
+		backoffMaxRetries := r.backoffMaxRetries
 		backoffRetryCount := uint64(0)
 
 		// log starting process
@@ -64,13 +71,13 @@ func (r *Runner) RunProcess(processName string, processFunc ProcessFunc) {
 			processStart := time.Now()
 
 			// execute process function
-			err := processFunc(ctx, r.IdxContext)
+			err := processFunc(r.ctx, r.client, chainId)
 
 			// set process duration
 			processDuration := time.Since(processStart)
 
 			// log process duration
-			fmt.Println("process duration", processName, processDuration)
+			fmt.Println("process duration", processName, processDuration.String())
 
 			if err != nil {
 				// log process error
@@ -99,7 +106,7 @@ func (r *Runner) RunProcess(processName string, processFunc ProcessFunc) {
 				fmt.Println("backing off", processName, backoffDuration.String())
 				// continue process
 				continue
-			case <-ctx.Done():
+			case <-r.ctx.Done():
 				// exit process
 				return
 			}
@@ -118,8 +125,8 @@ func (r *Runner) Close() {
 	// log processes complete
 	fmt.Println("processes complete")
 
-	// close indexer context
-	err := r.IdxContext.Close()
+	// close indexer client
+	err := r.client.Close()
 	if err != nil {
 		panic(err)
 	}

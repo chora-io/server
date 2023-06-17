@@ -5,8 +5,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/choraio/server/idx/client"
 	"github.com/choraio/server/idx/config"
-	context2 "github.com/choraio/server/idx/context"
 	"github.com/choraio/server/idx/process"
 	"github.com/choraio/server/idx/runner"
 )
@@ -18,18 +18,17 @@ func main() {
 	// load configuration
 	cfg := config.LoadConfig()
 
-	// create indexer context
-	idxCtx, err := context2.NewContext(cfg)
+	// create indexer client
+	c, err := client.NewClient(cfg)
 	if err != nil {
 		panic(err)
 	}
 
 	// create runner
-	r := runner.NewRunner(ctx, idxCtx)
+	r := runner.NewRunner(ctx, cfg, c)
 
 	// run processes
-	r.RunProcess("example-1", process.Example)
-	r.RunProcess("example-2", process.Example)
+	r.RunProcess("chora-testnet-1", process.GroupProposalsName, process.GroupProposals)
 
 	r.Close()
 }

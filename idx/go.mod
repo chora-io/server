@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/choraio/server/db v0.0.0
+	github.com/rs/zerolog v1.29.0
 	github.com/spf13/viper v1.15.0
 )
 
@@ -17,7 +18,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pressly/goose/v3 v3.10.0 // indirect
-	github.com/rs/zerolog v1.29.0 // indirect
 	github.com/simukti/sqldb-logger v0.0.0-20220521163925-faf2f2be0eb6 // indirect
 	github.com/simukti/sqldb-logger/logadapter/zerologadapter v0.0.0-20220521163925-faf2f2be0eb6 // indirect
 	github.com/spf13/afero v1.9.3 // indirect

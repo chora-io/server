@@ -19,3 +19,19 @@ func (q *Queries) GetData(ctx context.Context, iri string) (Datum, error) {
 	err := row.Scan(&i.Iri, &i.Jsonld)
 	return i, err
 }
+
+const getIdxProcessLastBlock = `-- name: GetIdxProcessLastBlock :one
+select last_block from idx_process where chain_id=$1 and process_name=$2
+`
+
+type GetIdxProcessLastBlockParams struct {
+	ChainID     string
+	ProcessName string
+}
+
+func (q *Queries) GetIdxProcessLastBlock(ctx context.Context, arg GetIdxProcessLastBlockParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getIdxProcessLastBlock, arg.ChainID, arg.ProcessName)
+	var last_block int64
+	err := row.Scan(&last_block)
+	return last_block, err
+}
