@@ -7,6 +7,7 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 )
 
 const getData = `-- name: GetData :one
@@ -18,6 +19,49 @@ func (q *Queries) GetData(ctx context.Context, iri string) (Datum, error) {
 	var i Datum
 	err := row.Scan(&i.Iri, &i.Jsonld)
 	return i, err
+}
+
+const getIdxGroupProposal = `-- name: GetIdxGroupProposal :one
+select proposal from idx_group_proposal where chain_id=$1 and proposal_id=$2
+`
+
+type GetIdxGroupProposalParams struct {
+	ChainID    string
+	ProposalID int64
+}
+
+func (q *Queries) GetIdxGroupProposal(ctx context.Context, arg GetIdxGroupProposalParams) (json.RawMessage, error) {
+	row := q.db.QueryRowContext(ctx, getIdxGroupProposal, arg.ChainID, arg.ProposalID)
+	var proposal json.RawMessage
+	err := row.Scan(&proposal)
+	return proposal, err
+}
+
+const getIdxGroupProposals = `-- name: GetIdxGroupProposals :many
+select proposal from idx_group_proposal where chain_id=$1
+`
+
+func (q *Queries) GetIdxGroupProposals(ctx context.Context, chainID string) ([]json.RawMessage, error) {
+	rows, err := q.db.QueryContext(ctx, getIdxGroupProposals, chainID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []json.RawMessage
+	for rows.Next() {
+		var proposal json.RawMessage
+		if err := rows.Scan(&proposal); err != nil {
+			return nil, err
+		}
+		items = append(items, proposal)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getIdxProcessLastBlock = `-- name: GetIdxProcessLastBlock :one

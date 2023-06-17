@@ -1,5 +1,7 @@
 package client
 
+import "encoding/json"
+
 // CosmosClient is the client.
 type CosmosClient struct {
 	chainId string
@@ -25,6 +27,6 @@ func (c CosmosClient) GetGroupEventProposalPruned(block int64) ([]any, error) {
 }
 
 // GetGroupProposalAtBlockHeight gets a group proposal by proposal id at a given block height.
-func (c CosmosClient) GetGroupProposalAtBlockHeight(block int64, proposalId string) (any, error) {
+func (c CosmosClient) GetGroupProposalAtBlockHeight(block int64, proposalId string) (json.RawMessage, error) {
 	return nil, nil
 }

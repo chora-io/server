@@ -28,7 +28,7 @@ func main() {
 	r := runner.NewRunner(ctx, cfg, c)
 
 	// run processes
-	r.RunProcess(cfg.ChainId, process.GroupProposalsName, process.GroupProposals)
+	r.RunProcess(cfg.ChainId, "group-proposals", process.GroupProposals)
 
 	// close runner
 	r.Close()

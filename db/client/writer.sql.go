@@ -10,6 +10,21 @@ import (
 	"encoding/json"
 )
 
+const addIdxGroupProposal = `-- name: AddIdxGroupProposal :exec
+insert into idx_group_proposal (chain_id, proposal_id, proposal) values ($1, $2, $3)
+`
+
+type AddIdxGroupProposalParams struct {
+	ChainID    string
+	ProposalID int64
+	Proposal   json.RawMessage
+}
+
+func (q *Queries) AddIdxGroupProposal(ctx context.Context, arg AddIdxGroupProposalParams) error {
+	_, err := q.db.ExecContext(ctx, addIdxGroupProposal, arg.ChainID, arg.ProposalID, arg.Proposal)
+	return err
+}
+
 const postData = `-- name: PostData :exec
 insert into data (iri, jsonld) values ($1, $2)
 `
@@ -21,6 +36,21 @@ type PostDataParams struct {
 
 func (q *Queries) PostData(ctx context.Context, arg PostDataParams) error {
 	_, err := q.db.ExecContext(ctx, postData, arg.Iri, arg.Jsonld)
+	return err
+}
+
+const updateIdxGroupProposal = `-- name: UpdateIdxGroupProposal :exec
+update idx_group_proposal set proposal=$3 where chain_id=$1 and proposal_id=$2
+`
+
+type UpdateIdxGroupProposalParams struct {
+	ChainID    string
+	ProposalID int64
+	Proposal   json.RawMessage
+}
+
+func (q *Queries) UpdateIdxGroupProposal(ctx context.Context, arg UpdateIdxGroupProposalParams) error {
+	_, err := q.db.ExecContext(ctx, updateIdxGroupProposal, arg.ChainID, arg.ProposalID, arg.Proposal)
 	return err
 }
 

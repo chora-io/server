@@ -14,6 +14,13 @@ type Datum struct {
 	Jsonld json.RawMessage
 }
 
+// the final state of a group proposal for a given chain
+type IdxGroupProposal struct {
+	ChainID    string
+	ProposalID int64
+	Proposal   json.RawMessage
+}
+
 // the idx process table stores information about a process
 type IdxProcess struct {
 	ChainID     string

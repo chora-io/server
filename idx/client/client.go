@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 
 	"github.com/rs/zerolog"
@@ -51,13 +52,22 @@ func (c Client) Close() error {
 	return nil
 }
 
+// AddGroupProposal adds a group proposal to the database.
+func (c Client) AddGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
+	err := c.db.Writer().AddIdxGroupProposal(ctx, chainId, proposalId, proposal)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetGroupEventProposalPruned gets group.v1.EventProposalPruned from the block.
 func (c Client) GetGroupEventProposalPruned(block int64) ([]any, error) {
 	return c.cc.GetGroupEventProposalPruned(block)
 }
 
 // GetGroupProposalAtBlockHeight gets a group proposal by proposal id at a given block height.
-func (c Client) GetGroupProposalAtBlockHeight(block int64, proposalId string) (any, error) {
+func (c Client) GetGroupProposalAtBlockHeight(block int64, proposalId string) (json.RawMessage, error) {
 	return c.cc.GetGroupProposalAtBlockHeight(block, proposalId)
 }
 
@@ -68,6 +78,15 @@ func (c Client) GetProcessLastBlock(ctx context.Context, chainId, processName st
 		return 0, err
 	}
 	return lastBlock, nil
+}
+
+// UpdateGroupProposal updates a group proposal in the database.
+func (c Client) UpdateGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
+	err := c.db.Writer().UpdateIdxGroupProposal(ctx, chainId, proposalId, proposal)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // UpdateProcessLastBlock updates the last processed block for a given process.

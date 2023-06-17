@@ -8,6 +8,7 @@ import (
 
 	"github.com/choraio/server/idx/client"
 	"github.com/choraio/server/idx/config"
+	"github.com/choraio/server/idx/process"
 )
 
 // Runner runs continuous background processes.
@@ -29,11 +30,8 @@ func NewRunner(ctx context.Context, cfg config.Config, client client.Client) Run
 	}
 }
 
-// ProcessFunc is the function used to advance the process.
-type ProcessFunc func(ctx context.Context, c client.Client, chainId string) error
-
 // RunProcess runs a process using the provided process function.
-func (r *Runner) RunProcess(chainId string, processName string, processFunc ProcessFunc) {
+func (r *Runner) RunProcess(chainId string, processName string, processFunc process.Function) {
 	// add process to wait group
 	r.waitGroup.Add(1)
 
@@ -50,12 +48,18 @@ func (r *Runner) RunProcess(chainId string, processName string, processFunc Proc
 
 		fmt.Println("starting process", processName)
 
+		// set process function params
+		processParams := process.Params{
+			ChainId:     chainId,
+			ProcessName: processName,
+		}
+
 		for {
 			// set process start time
 			processStart := time.Now()
 
 			// execute process function
-			err := processFunc(r.ctx, r.client, chainId)
+			err := processFunc(r.ctx, r.client, processParams)
 
 			// set process duration
 			processDuration := time.Since(processStart)
