@@ -15,10 +15,10 @@ func main() {
 	// set context signalling cancellation when SIGINT or SIGTERM is received
 	ctx, _ := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 
-	// load configuration
+	// load config
 	cfg := config.LoadConfig()
 
-	// create indexer client
+	// create client
 	c, err := client.NewClient(cfg)
 	if err != nil {
 		panic(err)
@@ -28,7 +28,8 @@ func main() {
 	r := runner.NewRunner(ctx, cfg, c)
 
 	// run processes
-	r.RunProcess("chora-testnet-1", process.GroupProposalsName, process.GroupProposals)
+	r.RunProcess(cfg.ChainId, process.GroupProposalsName, process.GroupProposals)
 
+	// close runner
 	r.Close()
 }

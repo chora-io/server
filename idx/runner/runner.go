@@ -12,31 +12,19 @@ import (
 
 // Runner runs continuous background processes.
 type Runner struct {
-	// Context is the context used for cancellation and shutdown of the runner.
-	ctx context.Context
-
-	// backoffDuration is the duration between advancing processes.
-	backoffDuration time.Duration
-
-	// backoffMaxRetries
+	ctx               context.Context
+	backoffDuration   time.Duration
 	backoffMaxRetries uint64
-
-	// client is the client used to interact with the database and network.
-	client client.Client
-
-	// waitGroup tracks running processes and is used to coordinate a shutdown.
-	waitGroup sync.WaitGroup
+	client            client.Client
+	waitGroup         sync.WaitGroup
 }
 
 // NewRunner creates a new runner.
 func NewRunner(ctx context.Context, cfg config.Config, client client.Client) Runner {
-	if ctx == nil {
-		ctx = context.Background()
-	}
 	return Runner{
 		ctx:               ctx,
-		backoffDuration:   cfg.IdxBackoffDuration,
-		backoffMaxRetries: cfg.IdxBackoffMaxRetries,
+		backoffDuration:   cfg.BackoffDuration,
+		backoffMaxRetries: cfg.BackoffMaxRetries,
 		client:            client,
 	}
 }
@@ -53,17 +41,13 @@ func (r *Runner) RunProcess(chainId string, processName string, processFunc Proc
 		// decrement wait group counter on exit
 		defer r.waitGroup.Done()
 
-		// log stopping process on exit
-		defer func() {
-			fmt.Println("stopping process", processName)
-		}()
+		defer fmt.Println("stopping process", processName)
 
 		// set and initialize backoff
 		backoffDuration := r.backoffDuration
 		backoffMaxRetries := r.backoffMaxRetries
 		backoffRetryCount := uint64(0)
 
-		// log starting process
 		fmt.Println("starting process", processName)
 
 		for {
@@ -76,11 +60,9 @@ func (r *Runner) RunProcess(chainId string, processName string, processFunc Proc
 			// set process duration
 			processDuration := time.Since(processStart)
 
-			// log process duration
 			fmt.Println("process duration", processName, processDuration.String())
 
 			if err != nil {
-				// log process error
 				fmt.Println("process error", processName, err.Error())
 
 				// update retry count
@@ -89,26 +71,19 @@ func (r *Runner) RunProcess(chainId string, processName string, processFunc Proc
 
 			// exit on max retries
 			if backoffRetryCount == backoffMaxRetries {
-				// log maximum retries
 				fmt.Println("maximum retries", processName, backoffMaxRetries)
-
-				// exit process
-				return
+				return // exit process
 			} else if backoffRetryCount > 0 {
-				// log retry count
 				fmt.Println("retry count", processName, backoffRetryCount)
 			}
 
 			// wait for the backoff duration to continue or context done to exit
 			select {
 			case <-time.After(backoffDuration):
-				// log backing off
 				fmt.Println("backing off", processName, backoffDuration.String())
-				// continue process
-				continue
+				continue // continue process
 			case <-r.ctx.Done():
-				// exit process
-				return
+				return // exit process
 			}
 		}
 	}()
@@ -116,21 +91,18 @@ func (r *Runner) RunProcess(chainId string, processName string, processFunc Proc
 
 // Close closes the runner.
 func (r *Runner) Close() {
-	// log finishing processes
 	fmt.Println("finishing processes")
 
 	// wait for processes to finish
 	r.waitGroup.Wait()
 
-	// log processes complete
-	fmt.Println("processes complete")
+	fmt.Println("shutting down client")
 
-	// close indexer client
+	// close client
 	err := r.client.Close()
 	if err != nil {
 		panic(err)
 	}
 
-	// log shutdown complete
 	fmt.Println("shutdown complete")
 }
