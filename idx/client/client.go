@@ -52,13 +52,19 @@ func NewClient(cfg config.Config) (Client, error) {
 	return c, nil
 }
 
-// Close closes the client.
+// Close shuts down the client.
 func (c Client) Close() error {
-	if c.db != nil {
-		err := c.db.Close()
-		if err != nil {
-			return err
-		}
+
+	// close db client
+	err := c.db.Close()
+	if err != nil {
+		return err
+	}
+
+	// close cosmos client
+	err = c.cc.Close()
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -66,18 +72,18 @@ func (c Client) Close() error {
 
 // database queries
 
-// AddGroupProposal adds a group proposal to the database.
-func (c Client) AddGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
-	err := c.db.Writer().AddIdxGroupProposal(ctx, chainId, proposalId, proposal)
+// InsertGroupProposal adds a group proposal to the database.
+func (c Client) InsertGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
+	err := c.db.Writer().InsertIdxGroupProposal(ctx, chainId, proposalId, proposal)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// GetProcessLastBlock gets the last processed block for a given process.
-func (c Client) GetProcessLastBlock(ctx context.Context, chainId, processName string) (int64, error) {
-	lastBlock, err := c.db.Reader().GetIdxProcessLastBlock(ctx, chainId, processName)
+// SelectProcessLastBlock gets the last processed block for a given process.
+func (c Client) SelectProcessLastBlock(ctx context.Context, chainId, processName string) (int64, error) {
+	lastBlock, err := c.db.Reader().SelectIdxProcessLastBlock(ctx, chainId, processName)
 	if err != nil {
 		return 0, err
 	}

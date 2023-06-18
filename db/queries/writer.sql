@@ -1,7 +1,7 @@
 -- name: PostData :exec
 insert into data (iri, jsonld) values ($1, $2);
 
--- name: AddIdxGroupProposal :exec
+-- name: InsertIdxGroupProposal :exec
 insert into idx_group_proposal (chain_id, proposal_id, proposal) values ($1, $2, $3);
 
 -- name: UpdateIdxProcessLastBlock :exec

@@ -10,18 +10,18 @@ import (
 	"encoding/json"
 )
 
-const addIdxGroupProposal = `-- name: AddIdxGroupProposal :exec
+const insertIdxGroupProposal = `-- name: InsertIdxGroupProposal :exec
 insert into idx_group_proposal (chain_id, proposal_id, proposal) values ($1, $2, $3)
 `
 
-type AddIdxGroupProposalParams struct {
+type InsertIdxGroupProposalParams struct {
 	ChainID    string
 	ProposalID int64
 	Proposal   json.RawMessage
 }
 
-func (q *Queries) AddIdxGroupProposal(ctx context.Context, arg AddIdxGroupProposalParams) error {
-	_, err := q.db.ExecContext(ctx, addIdxGroupProposal, arg.ChainID, arg.ProposalID, arg.Proposal)
+func (q *Queries) InsertIdxGroupProposal(ctx context.Context, arg InsertIdxGroupProposalParams) error {
+	_, err := q.db.ExecContext(ctx, insertIdxGroupProposal, arg.ChainID, arg.ProposalID, arg.Proposal)
 	return err
 }
 

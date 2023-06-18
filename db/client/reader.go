@@ -15,14 +15,14 @@ type Reader interface {
 
 	// indexer queries
 
-	// GetIdxGroupProposal reads data from the database.
-	GetIdxGroupProposal(ctx context.Context, chainId string, proposalId int64) (json.RawMessage, error)
+	// SelectIdxGroupProposal reads data from the database.
+	SelectIdxGroupProposal(ctx context.Context, chainId string, proposalId int64) (json.RawMessage, error)
 
-	// GetIdxGroupProposals reads data from the database.
-	GetIdxGroupProposals(ctx context.Context, chainId string) ([]json.RawMessage, error)
+	// SelectIdxGroupProposals reads data from the database.
+	SelectIdxGroupProposals(ctx context.Context, chainId string) ([]json.RawMessage, error)
 
-	// GetIdxProcessLastBlock reads data from the database.
-	GetIdxProcessLastBlock(ctx context.Context, chainId string, processName string) (int64, error)
+	// SelectIdxProcessLastBlock reads data from the database.
+	SelectIdxProcessLastBlock(ctx context.Context, chainId string, processName string) (int64, error)
 }
 
 var _ Reader = &reader{}
@@ -40,22 +40,22 @@ func (r *reader) GetData(ctx context.Context, iri string) (Datum, error) {
 
 // indexer queries
 
-// GetIdxGroupProposal reads data from the database.
-func (r *reader) GetIdxGroupProposal(ctx context.Context, chainId string, proposalId int64) (json.RawMessage, error) {
-	return r.q.GetIdxGroupProposal(ctx, GetIdxGroupProposalParams{
+// SelectIdxGroupProposal reads data from the database.
+func (r *reader) SelectIdxGroupProposal(ctx context.Context, chainId string, proposalId int64) (json.RawMessage, error) {
+	return r.q.SelectIdxGroupProposal(ctx, SelectIdxGroupProposalParams{
 		ChainID:    chainId,
 		ProposalID: proposalId,
 	})
 }
 
-// GetIdxGroupProposals reads data from the database.
-func (r *reader) GetIdxGroupProposals(ctx context.Context, chainId string) ([]json.RawMessage, error) {
-	return r.q.GetIdxGroupProposals(ctx, chainId)
+// SelectIdxGroupProposals reads data from the database.
+func (r *reader) SelectIdxGroupProposals(ctx context.Context, chainId string) ([]json.RawMessage, error) {
+	return r.q.SelectIdxGroupProposals(ctx, chainId)
 }
 
-// GetIdxProcessLastBlock reads data from the database.
-func (r *reader) GetIdxProcessLastBlock(ctx context.Context, chainId string, processName string) (int64, error) {
-	return r.q.GetIdxProcessLastBlock(ctx, GetIdxProcessLastBlockParams{
+// SelectIdxProcessLastBlock reads data from the database.
+func (r *reader) SelectIdxProcessLastBlock(ctx context.Context, chainId string, processName string) (int64, error) {
+	return r.q.SelectIdxProcessLastBlock(ctx, SelectIdxProcessLastBlockParams{
 		ChainID:     chainId,
 		ProcessName: processName,
 	})

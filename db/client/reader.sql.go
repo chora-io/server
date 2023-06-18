@@ -21,28 +21,28 @@ func (q *Queries) GetData(ctx context.Context, iri string) (Datum, error) {
 	return i, err
 }
 
-const getIdxGroupProposal = `-- name: GetIdxGroupProposal :one
+const selectIdxGroupProposal = `-- name: SelectIdxGroupProposal :one
 select proposal from idx_group_proposal where chain_id=$1 and proposal_id=$2
 `
 
-type GetIdxGroupProposalParams struct {
+type SelectIdxGroupProposalParams struct {
 	ChainID    string
 	ProposalID int64
 }
 
-func (q *Queries) GetIdxGroupProposal(ctx context.Context, arg GetIdxGroupProposalParams) (json.RawMessage, error) {
-	row := q.db.QueryRowContext(ctx, getIdxGroupProposal, arg.ChainID, arg.ProposalID)
+func (q *Queries) SelectIdxGroupProposal(ctx context.Context, arg SelectIdxGroupProposalParams) (json.RawMessage, error) {
+	row := q.db.QueryRowContext(ctx, selectIdxGroupProposal, arg.ChainID, arg.ProposalID)
 	var proposal json.RawMessage
 	err := row.Scan(&proposal)
 	return proposal, err
 }
 
-const getIdxGroupProposals = `-- name: GetIdxGroupProposals :many
+const selectIdxGroupProposals = `-- name: SelectIdxGroupProposals :many
 select proposal from idx_group_proposal where chain_id=$1
 `
 
-func (q *Queries) GetIdxGroupProposals(ctx context.Context, chainID string) ([]json.RawMessage, error) {
-	rows, err := q.db.QueryContext(ctx, getIdxGroupProposals, chainID)
+func (q *Queries) SelectIdxGroupProposals(ctx context.Context, chainID string) ([]json.RawMessage, error) {
+	rows, err := q.db.QueryContext(ctx, selectIdxGroupProposals, chainID)
 	if err != nil {
 		return nil, err
 	}
@@ -64,17 +64,17 @@ func (q *Queries) GetIdxGroupProposals(ctx context.Context, chainID string) ([]j
 	return items, nil
 }
 
-const getIdxProcessLastBlock = `-- name: GetIdxProcessLastBlock :one
+const selectIdxProcessLastBlock = `-- name: SelectIdxProcessLastBlock :one
 select last_block from idx_process where chain_id=$1 and process_name=$2
 `
 
-type GetIdxProcessLastBlockParams struct {
+type SelectIdxProcessLastBlockParams struct {
 	ChainID     string
 	ProcessName string
 }
 
-func (q *Queries) GetIdxProcessLastBlock(ctx context.Context, arg GetIdxProcessLastBlockParams) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getIdxProcessLastBlock, arg.ChainID, arg.ProcessName)
+func (q *Queries) SelectIdxProcessLastBlock(ctx context.Context, arg SelectIdxProcessLastBlockParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, selectIdxProcessLastBlock, arg.ChainID, arg.ProcessName)
 	var last_block int64
 	err := row.Scan(&last_block)
 	return last_block, err

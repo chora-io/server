@@ -10,7 +10,7 @@ import (
 
 func GroupProposals(ctx context.Context, c client.Client) error {
 	// get last processed block from database
-	lastBlock, err := c.GetProcessLastBlock(ctx, c.ChainId, c.ProcessName)
+	lastBlock, err := c.SelectProcessLastBlock(ctx, c.ChainId, c.ProcessName)
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func GroupProposals(ctx context.Context, c client.Client) error {
 		fmt.Println("proposal", proposal)
 
 		// add group proposal to database
-		err = c.AddGroupProposal(ctx, c.ChainId, proposalId, proposal)
+		err = c.InsertGroupProposal(ctx, c.ChainId, proposalId, proposal)
 		if err != nil {
 			return err
 		}

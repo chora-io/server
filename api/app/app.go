@@ -22,24 +22,29 @@ type App struct {
 }
 
 // Initialize initializes the app.
-func Initialize(cfg Config, dbr db.Reader, dbw db.Writer, log zerolog.Logger) *App {
+func Initialize(cfg Config, log zerolog.Logger) *App {
+	db, err := db.NewDatabase(cfg.DatabaseUrl, log)
+	if err != nil {
+		panic(err)
+	}
+
 	app := &App{
 		env: cfg.ServerEnv,
-		dbr: dbr,
-		dbw: dbw,
+		dbr: db.Reader(),
+		dbw: db.Writer(),
 		rtr: mux.NewRouter(),
 		aos: cfg.ApiAllowedOrigins,
 		log: log,
 	}
 
 	// authenticate
-	app.Get("/auth", app.handleGetRequest(Auth))
+	app.get("/auth", app.handleGetRequest(Auth))
 
 	// get requests
-	app.Get("/data/{iri}", app.handleGetRequest(GetData))
+	app.get("/data/{iri}", app.handleGetRequest(GetData))
 
 	// post requests
-	app.Post("/data/", app.handlePostRequest(PostData))
+	app.post("/data/", app.handlePostRequest(PostData))
 
 	return app
 }
@@ -51,19 +56,22 @@ func (a *App) Run(host string) {
 	a.rtr.HandleFunc("/", a.handleIndexRequest())
 
 	// add allowed origins for get and post requests
-	aos := handlers.AllowedOrigins(strings.Split(a.aos, ","))
+	origins := handlers.AllowedOrigins(strings.Split(a.aos, ","))
 
-	// start listening for and serving requests
-	log.Fatal(http.ListenAndServe(host, handlers.CORS(aos)(a.rtr)))
+	// set cors handler with allowed origins
+	handler := handlers.CORS(origins)(a.rtr)
+
+	// start listening and serving requests
+	if err := http.ListenAndServe(host, handler); err != nil {
+		log.Fatal(err)
+	}
 }
 
-// Get wraps the router for GET method
-func (a *App) Get(path string, f func(w http.ResponseWriter, r *http.Request)) {
+func (a *App) get(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.rtr.HandleFunc(path, f).Methods("GET")
 }
 
-// Post wraps the router for POST method
-func (a *App) Post(path string, f func(w http.ResponseWriter, r *http.Request)) {
+func (a *App) post(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.rtr.HandleFunc(path, f).Methods("POST")
 }
 

@@ -24,9 +24,14 @@ type Client struct {
 // NewClient creates a new client.
 func NewClient(rpcUrl string) (Client, error) {
 	c := Client{}
+
+	// set context
 	c.ctx = context.Background()
+
+	// set custom codec
 	c.cdc = CustomCodec()
 
+	// make rpc connection
 	conn, err := grpc.Dial(
 		rpcUrl,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -35,13 +40,22 @@ func NewClient(rpcUrl string) (Client, error) {
 	if err != nil {
 		return Client{}, err
 	}
+
+	// set connection
 	c.conn = conn
 
 	return c, nil
 }
 
-// Close closes the client.
+// Close shuts down the client.
 func (c Client) Close() error {
+
+	// close the connection
+	err := c.conn.Close()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -62,6 +76,8 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]json.RawMessage, er
 			return nil, err
 		}
 
+		fmt.Println("transaction", tx)
+
 		for _, msg := range tx.GetMsgs() {
 			fmt.Println("msg", msg.String())
 		}
@@ -79,6 +95,10 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]json.RawMessage, er
 
 // GetGroupProposal gets a group proposal by proposal id at a given block height.
 func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, error) {
+
+	// TODO: query proposal at given block height
+	fmt.Println("height", height)
+
 	resp, err := group.NewQueryClient(c.conn).Proposal(c.ctx, &group.QueryProposalRequest{
 		ProposalId: uint64(proposalId),
 	})
@@ -86,10 +106,14 @@ func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessag
 		return nil, err
 	}
 
+	fmt.Println("response", resp)
+
 	bz, err := json.Marshal(resp.Proposal)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println("proposal", json.RawMessage(bz))
 
 	return bz, nil
 }
