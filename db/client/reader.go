@@ -35,7 +35,7 @@ type reader struct {
 
 // GetData reads data from the database.
 func (r *reader) GetData(ctx context.Context, iri string) (Datum, error) {
-	return r.q.GetData(ctx, iri)
+	return r.q.SelectData(ctx, iri)
 }
 
 // indexer queries

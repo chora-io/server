@@ -10,12 +10,12 @@ import (
 	"encoding/json"
 )
 
-const getData = `-- name: GetData :one
+const selectData = `-- name: SelectData :one
 select iri, jsonld from data where iri=$1
 `
 
-func (q *Queries) GetData(ctx context.Context, iri string) (Datum, error) {
-	row := q.db.QueryRowContext(ctx, getData, iri)
+func (q *Queries) SelectData(ctx context.Context, iri string) (Datum, error) {
+	row := q.db.QueryRowContext(ctx, selectData, iri)
 	var i Datum
 	err := row.Scan(&i.Iri, &i.Jsonld)
 	return i, err

@@ -10,6 +10,20 @@ import (
 	"encoding/json"
 )
 
+const insertData = `-- name: InsertData :exec
+insert into data (iri, jsonld) values ($1, $2)
+`
+
+type InsertDataParams struct {
+	Iri    string
+	Jsonld json.RawMessage
+}
+
+func (q *Queries) InsertData(ctx context.Context, arg InsertDataParams) error {
+	_, err := q.db.ExecContext(ctx, insertData, arg.Iri, arg.Jsonld)
+	return err
+}
+
 const insertIdxGroupProposal = `-- name: InsertIdxGroupProposal :exec
 insert into idx_group_proposal (chain_id, proposal_id, proposal) values ($1, $2, $3)
 `
@@ -25,17 +39,18 @@ func (q *Queries) InsertIdxGroupProposal(ctx context.Context, arg InsertIdxGroup
 	return err
 }
 
-const postData = `-- name: PostData :exec
-insert into data (iri, jsonld) values ($1, $2)
+const insertIdxProcessLastBlock = `-- name: InsertIdxProcessLastBlock :exec
+insert into idx_process (chain_id, process_name, last_block) values ($1, $2, $3)
 `
 
-type PostDataParams struct {
-	Iri    string
-	Jsonld json.RawMessage
+type InsertIdxProcessLastBlockParams struct {
+	ChainID     string
+	ProcessName string
+	LastBlock   int64
 }
 
-func (q *Queries) PostData(ctx context.Context, arg PostDataParams) error {
-	_, err := q.db.ExecContext(ctx, postData, arg.Iri, arg.Jsonld)
+func (q *Queries) InsertIdxProcessLastBlock(ctx context.Context, arg InsertIdxProcessLastBlockParams) error {
+	_, err := q.db.ExecContext(ctx, insertIdxProcessLastBlock, arg.ChainID, arg.ProcessName, arg.LastBlock)
 	return err
 }
 

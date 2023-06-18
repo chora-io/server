@@ -1,4 +1,4 @@
--- name: GetData :one
+-- name: SelectData :one
 select iri, jsonld from data where iri=$1;
 
 -- name: SelectIdxGroupProposal :one

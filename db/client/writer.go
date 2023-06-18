@@ -10,13 +10,16 @@ type Writer interface {
 
 	// data queries
 
-	// PostData writes data to the database.
-	PostData(ctx context.Context, iri string, jsonld json.RawMessage) error
+	// InsertData writes data to the database.
+	InsertData(ctx context.Context, iri string, jsonld json.RawMessage) error
 
 	// indexer queries
 
 	// InsertIdxGroupProposal writes data to the database.
 	InsertIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error
+
+	// InsertIdxProcessLastBlock writes data to the database.
+	InsertIdxProcessLastBlock(ctx context.Context, chainId string, processName string, lastBlack int64) error
 
 	// UpdateIdxProcessLastBlock writes data to the database.
 	UpdateIdxProcessLastBlock(ctx context.Context, chainId string, processName string, lastBlock int64) error
@@ -30,8 +33,8 @@ type writer struct {
 
 // data queries
 
-func (w *writer) PostData(ctx context.Context, iri string, jsonld json.RawMessage) error {
-	return w.q.PostData(ctx, PostDataParams{
+func (w *writer) InsertData(ctx context.Context, iri string, jsonld json.RawMessage) error {
+	return w.q.InsertData(ctx, InsertDataParams{
 		Iri:    iri,
 		Jsonld: jsonld,
 	})
@@ -44,6 +47,14 @@ func (w *writer) InsertIdxGroupProposal(ctx context.Context, chainId string, pro
 		ChainID:    chainId,
 		ProposalID: proposalId,
 		Proposal:   proposal,
+	})
+}
+
+func (w *writer) InsertIdxProcessLastBlock(ctx context.Context, chainId string, processName string, lastBlack int64) error {
+	return w.q.InsertIdxProcessLastBlock(ctx, InsertIdxProcessLastBlockParams{
+		ChainID:     chainId,
+		ProcessName: processName,
+		LastBlock:   lastBlack,
 	})
 }
 

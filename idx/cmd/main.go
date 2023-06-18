@@ -25,12 +25,19 @@ func main() {
 	}
 
 	// create process runner
-	r := runner.NewRunner(ctx, cfg, c)
+	r := runner.NewRunner(ctx, cfg)
 
 	// run processes
-	r.RunProcess("group-proposals", process.GroupProposals)
+	r.RunProcess(c, process.GroupProposals, process.Params{
+		Name:       "group-proposals-0",
+		ChainId:    cfg.ChainId,
+		StartBlock: cfg.StartBlock,
+	})
 	// ...
 
-	// close process runner
+	// shut down runner
 	r.Close()
+
+	// then shut down client
+	c.Close()
 }

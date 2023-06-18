@@ -8,8 +8,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
-	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/x/group"
 )
@@ -61,34 +59,14 @@ func (c Client) Close() error {
 
 // GetGroupEventProposalPruned gets group.v1.EventProposalPruned from a given block.
 func (c Client) GetGroupEventProposalPruned(height int64) ([]json.RawMessage, error) {
-	block, err := c.getBlockByHeight(c.ctx, height)
+	txs, err := c.getTxsEvent(c.ctx, "cosmos.group.v1.EventProposalPruned", height)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("block", block)
+	fmt.Println("transactions with event", txs.Total)
 
-	for _, bz := range block.Data.GetTxs() {
-		var tx types.Tx
-
-		err := c.cdc.Unmarshal(bz, &tx)
-		if err != nil {
-			return nil, err
-		}
-
-		fmt.Println("transaction", tx)
-
-		for _, msg := range tx.GetMsgs() {
-			fmt.Println("msg", msg.String())
-		}
-	}
-
-	submitEvents, err := c.getTxsEvent(c.ctx, "cosmos.group.v1.MsgSubmitProposal", height)
-	if err != nil {
-		return nil, err
-	}
-
-	fmt.Println("submit events", submitEvents)
+	// TODO: get events from transactions
 
 	return nil, nil
 }
@@ -97,7 +75,6 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]json.RawMessage, er
 func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, error) {
 
 	// TODO: query proposal at given block height
-	fmt.Println("height", height)
 
 	resp, err := group.NewQueryClient(c.conn).Proposal(c.ctx, &group.QueryProposalRequest{
 		ProposalId: uint64(proposalId),
@@ -116,17 +93,6 @@ func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessag
 	fmt.Println("proposal", json.RawMessage(bz))
 
 	return bz, nil
-}
-
-func (c Client) getBlockByHeight(ctx context.Context, height int64) (*tmservice.Block, error) {
-	res, err := tmservice.NewServiceClient(c.conn).GetBlockByHeight(ctx, &tmservice.GetBlockByHeightRequest{
-		Height: height,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return res.SdkBlock, nil
 }
 
 func (c Client) getTxsEvent(ctx context.Context, msgTypeName string, height int64) (*tx.GetTxsEventResponse, error) {
