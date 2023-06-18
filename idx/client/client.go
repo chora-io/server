@@ -8,19 +8,23 @@ import (
 	"github.com/rs/zerolog"
 
 	db "github.com/choraio/server/db/client"
+	"github.com/choraio/server/idx/client/cosmos"
 	"github.com/choraio/server/idx/config"
 )
 
 // Client is the client.
 type Client struct {
+	ctx context.Context
 	db  db.Database
-	cc  CosmosClient
+	cc  cosmos.Client
 	log zerolog.Logger
 }
 
 // NewClient creates a new client.
-func NewClient(cfg config.Config) (Client, error) {
-	c := Client{}
+func NewClient(ctx context.Context, cfg config.Config) (Client, error) {
+	c := Client{ctx: ctx}
+
+	// set logger
 	c.log = zerolog.New(os.Stdout)
 
 	// initialize and set db client
@@ -31,7 +35,7 @@ func NewClient(cfg config.Config) (Client, error) {
 	c.db = newDb
 
 	// initialize and set cosmos client
-	newCosmos, err := NewCosmosClient(cfg.ChainId, cfg.ChainRpc)
+	newCosmos, err := cosmos.NewClient(c.ctx, cfg.ChainRpc)
 	if err != nil {
 		return Client{}, err
 	}
@@ -62,13 +66,13 @@ func (c Client) AddGroupProposal(ctx context.Context, chainId string, proposalId
 }
 
 // GetGroupEventProposalPruned gets group.v1.EventProposalPruned from the block.
-func (c Client) GetGroupEventProposalPruned(block int64) ([]any, error) {
+func (c Client) GetGroupEventProposalPruned(block int64) ([]json.RawMessage, error) {
 	return c.cc.GetGroupEventProposalPruned(block)
 }
 
-// GetGroupProposalAtBlockHeight gets a group proposal by proposal id at a given block height.
-func (c Client) GetGroupProposalAtBlockHeight(block int64, proposalId string) (json.RawMessage, error) {
-	return c.cc.GetGroupProposalAtBlockHeight(block, proposalId)
+// GetGroupProposal gets a group proposal by proposal id at a given block height.
+func (c Client) GetGroupProposal(block int64, proposalId int64) (json.RawMessage, error) {
+	return c.cc.GetGroupProposal(block, proposalId)
 }
 
 // GetProcessLastBlock gets the last processed block for a given process.

@@ -16,6 +16,7 @@ type Runner struct {
 	ctx               context.Context
 	backoffDuration   time.Duration
 	backoffMaxRetries uint64
+	chainId           string
 	client            client.Client
 	waitGroup         sync.WaitGroup
 }
@@ -26,12 +27,13 @@ func NewRunner(ctx context.Context, cfg config.Config, client client.Client) Run
 		ctx:               ctx,
 		backoffDuration:   cfg.BackoffDuration,
 		backoffMaxRetries: cfg.BackoffMaxRetries,
+		chainId:           cfg.ChainId,
 		client:            client,
 	}
 }
 
 // RunProcess runs a process using the provided process function.
-func (r *Runner) RunProcess(chainId string, processName string, processFunc process.Function) {
+func (r *Runner) RunProcess(processName string, processFunc process.Function) {
 	// add process to wait group
 	r.waitGroup.Add(1)
 
@@ -50,7 +52,7 @@ func (r *Runner) RunProcess(chainId string, processName string, processFunc proc
 
 		// set process function params
 		processParams := process.Params{
-			ChainId:     chainId,
+			ChainId:     r.chainId,
 			ProcessName: processName,
 		}
 

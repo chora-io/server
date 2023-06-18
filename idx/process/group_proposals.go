@@ -30,7 +30,7 @@ func GroupProposals(ctx context.Context, c client.Client, p Params) error {
 		eventProposalId := "1"
 
 		// fetch proposal from archive node
-		proposal, err := c.GetGroupProposalAtBlockHeight(lastBlock, eventProposalId)
+		proposal, err := c.GetGroupProposal(lastBlock, eventProposalId)
 		if err != nil {
 			return err
 		}
