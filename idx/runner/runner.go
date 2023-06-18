@@ -13,22 +13,18 @@ import (
 
 // Runner runs continuous background processes.
 type Runner struct {
-	ctx               context.Context
-	backoffDuration   time.Duration
-	backoffMaxRetries uint64
-	chainId           string
-	client            client.Client
-	waitGroup         sync.WaitGroup
+	ctx       context.Context
+	cfg       config.Config
+	client    client.Client
+	waitGroup sync.WaitGroup
 }
 
 // NewRunner creates a new runner.
 func NewRunner(ctx context.Context, cfg config.Config, client client.Client) Runner {
 	return Runner{
-		ctx:               ctx,
-		backoffDuration:   cfg.BackoffDuration,
-		backoffMaxRetries: cfg.BackoffMaxRetries,
-		chainId:           cfg.ChainId,
-		client:            client,
+		ctx:    ctx,
+		cfg:    cfg,
+		client: client,
 	}
 }
 
@@ -44,17 +40,11 @@ func (r *Runner) RunProcess(processName string, processFunc process.Function) {
 		defer fmt.Println("stopping process", processName)
 
 		// set and initialize backoff
-		backoffDuration := r.backoffDuration
-		backoffMaxRetries := r.backoffMaxRetries
+		backoffDuration := r.cfg.BackoffDuration
+		backoffMaxRetries := r.cfg.BackoffMaxRetries
 		backoffRetryCount := uint64(0)
 
 		fmt.Println("starting process", processName)
-
-		// set process function params
-		processParams := process.Params{
-			ChainId:     r.chainId,
-			ProcessName: processName,
-		}
 
 		for {
 			// log retry count
@@ -72,7 +62,7 @@ func (r *Runner) RunProcess(processName string, processFunc process.Function) {
 			processStart := time.Now()
 
 			// execute process function
-			err := processFunc(r.ctx, r.client, processParams)
+			err := processFunc(r.ctx, r.client)
 
 			// set process duration
 			processDuration := time.Since(processStart)
@@ -86,7 +76,7 @@ func (r *Runner) RunProcess(processName string, processFunc process.Function) {
 				backoffRetryCount++
 			}
 
-			// wait for context done to exit or backoff duration to continue
+			// wait for context done or backoff duration
 			select {
 			case <-r.ctx.Done():
 				return // exit process

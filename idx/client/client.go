@@ -17,6 +17,15 @@ type Client struct {
 	db  db.Database
 	cc  cosmos.Client
 	log zerolog.Logger
+
+	// ChainId is the chain id from the configuration. Information about each process such as last
+	// processed block is stored in the database using (chain id, process name). Indexed blockchain
+	// state is stored using only the chain id and therefore is not specific to a process.
+	ChainId string
+
+	// ProcessName is the name of the process. Information about each process such as last processed
+	// block is stored in the database using (chain id, process name) as the primary key.
+	ProcessName string
 }
 
 // NewClient creates a new client.

@@ -8,9 +8,9 @@ import (
 	"github.com/choraio/server/idx/client"
 )
 
-func GroupProposals(ctx context.Context, c client.Client, p Params) error {
+func GroupProposals(ctx context.Context, c client.Client) error {
 	// get last processed block from database
-	lastBlock, err := c.GetProcessLastBlock(ctx, p.ChainId, p.ProcessName)
+	lastBlock, err := c.GetProcessLastBlock(ctx, c.ChainId, c.ProcessName)
 	if err != nil {
 		return err
 	}
@@ -41,14 +41,14 @@ func GroupProposals(ctx context.Context, c client.Client, p Params) error {
 		fmt.Println("proposal", proposal)
 
 		// add group proposal to database
-		err = c.AddGroupProposal(ctx, p.ChainId, proposalId, proposal)
+		err = c.AddGroupProposal(ctx, c.ChainId, proposalId, proposal)
 		if err != nil {
 			return err
 		}
 	}
 
 	// increment last processed block in database
-	err = c.UpdateProcessLastBlock(ctx, p.ChainId, p.ProcessName, lastBlock+1)
+	err = c.UpdateProcessLastBlock(ctx, c.ChainId, c.ProcessName, lastBlock+1)
 	if err != nil {
 		return err
 	}

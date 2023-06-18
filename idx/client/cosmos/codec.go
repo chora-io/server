@@ -14,28 +14,37 @@ var ModuleBasics = []module.AppModuleBasic{
 	groupmodule.AppModuleBasic{},
 }
 
-type GRPCCodec struct {
+type Codec struct {
 	*codec.ProtoCodec
-	codectypes.InterfaceRegistry
 }
 
-func CustomCodec() *GRPCCodec {
-	cm := GRPCCodec{}
-	modBasic := module.NewBasicManager(ModuleBasics...)
+func CustomCodec() *Codec {
+	c := Codec{}
+
+	// create interface registry
 	ir := codectypes.NewInterfaceRegistry()
+
+	// register types, crypto, and tx interfaces
 	std.RegisterInterfaces(ir)
+
+	// register module basic interfaces
+	modBasic := module.NewBasicManager(ModuleBasics...)
 	modBasic.RegisterInterfaces(ir)
-	cdc := codec.NewProtoCodec(ir)
-	cm.ProtoCodec = cdc
-	cm.InterfaceRegistry = ir
-	return &cm
+
+	// create proto codec
+	pc := codec.NewProtoCodec(ir)
+
+	// set proto codec
+	c.ProtoCodec = pc
+
+	return &c
 }
 
-func (c GRPCCodec) Name() string {
+func (c Codec) Name() string {
 	return "custom"
 }
 
-func (c GRPCCodec) Marshal(v interface{}) ([]byte, error) {
+func (c Codec) Marshal(v interface{}) ([]byte, error) {
 	switch x := v.(type) {
 	case codec.ProtoMarshaler:
 		return c.ProtoCodec.Marshal(x)
@@ -44,7 +53,7 @@ func (c GRPCCodec) Marshal(v interface{}) ([]byte, error) {
 	}
 }
 
-func (c GRPCCodec) Unmarshal(data []byte, v interface{}) error {
+func (c Codec) Unmarshal(data []byte, v interface{}) error {
 	switch x := v.(type) {
 	case codec.ProtoMarshaler:
 		return c.ProtoCodec.Unmarshal(data, x)

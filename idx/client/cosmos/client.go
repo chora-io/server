@@ -17,7 +17,7 @@ import (
 // Client is the client.
 type Client struct {
 	ctx  context.Context
-	cdc  *GRPCCodec
+	cdc  *Codec
 	conn *grpc.ClientConn
 }
 
