@@ -8,8 +8,12 @@ import (
 // Reader is the interface that wraps database reads.
 type Reader interface {
 
+	// data queries
+
 	// GetData reads data from the database.
 	GetData(ctx context.Context, iri string) (Datum, error)
+
+	// indexer queries
 
 	// GetIdxGroupProposal reads data from the database.
 	GetIdxGroupProposal(ctx context.Context, chainId string, proposalId int64) (json.RawMessage, error)
@@ -27,10 +31,14 @@ type reader struct {
 	q *Queries
 }
 
+// data queries
+
 // GetData reads data from the database.
 func (r *reader) GetData(ctx context.Context, iri string) (Datum, error) {
 	return r.q.GetData(ctx, iri)
 }
+
+// indexer queries
 
 // GetIdxGroupProposal reads data from the database.
 func (r *reader) GetIdxGroupProposal(ctx context.Context, chainId string, proposalId int64) (json.RawMessage, error) {

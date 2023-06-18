@@ -26,22 +26,19 @@ func GroupProposals(ctx context.Context, c client.Client, p Params) error {
 	for i, event := range events {
 		fmt.Println("event", i, event)
 
-		// TODO: event proposal
-		eventProposalId := "1"
+		// TODO: get proposal id from event
+		proposalId, err := strconv.ParseInt("1", 0, 64)
+		if err != nil {
+			return err
+		}
 
-		// fetch proposal from archive node
-		proposal, err := c.GetGroupProposal(lastBlock, eventProposalId)
+		// fetch proposal at last block height
+		proposal, err := c.GetGroupProposal(lastBlock, proposalId)
 		if err != nil {
 			return err
 		}
 
 		fmt.Println("proposal", proposal)
-
-		// parse group proposal id
-		proposalId, err := strconv.ParseInt(eventProposalId, 0, 64)
-		if err != nil {
-			return err
-		}
 
 		// add group proposal to database
 		err = c.AddGroupProposal(ctx, p.ChainId, proposalId, proposal)

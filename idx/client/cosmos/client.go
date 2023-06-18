@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
+	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/x/group"
 )
@@ -16,21 +17,26 @@ import (
 // Client is the client.
 type Client struct {
 	ctx  context.Context
+	cdc  *GRPCCodec
 	conn *grpc.ClientConn
 }
 
 // NewClient creates a new client.
-func NewClient(ctx context.Context, rpcUrl string) (Client, error) {
-	c := Client{ctx: ctx}
+func NewClient(rpcUrl string) (Client, error) {
+	c := Client{}
+	c.ctx = context.Background()
+	c.cdc = CustomCodec()
+
 	conn, err := grpc.Dial(
 		rpcUrl,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithDefaultCallOptions(grpc.ForceCodec(CustomCodec())),
+		grpc.WithDefaultCallOptions(grpc.ForceCodec(c.cdc)),
 	)
 	if err != nil {
 		return Client{}, err
 	}
 	c.conn = conn
+
 	return c, nil
 }
 
@@ -47,6 +53,19 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]json.RawMessage, er
 	}
 
 	fmt.Println("block", block)
+
+	for _, bz := range block.Data.GetTxs() {
+		var tx types.Tx
+
+		err := c.cdc.Unmarshal(bz, &tx)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, msg := range tx.GetMsgs() {
+			fmt.Println("msg", msg.String())
+		}
+	}
 
 	submitEvents, err := c.getTxsEvent(c.ctx, "cosmos.group.v1.MsgSubmitProposal", height)
 	if err != nil {

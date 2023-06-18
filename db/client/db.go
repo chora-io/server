@@ -2,7 +2,6 @@ package client
 
 import (
 	"database/sql"
-	"fmt"
 	"io"
 
 	"github.com/lib/pq"
@@ -16,7 +15,7 @@ import (
 
 //go:generate sqlc generate
 
-// Database defines an interface which gives access to a Reader and Writer.
+// Database defines an interface that gives access to Reader and Writer interfaces.
 type Database interface {
 	Reader() Reader
 	Writer() Writer
@@ -28,13 +27,12 @@ type db struct {
 	db *sql.DB
 }
 
-// NewDatabase wraps a postgres database connection and also runs any needed migrations on startup.
-func NewDatabase(postgresUrl string, logger zerolog.Logger) (Database, error) {
-	loggerAdapter := zerologadapter.New(logger)
+// NewDatabase wraps a postgres database connection and runs goose migrations.
+func NewDatabase(dsn string, log zerolog.Logger) (Database, error) {
 	sqlDb := sqldblogger.OpenDriver(
-		postgresUrl,
+		dsn,
 		pq.Driver{},
-		loggerAdapter,
+		zerologadapter.New(log),
 		sqldblogger.WithQueryerLevel(sqldblogger.LevelDebug),
 		sqldblogger.WithExecerLevel(sqldblogger.LevelDebug),
 		sqldblogger.WithPreparerLevel(sqldblogger.LevelDebug),
@@ -45,25 +43,32 @@ func NewDatabase(postgresUrl string, logger zerolog.Logger) (Database, error) {
 		return nil, err
 	}
 
-	if err := goose.SetDialect("postgres"); err != nil {
-		return nil, err
-	}
+	// set logger for goose migrations
+	goose.SetLogger(gooseLogger{log})
 
-	goose.SetBaseFS(migrations.Migrations)
-	err = goose.Up(sqlDb, ".")
-
-	goose.SetLogger(gooseLogger{logger})
+	// set goose dialect for migrations
+	err = goose.SetDialect("postgres")
 	if err != nil {
 		return nil, err
 	}
 
-	db := db{db: sqlDb}
-	return &db, nil
+	// set migrations base directory
+	goose.SetBaseFS(migrations.Migrations)
+
+	// run goose migrations
+	err = goose.Up(sqlDb, ".")
+	if err != nil {
+		return nil, err
+	}
+
+	d := &db{db: sqlDb}
+
+	return d, nil
 }
 
-// Writer returns an interface to write to the database.
-func (d *db) Writer() Writer {
-	return &writer{q: New(d.db)}
+// Close shuts down the database client.
+func (d *db) Close() error {
+	return d.db.Close()
 }
 
 // Reader returns an interface to read from the database.
@@ -71,30 +76,7 @@ func (d *db) Reader() Reader {
 	return &reader{q: New(d.db)}
 }
 
-func (d *db) Close() error {
-	return d.db.Close()
-}
-
-type gooseLogger struct {
-	logger zerolog.Logger
-}
-
-func (g gooseLogger) Print(v ...interface{}) {
-	g.logger.Print(v...)
-}
-
-func (g gooseLogger) Printf(format string, v ...interface{}) {
-	g.logger.Printf(format, v...)
-}
-
-func (g gooseLogger) Fatal(v ...interface{}) {
-	g.logger.Error().Msg(fmt.Sprint(v...))
-}
-
-func (g gooseLogger) Fatalf(format string, v ...interface{}) {
-	g.logger.Error().Msgf(format, v...)
-}
-
-func (g gooseLogger) Println(v ...interface{}) {
-	g.logger.Debug().Msg(fmt.Sprint(v...))
+// Writer returns an interface to write to the database.
+func (d *db) Writer() Writer {
+	return &writer{q: New(d.db)}
 }

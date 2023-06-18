@@ -39,21 +39,6 @@ func (q *Queries) PostData(ctx context.Context, arg PostDataParams) error {
 	return err
 }
 
-const updateIdxGroupProposal = `-- name: UpdateIdxGroupProposal :exec
-update idx_group_proposal set proposal=$3 where chain_id=$1 and proposal_id=$2
-`
-
-type UpdateIdxGroupProposalParams struct {
-	ChainID    string
-	ProposalID int64
-	Proposal   json.RawMessage
-}
-
-func (q *Queries) UpdateIdxGroupProposal(ctx context.Context, arg UpdateIdxGroupProposalParams) error {
-	_, err := q.db.ExecContext(ctx, updateIdxGroupProposal, arg.ChainID, arg.ProposalID, arg.Proposal)
-	return err
-}
-
 const updateIdxProcessLastBlock = `-- name: UpdateIdxProcessLastBlock :exec
 update idx_process set last_block=$3 where chain_id=$1 and process_name=$2
 `

@@ -57,6 +57,17 @@ func (r *Runner) RunProcess(processName string, processFunc process.Function) {
 		}
 
 		for {
+			// log retry count
+			if backoffRetryCount > 0 {
+				fmt.Println("retry count", processName, backoffRetryCount)
+			}
+
+			// exit on exceeding max retries
+			if backoffRetryCount > backoffMaxRetries {
+				fmt.Println("maximum retries", processName, backoffMaxRetries)
+				return // exit process
+			}
+
 			// set process start time
 			processStart := time.Now()
 
@@ -75,27 +86,19 @@ func (r *Runner) RunProcess(processName string, processFunc process.Function) {
 				backoffRetryCount++
 			}
 
-			// exit on max retries
-			if backoffRetryCount == backoffMaxRetries {
-				fmt.Println("maximum retries", processName, backoffMaxRetries)
-				return // exit process
-			} else if backoffRetryCount > 0 {
-				fmt.Println("retry count", processName, backoffRetryCount)
-			}
-
-			// wait for the backoff duration to continue or context done to exit
+			// wait for context done to exit or backoff duration to continue
 			select {
+			case <-r.ctx.Done():
+				return // exit process
 			case <-time.After(backoffDuration):
 				fmt.Println("backing off", processName, backoffDuration.String())
 				continue // continue process
-			case <-r.ctx.Done():
-				return // exit process
 			}
 		}
 	}()
 }
 
-// Close closes the runner.
+// Close shuts down the runner.
 func (r *Runner) Close() {
 	fmt.Println("finishing processes")
 

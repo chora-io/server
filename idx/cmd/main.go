@@ -24,12 +24,13 @@ func main() {
 		panic(err)
 	}
 
-	// create runner
+	// create process runner
 	r := runner.NewRunner(ctx, cfg, c)
 
 	// run processes
 	r.RunProcess("group-proposals", process.GroupProposals)
+	// ...
 
-	// close runner
+	// close process runner
 	r.Close()
 }

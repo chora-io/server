@@ -8,14 +8,15 @@ import (
 // Writer is the interface that wraps database writes.
 type Writer interface {
 
+	// data queries
+
 	// PostData writes data to the database.
 	PostData(ctx context.Context, iri string, jsonld json.RawMessage) error
 
+	// indexer queries
+
 	// AddIdxGroupProposal writes data to the database.
 	AddIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error
-
-	// UpdateIdxGroupProposal writes data to the database.
-	UpdateIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error
 
 	// UpdateIdxProcessLastBlock writes data to the database.
 	UpdateIdxProcessLastBlock(ctx context.Context, chainId string, processName string, lastBlock int64) error
@@ -27,6 +28,8 @@ type writer struct {
 	q *Queries
 }
 
+// data queries
+
 func (w *writer) PostData(ctx context.Context, iri string, jsonld json.RawMessage) error {
 	return w.q.PostData(ctx, PostDataParams{
 		Iri:    iri,
@@ -34,16 +37,10 @@ func (w *writer) PostData(ctx context.Context, iri string, jsonld json.RawMessag
 	})
 }
 
+// indexer queries
+
 func (w *writer) AddIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
 	return w.q.AddIdxGroupProposal(ctx, AddIdxGroupProposalParams{
-		ChainID:    chainId,
-		ProposalID: proposalId,
-		Proposal:   proposal,
-	})
-}
-
-func (w *writer) UpdateIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
-	return w.q.UpdateIdxGroupProposal(ctx, UpdateIdxGroupProposalParams{
 		ChainID:    chainId,
 		ProposalID: proposalId,
 		Proposal:   proposal,
