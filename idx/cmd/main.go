@@ -29,7 +29,7 @@ func main() {
 
 	// run processes
 	r.RunProcess(c, process.GroupProposals, process.Params{
-		Name:       "group-proposals-0",
+		Name:       "group-proposals-1",
 		ChainId:    cfg.ChainId,
 		StartBlock: cfg.StartBlock,
 	})
