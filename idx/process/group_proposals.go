@@ -74,7 +74,7 @@ func GroupProposals(ctx context.Context, p Params) error {
 		// fetch proposal at last block height
 		proposal, err := p.Client.GetGroupProposal(lastBlock, proposalId)
 
-		// handle proposal not found error
+		// TODO: handle proposal not found error
 		if err != nil {
 			return err
 		}

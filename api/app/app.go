@@ -42,7 +42,7 @@ func Initialize(cfg Config, log zerolog.Logger) *App {
 
 	// data requests
 	app.get("/data/{iri}", app.handleGetRequest(GetData))
-	app.post("/data/", app.handlePostRequest(PostData))
+	app.post("/data", app.handlePostRequest(PostData))
 
 	// indexer requests
 	app.get("/idx/{chain_id}/group-proposal/{proposal_id}", app.handleGetRequest(GetIdxGroupProposal))
