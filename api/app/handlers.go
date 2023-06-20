@@ -143,7 +143,7 @@ func PostData(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 
 	jsonld := compactJSONString(req.Jsonld)
 
-	err = dbw.PostData(r.Context(), iri, json.RawMessage(jsonld))
+	err = dbw.InsertData(r.Context(), iri, json.RawMessage(jsonld))
 	if err != nil {
 
 		// a duplicate IRI means the exact same data is already stored, so we return the data
