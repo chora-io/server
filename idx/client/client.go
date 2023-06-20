@@ -3,14 +3,12 @@ package client
 import (
 	"context"
 	"encoding/json"
-	"os"
 
 	"github.com/cosmos/cosmos-sdk/x/group"
 	"github.com/rs/zerolog"
 
 	db "github.com/choraio/server/db/client"
 	"github.com/choraio/server/idx/client/cosmos"
-	"github.com/choraio/server/idx/config"
 )
 
 // Client is the client.
@@ -18,33 +16,18 @@ type Client struct {
 	db  db.Database
 	cc  cosmos.Client
 	log zerolog.Logger
-
-	// ChainId is the chain id from the configuration. Information about each process such as last
-	// processed block is stored in the database using (chain id, process name). Indexed blockchain
-	// state is stored using only the chain id and therefore is not specific to a process.
-	ChainId string
-
-	// ProcessName is the name of the process. Information about each process such as last processed
-	// block is stored in the database using (chain id, process name) as the primary key.
-	ProcessName string
 }
 
-// NewClient creates a new client.
-func NewClient(cfg config.Config) (Client, error) {
-	c := Client{}
-
-	// set logger
-	c.log = zerolog.New(os.Stdout)
-
-	// initialize and set db client
-	newDb, err := db.NewDatabase(cfg.DatabaseUrl, c.log)
-	if err != nil {
-		return Client{}, err
+// NewClient wraps the provided database and logger and creates a new cosmos client.
+func NewClient(rpcUrl string, db db.Database, log zerolog.Logger) (Client, error) {
+	// wrap db and logger
+	c := Client{
+		db:  db,
+		log: log,
 	}
-	c.db = newDb
 
 	// initialize and set cosmos client
-	newCosmos, err := cosmos.NewClient(cfg.ChainRpc)
+	newCosmos, err := cosmos.NewClient(rpcUrl)
 	if err != nil {
 		return Client{}, err
 	}
@@ -56,14 +39,8 @@ func NewClient(cfg config.Config) (Client, error) {
 // Close shuts down the client.
 func (c Client) Close() error {
 
-	// close db client
-	err := c.db.Close()
-	if err != nil {
-		return err
-	}
-
 	// close cosmos client
-	err = c.cc.Close()
+	err := c.cc.Close()
 	if err != nil {
 		return err
 	}
@@ -98,6 +75,15 @@ func (c Client) SelectProcessLastBlock(ctx context.Context, chainId, processName
 		return 0, err
 	}
 	return lastBlock, nil
+}
+
+// UpdateGroupProposal updates a group proposal in the database.
+func (c Client) UpdateGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
+	err := c.db.Writer().UpdateIdxGroupProposal(ctx, chainId, proposalId, proposal)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // UpdateProcessLastBlock updates the last processed block for a given process.

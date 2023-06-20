@@ -4,12 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/types"
+	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	"github.com/cosmos/cosmos-sdk/x/group"
 )
@@ -61,7 +64,7 @@ func (c Client) Close() error {
 
 // GetGroupEventProposalPruned gets group.v1.EventProposalPruned from a given block height.
 func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposalPruned, error) {
-	// get all transactions from block height (i.e. the event is not triggered by any one message)
+	// get all transactions from block height (i.e. event is not triggered by a message)
 	txs, err := tx.NewServiceClient(c.conn).GetTxsEvent(c.ctx, &tx.GetTxsEventRequest{
 		Events: []string{
 			fmt.Sprintf(`tx.height=%d`, height),
@@ -71,27 +74,19 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposal
 		return nil, err
 	}
 
-	fmt.Println("total transactions", txs.Total)
-
 	// initialize event proposal pruned array
 	events := make([]group.EventProposalPruned, 0)
 
 	// loop through transaction responses
-	for i, tx := range txs.TxResponses {
-
-		fmt.Println("transaction", i, tx.TxHash)
+	for _, tx := range txs.TxResponses {
 
 		// ignore failed transactions
 		if tx.Code != 0 {
-			fmt.Println("ignoring failed transaction", i, tx.TxHash)
 			continue
 		}
 
 		// loop through transaction events
-		for i, e := range tx.Events {
-
-			fmt.Println("event", i, e.Type)
-
+		for _, e := range tx.Events {
 			if e.Type == "cosmos.group.v1.EventProposalPruned" {
 
 				protoEvent, err := types.ParseTypedEvent(e)
@@ -114,24 +109,25 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposal
 
 // GetGroupProposal gets a group proposal by proposal id at a given block height.
 func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, error) {
+	// convert block height to string
+	blockHeight := strconv.FormatInt(height, 10)
 
-	// TODO: query proposal at given block height
+	// set context to use block height in header
+	ctx := metadata.AppendToOutgoingContext(c.ctx, grpctypes.GRPCBlockHeightHeader, blockHeight)
 
-	resp, err := group.NewQueryClient(c.conn).Proposal(c.ctx, &group.QueryProposalRequest{
+	// query proposal at block height using updated context
+	resp, err := group.NewQueryClient(c.conn).Proposal(ctx, &group.QueryProposalRequest{
 		ProposalId: uint64(proposalId),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("response", resp)
-
+	// get json encoding of proposal
 	bz, err := json.Marshal(resp.Proposal)
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("proposal", json.RawMessage(bz))
 
 	return bz, nil
 }

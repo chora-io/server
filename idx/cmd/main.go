@@ -2,13 +2,16 @@ package main
 
 import (
 	"context"
+	"os"
 	"os/signal"
 	"syscall"
 
+	db "github.com/choraio/server/db/client"
 	"github.com/choraio/server/idx/client"
 	"github.com/choraio/server/idx/config"
 	"github.com/choraio/server/idx/process"
 	"github.com/choraio/server/idx/runner"
+	"github.com/rs/zerolog"
 )
 
 func main() {
@@ -18,26 +21,41 @@ func main() {
 	// load config
 	cfg := config.LoadConfig()
 
-	// create client
-	c, err := client.NewClient(cfg)
+	// set logger
+	log := zerolog.New(os.Stdout)
+
+	// initialize and set db client
+	db, err := db.NewDatabase(cfg.DatabaseUrl, log)
 	if err != nil {
 		panic(err)
 	}
+
+	// create clients that wrap db and logger
+	c, err := client.NewClient("127.0.0.1:9090", db, log)
+	if err != nil {
+		panic(err)
+	}
+	// ...
 
 	// create process runner
 	r := runner.NewRunner(ctx, cfg)
 
 	// run processes
-	r.RunProcess(c, process.GroupProposals, process.Params{
-		Name:       "group-proposals-1",
-		ChainId:    cfg.ChainId,
-		StartBlock: cfg.StartBlock,
+	r.RunProcess(process.GroupProposals, process.Params{
+		Name:       "group-proposals",
+		ChainId:    "chora-local",
+		Client:     c,
+		StartBlock: 1,
 	})
 	// ...
 
 	// shut down runner
 	r.Close()
 
-	// then shut down client
+	// shut down db
+	db.Close()
+
+	// shut down clients
 	c.Close()
+	// ...
 }

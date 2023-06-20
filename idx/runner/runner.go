@@ -6,7 +6,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/choraio/server/idx/client"
 	"github.com/choraio/server/idx/config"
 	"github.com/choraio/server/idx/process"
 )
@@ -31,11 +30,28 @@ func (r *Runner) Close() {
 	// wait for processes to finish
 	r.waitGroup.Wait()
 
-	fmt.Println("shutdown complete")
+	fmt.Println("runner", "shutdown complete")
 }
 
 // RunProcess runs a process using the provided process function.
-func (r *Runner) RunProcess(c client.Client, f process.Function, p process.Params) {
+func (r *Runner) RunProcess(f process.Function, p process.Params) {
+	// validate process parameters
+	err := p.ValidateParams()
+	if err != nil {
+		defer fmt.Println("runner", "invalid params", p.Name)
+		return // exit process
+	}
+
+	// initialize new client if not empty
+	if p.ChainRpc != "" {
+		fmt.Println("runner", "initializing new client", p.ChainId, p.ChainRpc)
+
+		// TODO: initialize new client
+		fmt.Println("runner", "error", "not implemented", p.Name)
+
+		return // exit process
+	}
+
 	// add process to wait group
 	r.waitGroup.Add(1)
 
@@ -43,24 +59,24 @@ func (r *Runner) RunProcess(c client.Client, f process.Function, p process.Param
 		// decrement wait group counter on exit
 		defer r.waitGroup.Done()
 
-		defer fmt.Println("stopping process", p.Name)
+		defer fmt.Println("runner", "stopping process", p.Name)
 
 		// set and initialize backoff
-		backoffDuration := r.cfg.BackoffDuration
-		backoffMaxRetries := r.cfg.BackoffMaxRetries
+		backoffDuration := r.cfg.RunnerBackoffDuration
+		backoffMaxRetries := r.cfg.RunnerBackoffMaxRetries
 		backoffRetryCount := uint64(0)
 
-		fmt.Println("starting process", p.Name)
+		fmt.Println("runner", "starting process", p.Name)
 
 		for {
 			// log retry count
 			if backoffRetryCount > 0 {
-				fmt.Println("retry count", p.Name, backoffRetryCount)
+				fmt.Println("runner", "retry count", p.Name, backoffRetryCount)
 			}
 
 			// exit on exceeding max retries
 			if backoffRetryCount > backoffMaxRetries {
-				fmt.Println("maximum retries", p.Name, backoffMaxRetries)
+				fmt.Println("runner", "maximum retries", p.Name, backoffMaxRetries)
 				return // exit process
 			}
 
@@ -68,15 +84,15 @@ func (r *Runner) RunProcess(c client.Client, f process.Function, p process.Param
 			processStart := time.Now()
 
 			// execute process function
-			err := f(r.ctx, c, p)
+			err := f(r.ctx, p)
 
 			// set process duration
 			processDuration := time.Since(processStart)
 
-			fmt.Println("process duration", p.Name, processDuration.String())
+			fmt.Println("runner", "process duration", p.Name, processDuration.String())
 
 			if err != nil {
-				fmt.Println("process error", p.Name, err.Error())
+				fmt.Println("runner", "process error", p.Name, err.Error())
 
 				// update retry count
 				backoffRetryCount++
@@ -87,7 +103,7 @@ func (r *Runner) RunProcess(c client.Client, f process.Function, p process.Param
 			case <-r.ctx.Done():
 				return // exit process
 			case <-time.After(backoffDuration):
-				fmt.Println("backing off", p.Name, backoffDuration.String())
+				fmt.Println("runner", "backing off", p.Name, backoffDuration.String())
 				continue // continue process
 			}
 		}
