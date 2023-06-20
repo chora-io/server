@@ -19,12 +19,12 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "idx [rpc] [chain-id] [start-block]",
+	Use:     "idx [db] [rpc] [chain-id] [start-block]",
 	Short:   "A process runner for indexing blockchain state",
 	Long:    "A process runner for indexing blockchain state",
-	Example: "idx localhost:9090 chora-local 1",
-	Args:    cobra.ExactArgs(3),
-	Run: func(cmd *cobra.Command, args []string) {
+	Example: "idx postgres://postgres:password@localhost:5432/postgres?sslmode=disable localhost:9090 chora-local 1",
+	Args:    cobra.ExactArgs(4),
+	RunE: func(cmd *cobra.Command, args []string) error {
 		// set context signalling cancellation when SIGINT or SIGTERM is received
 		ctx, _ := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 
@@ -35,15 +35,15 @@ var rootCmd = &cobra.Command{
 		log := zerolog.New(os.Stdout)
 
 		// initialize and set db client
-		db, err := db.NewDatabase(cfg.DatabaseUrl, log)
+		db, err := db.NewDatabase(args[0], log)
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		// creates a client that wraps db and logger
-		c, err := client.NewClient(args[0], db, log)
+		c, err := client.NewClient(args[1], db, log)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		// ...
 
@@ -51,15 +51,15 @@ var rootCmd = &cobra.Command{
 		r := runner.NewRunner(ctx, cfg)
 
 		// parse start block
-		startBlock, err := strconv.ParseInt(args[2], 0, 64)
+		startBlock, err := strconv.ParseInt(args[3], 0, 64)
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		// run processes
 		r.RunProcess(process.GroupProposals, process.Params{
 			Name:       "group-proposals",
-			ChainId:    args[1],
+			ChainId:    args[2],
 			Client:     c,
 			StartBlock: startBlock,
 		})
@@ -74,6 +74,8 @@ var rootCmd = &cobra.Command{
 		// shut down clients
 		c.Close()
 		// ...
+
+		return nil
 	},
 }
 
