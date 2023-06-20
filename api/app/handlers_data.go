@@ -61,8 +61,6 @@ func GetData(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
 	respondJSON(rw, http.StatusOK, NewGetDataResponse(iri, string(d.Jsonld)))
 }
 
-type PostHandler func(dbw db.Writer, rw http.ResponseWriter, r *http.Request)
-
 func PostData(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 	var req PostDataRequest
 
