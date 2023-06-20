@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 )
 
 func GroupProposals(ctx context.Context, p Params) error {
@@ -75,20 +76,14 @@ func GroupProposals(ctx context.Context, p Params) error {
 
 		// handle proposal not found error
 		if err != nil {
-			fmt.Println(p.Name, "proposal not found", proposalId)
-
-			return err // TODO: send alert and continue?
+			return err
 		}
 
-		fmt.Println(p.Name, "inserting group proposal", p.ChainId, proposalId)
+		fmt.Println(p.Name, "adding group proposal", p.ChainId, proposalId)
 
 		// add group proposal to database
 		err = p.Client.InsertGroupProposal(ctx, p.ChainId, proposalId, proposal)
-		if err != nil {
-
-			// TODO: pq: duplicate key value violates unique constraint "idx_group_proposal_pkey"
-			fmt.Println(p.Name, "error", err.Error())
-
+		if strings.Contains(err.Error(), "duplicate key value ") {
 			fmt.Println(p.Name, "updating group proposal", p.ChainId, proposalId)
 
 			// update group proposal in database
@@ -96,13 +91,13 @@ func GroupProposals(ctx context.Context, p Params) error {
 			if err != nil {
 				return err
 			}
+		} else if err != nil {
+			return err
 		}
 
 		fmt.Println(p.Name, "successfully processed event", p.ChainId, event.String())
 		fmt.Println(p.Name, "successfully added proposal", p.ChainId, proposalId)
 	}
-
-	fmt.Println(p.Name, "updating last processed block", p.ChainId, lastBlock, nextBlock)
 
 	// increment last processed block in database
 	err = p.Client.UpdateProcessLastBlock(ctx, p.ChainId, p.Name, nextBlock)

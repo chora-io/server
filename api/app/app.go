@@ -40,11 +40,13 @@ func Initialize(cfg Config, log zerolog.Logger) *App {
 	// authenticate
 	app.get("/auth", app.handleGetRequest(Auth))
 
-	// get requests
+	// data requests
 	app.get("/data/{iri}", app.handleGetRequest(GetData))
-
-	// post requests
 	app.post("/data/", app.handlePostRequest(PostData))
+
+	// indexer requests
+	app.get("/idx/{chain_id}/proposal/{proposal_id}", app.handleGetRequest(GetIdxGroupProposal))
+	app.get("/idx/{chain_id}/proposals/{group_id}", app.handleGetRequest(GetIdxGroupProposals))
 
 	return app
 }
