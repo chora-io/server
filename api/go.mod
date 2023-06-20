@@ -3,7 +3,7 @@ module github.com/choraio/server/api
 go 1.19
 
 require (
-	github.com/choraio/server/db v0.0.0
+	github.com/choraio/server/db v0.1.0-alpha1
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/piprate/json-gold v0.5.0
@@ -131,5 +131,3 @@ replace github.com/cosmos/cosmos-sdk => github.com/regen-network/cosmos-sdk v0.4
 
 // NOTE: use custom version with configurable data module
 replace github.com/regen-network/regen-ledger/x/data/v2 => github.com/regen-network/regen-ledger/x/data/v2 v2.0.0-20221216204149-fcf6a0740861
-
-replace github.com/choraio/server/db => ../db
