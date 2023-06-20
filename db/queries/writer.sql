@@ -4,6 +4,9 @@ insert into data (iri, jsonld) values ($1, $2);
 -- name: InsertIdxGroupProposal :exec
 insert into idx_group_proposal (chain_id, proposal_id, proposal) values ($1, $2, $3);
 
+-- name: UpdateIdxGroupProposal :exec
+update idx_group_proposal set proposal=$3 where chain_id=$1 and proposal_id=$2;
+
 -- name: InsertIdxProcessLastBlock :exec
 insert into idx_process (chain_id, process_name, last_block) values ($1, $2, $3);
 

@@ -21,6 +21,9 @@ type Writer interface {
 	// InsertIdxProcessLastBlock writes data to the database.
 	InsertIdxProcessLastBlock(ctx context.Context, chainId string, processName string, lastBlack int64) error
 
+	// UpdateIdxGroupProposal writes data to the database.
+	UpdateIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error
+
 	// UpdateIdxProcessLastBlock writes data to the database.
 	UpdateIdxProcessLastBlock(ctx context.Context, chainId string, processName string, lastBlock int64) error
 }
@@ -55,6 +58,14 @@ func (w *writer) InsertIdxProcessLastBlock(ctx context.Context, chainId string, 
 		ChainID:     chainId,
 		ProcessName: processName,
 		LastBlock:   lastBlack,
+	})
+}
+
+func (w *writer) UpdateIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
+	return w.q.UpdateIdxGroupProposal(ctx, UpdateIdxGroupProposalParams{
+		ChainID:    chainId,
+		ProposalID: proposalId,
+		Proposal:   proposal,
 	})
 }
 
