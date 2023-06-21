@@ -84,6 +84,8 @@ func GroupProposals(ctx context.Context, p Params) error {
 		// add group proposal to database
 		err = p.Client.InsertGroupProposal(ctx, p.ChainId, proposalId, proposal)
 		if strings.Contains(err.Error(), "duplicate key value ") {
+			fmt.Println(p.Name, "error", err.Error())
+
 			fmt.Println(p.Name, "updating group proposal", p.ChainId, proposalId)
 
 			// update group proposal in database

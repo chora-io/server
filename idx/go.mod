@@ -6,6 +6,7 @@ require (
 	github.com/choraio/server/db v0.1.0-alpha1
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/rs/zerolog v1.29.1
+	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
 	google.golang.org/grpc v1.55.0
 )
@@ -101,7 +102,6 @@ require (
 	github.com/simukti/sqldb-logger/logadapter/zerologadapter v0.0.0-20220521163925-faf2f2be0eb6 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
-	github.com/spf13/cobra v1.6.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect

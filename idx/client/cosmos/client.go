@@ -62,9 +62,9 @@ func (c Client) Close() error {
 	return nil
 }
 
-// GetGroupEventProposalPruned gets group.v1.EventProposalPruned from a given block height.
+// GetGroupEventProposalPruned gets any array of group.v1.EventProposalPruned from block height.
 func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposalPruned, error) {
-	// get all transactions from block height (i.e. event is not triggered by a message)
+	// get all transactions from block height // TODO: limit to
 	txs, err := tx.NewServiceClient(c.conn).GetTxsEvent(c.ctx, &tx.GetTxsEventRequest{
 		Events: []string{
 			fmt.Sprintf(`tx.height=%d`, height),
@@ -107,7 +107,7 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposal
 	return events, nil
 }
 
-// GetGroupProposal gets a group proposal by proposal id at a given block height.
+// GetGroupProposal gets a group proposal by proposal id at block height.
 func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, error) {
 	// convert block height to string
 	blockHeight := strconv.FormatInt(height, 10)
@@ -115,7 +115,7 @@ func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessag
 	// set context to use block height in header
 	ctx := metadata.AppendToOutgoingContext(c.ctx, grpctypes.GRPCBlockHeightHeader, blockHeight)
 
-	// query proposal at block height using updated context
+	// query proposal at block height using context with block height
 	resp, err := group.NewQueryClient(c.conn).Proposal(ctx, &group.QueryProposalRequest{
 		ProposalId: uint64(proposalId),
 	})

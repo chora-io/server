@@ -97,12 +97,12 @@ func (c Client) UpdateProcessLastBlock(ctx context.Context, chainId, processName
 
 // cosmos blockchain queries
 
-// GetGroupEventProposalPruned gets group.v1.EventProposalPruned from the block.
+// GetGroupEventProposalPruned gets any array of group.v1.EventProposalPruned from block height.
 func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposalPruned, error) {
 	return c.cc.GetGroupEventProposalPruned(height)
 }
 
-// GetGroupProposal gets a group proposal by proposal id at a given block height.
+// GetGroupProposal gets a group proposal by proposal id at block height.
 func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, error) {
 	return c.cc.GetGroupProposal(height, proposalId)
 }
