@@ -1,16 +1,4 @@
 services:
-  fuseki:
-    image: stain/jena-fuseki:jena4
-    expose:
-      - 3030
-    ports:
-      - 3030:3030
-    networks:
-      - default
-    environment:
-      - ADMIN_PASSWORD=fuseki
-      - FUSEKI_DATASET_1=resources
-
   postgres:
     image: postgres:15
     user: postgres
@@ -29,12 +17,29 @@ services:
       timeout: 10s
       retries: 100
 
+  fuseki:
+    image: stain/jena-fuseki:jena4
+    expose:
+      - 3030
+    ports:
+      - 3030:3030
+    networks:
+      - default
+    environment:
+      - ADMIN_PASSWORD=fuseki
+      - FUSEKI_DATASET_1=resources
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:3030 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 100
+
   api:
     build:
       context: api
     environment:
       DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "go run ./cmd" ]
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd/api" ]
     expose:
       - 3000
     ports:
@@ -47,14 +52,28 @@ services:
 
   idx:
     build:
-      context: idx
+      context: .
+      dockerfile: idx/Dockerfile
     environment:
       DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "go run ./cmd" ]
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd/idx" ]
     networks:
       - default
     depends_on:
       postgres:
+        condition: service_healthy
+
+  state:
+    build:
+      context: .
+      dockerfile: state/Dockerfile
+    environment:
+      FUSKEI_DATASET: "http://localhost:3030/resources"
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd/state" ]
+    networks:
+      - default
+    depends_on:
+      fuseki:
         condition: service_healthy
 
 networks:
