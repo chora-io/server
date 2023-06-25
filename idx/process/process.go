@@ -18,16 +18,7 @@ type Params struct {
 	// ChainId is the chain id of the network (e.g. chora-testnet-1, regen-redwood-1).
 	ChainId string
 
-	// ChainRpc is the rpc endpoint for the network (e.g. testnet.chora.io:9090, redwood.chora.io:9090).
-	//
-	// TODO: When ChainRpc is empty, the Client will be used. When ChainRpc is provided, a new client
-	// will be created from the rpc url and Client will be ignored.
-	ChainRpc string
-
 	// Client is the client that wraps the database and connects to the network.
-	//
-	// TODO: When ChainRpc is empty, the Client will be used. When ChainRpc is provided, a new client
-	// will be created from the rpc url and Client will be ignored.
 	Client client.Client
 
 	// StartBlock is the starting block height from which the process will start when no record of the

@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [Go >= 1.19](https://golang.org/doc/install)
+- [Go >= 1.20](https://golang.org/doc/install)
 
 ## Installation
 
@@ -19,5 +19,5 @@ idx help
 ## Example
 
 ```
-idx postgres://postgres:password@localhost:5432/postgres?sslmode=disable localhost:9090 chora-local 1
+DATABASE_URL=postgres://postgres:password@localhost:5432/postgres?sslmode=disable idx localhost:9090 chora-local 1
 ```

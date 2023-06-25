@@ -23,7 +23,7 @@ func NewRootCmd() *cobra.Command {
 		Short:   "A process runner for indexing blockchain state",
 		Long:    "A process runner for indexing blockchain state",
 		Example: "idx localhost:9090 chora-local 1",
-		Args:    cobra.ExactArgs(4),
+		Args:    cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// set context signalling cancellation when SIGINT or SIGTERM is received
 			ctx, _ := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -59,6 +59,13 @@ func NewRootCmd() *cobra.Command {
 				ChainId:    args[1],
 				Client:     c,
 				StartBlock: startBlock,
+			}
+			// ...
+
+			// validate process parameters for each process
+			err = groupProposalsParams.ValidateParams()
+			if err != nil {
+				return err
 			}
 			// ...
 

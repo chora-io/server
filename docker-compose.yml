@@ -36,7 +36,8 @@ services:
 
   api:
     build:
-      context: api
+      context: .
+      dockerfile: api/Dockerfile
     environment:
       DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
     entrypoint: [ "/bin/sh", "-c", "go run ./cmd/api" ]

@@ -43,7 +43,7 @@ api:
 ###############################################################################
 
 idx:
-	@go run ./cmd/idx postgres://postgres:password@localhost:5432/postgres?sslmode=disable localhost:9090 chora-local 1
+	@go run ./cmd/idx localhost:9090 chora-local 1
 
 .PHONY: idx
 
