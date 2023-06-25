@@ -131,7 +131,7 @@ func PostData(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 		MerkleTree:                regen.GraphMerkleTree_GRAPH_MERKLE_TREE_NONE_UNSPECIFIED,
 	}
 
-	iri, err := ch.ToIRI(&regen.IRIOptions{Prefix: "chora"})
+	iri, err := ch.ToIRI("chora")
 	if err != nil {
 		respondError(rw, http.StatusInternalServerError, err.Error())
 		return

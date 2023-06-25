@@ -1,9 +1,14 @@
-// Package regen implements the IRI defined within Regen Ledger:
+// Package regen includes the IRI defined within Regen Ledger:
 // https://github.com/regen-network/regen-ledger/tree/v5.1.2/x/data
 //
-// This version modifies the original to support additional configuration
-// options including custom prefixes and IRI versioning.
+// This version modifies the original to support custom prefixes and
+// limits the amount of dependencies required.
 package regen
+
+import (
+	"fmt"
+	"reflect"
+)
 
 // ContentHash specifies a hash-based content identifier for a piece of data.
 type ContentHash struct {
@@ -34,7 +39,12 @@ type ContentHash_Raw struct {
 
 // Validate validates ContentHash_Raw.
 func (chr ContentHash_Raw) Validate() error {
-	return nil
+	err := chr.DigestAlgorithm.Validate(chr.Hash)
+	if err != nil {
+		return err
+	}
+
+	return chr.MediaType.Validate()
 }
 
 // ContentHash_Graph is a graph content hash.
@@ -53,18 +63,51 @@ type ContentHash_Graph struct {
 
 // Validate validates ContentHash_Graph.
 func (chg ContentHash_Graph) Validate() error {
-	return nil
+	err := chg.DigestAlgorithm.Validate(chg.Hash)
+	if err != nil {
+		return err
+	}
+
+	err = chg.CanonicalizationAlgorithm.Validate()
+	if err != nil {
+		return err
+	}
+
+	return chg.MerkleTree.Validate()
 }
 
 // DigestAlgorithm is the digest algorithm.
 type DigestAlgorithm int32
 
 const (
+	DigestAlgorithm_DIGEST_ALGORITHM_UNSPECIFIED DigestAlgorithm = 0
 	DigestAlgorithm_DIGEST_ALGORITHM_BLAKE2B_256 DigestAlgorithm = 1
 )
 
+var DigestAlgorithmLength = map[DigestAlgorithm]int{
+	DigestAlgorithm_DIGEST_ALGORITHM_BLAKE2B_256: 256,
+}
+
 // Validate validates DigestAlgorithm.
-func (a DigestAlgorithm) Validate(hash []byte) error {
+func (da DigestAlgorithm) Validate(hash []byte) error {
+	if reflect.DeepEqual(hash, []byte(nil)) {
+		return fmt.Errorf("hash cannot be empty")
+	}
+
+	if da == DigestAlgorithm_DIGEST_ALGORITHM_UNSPECIFIED {
+		return fmt.Errorf("invalid %T %s", da, da)
+	}
+
+	nBits, ok := DigestAlgorithmLength[da]
+	if !ok {
+		return fmt.Errorf("unknown %T %s", da, da)
+	}
+
+	nBytes := nBits / 8
+	if len(hash) != nBytes {
+		return fmt.Errorf("expected %d bytes for %s, got %d", nBytes, da, len(hash))
+	}
+
 	return nil
 }
 
@@ -72,11 +115,25 @@ func (a DigestAlgorithm) Validate(hash []byte) error {
 type GraphCanonicalizationAlgorithm int32
 
 const (
-	GraphCanonicalizationAlgorithm_GRAPH_CANONICALIZATION_ALGORITHM_URDNA2015 GraphCanonicalizationAlgorithm = 1
+	GraphCanonicalizationAlgorithm_GRAPH_CANONICALIZATION_ALGORITHM_UNSPECIFIED GraphCanonicalizationAlgorithm = 0
+	GraphCanonicalizationAlgorithm_GRAPH_CANONICALIZATION_ALGORITHM_URDNA2015   GraphCanonicalizationAlgorithm = 1
 )
 
+var GraphCanonicalizationAlgorithm_name = map[int32]string{
+	0: "GRAPH_CANONICALIZATION_ALGORITHM_UNSPECIFIED",
+	1: "GRAPH_CANONICALIZATION_ALGORITHM_URDNA2015",
+}
+
 // Validate validates GraphCanonicalizationAlgorithm.
-func (a GraphCanonicalizationAlgorithm) Validate() error {
+func (gca GraphCanonicalizationAlgorithm) Validate() error {
+	if _, ok := GraphCanonicalizationAlgorithm_name[int32(gca)]; !ok {
+		return fmt.Errorf("unknown %T %d", gca, gca)
+	}
+
+	if gca == GraphCanonicalizationAlgorithm_GRAPH_CANONICALIZATION_ALGORITHM_UNSPECIFIED {
+		return fmt.Errorf("invalid %T %s", gca, gca)
+	}
+
 	return nil
 }
 
@@ -87,13 +144,50 @@ const (
 	GraphMerkleTree_GRAPH_MERKLE_TREE_NONE_UNSPECIFIED GraphMerkleTree = 0
 )
 
+var GraphMerkleTree_name = map[int32]string{
+	0: "GRAPH_MERKLE_TREE_NONE_UNSPECIFIED",
+}
+
 // Validate validates GraphMerkleTree.
-func (t GraphMerkleTree) Validate() error {
+func (gmt GraphMerkleTree) Validate() error {
+	if _, ok := GraphMerkleTree_name[int32(gmt)]; !ok {
+		return fmt.Errorf("unknown %T %d", gmt, gmt)
+	}
+
 	return nil
 }
 
 // RawMediaType is the raw media type.
 type RawMediaType int32
+
+var RawMediaType_name = map[int32]string{
+	0:  "RAW_MEDIA_TYPE_UNSPECIFIED",
+	1:  "RAW_MEDIA_TYPE_TEXT_PLAIN",
+	2:  "RAW_MEDIA_TYPE_JSON",
+	3:  "RAW_MEDIA_TYPE_CSV",
+	4:  "RAW_MEDIA_TYPE_XML",
+	5:  "RAW_MEDIA_TYPE_PDF",
+	16: "RAW_MEDIA_TYPE_TIFF",
+	17: "RAW_MEDIA_TYPE_JPG",
+	18: "RAW_MEDIA_TYPE_PNG",
+	19: "RAW_MEDIA_TYPE_SVG",
+	20: "RAW_MEDIA_TYPE_WEBP",
+	21: "RAW_MEDIA_TYPE_AVIF",
+	22: "RAW_MEDIA_TYPE_GIF",
+	23: "RAW_MEDIA_TYPE_APNG",
+	32: "RAW_MEDIA_TYPE_MPEG",
+	33: "RAW_MEDIA_TYPE_MP4",
+	34: "RAW_MEDIA_TYPE_WEBM",
+	35: "RAW_MEDIA_TYPE_OGG",
+}
+
+func (rmt RawMediaType) Validate() error {
+	if _, ok := RawMediaType_name[int32(rmt)]; !ok {
+		return fmt.Errorf("unknown %T %d", rmt, rmt)
+	}
+
+	return nil
+}
 
 const (
 	RawMediaType_RAW_MEDIA_TYPE_UNSPECIFIED RawMediaType = 0
@@ -115,3 +209,32 @@ const (
 	RawMediaType_RAW_MEDIA_TYPE_WEBM        RawMediaType = 34
 	RawMediaType_RAW_MEDIA_TYPE_OGG         RawMediaType = 35
 )
+
+var mediaExtensionTypeToString = map[RawMediaType]string{
+	RawMediaType_RAW_MEDIA_TYPE_UNSPECIFIED: "bin",
+	RawMediaType_RAW_MEDIA_TYPE_TEXT_PLAIN:  "txt",
+	RawMediaType_RAW_MEDIA_TYPE_CSV:         "csv",
+	RawMediaType_RAW_MEDIA_TYPE_JSON:        "json",
+	RawMediaType_RAW_MEDIA_TYPE_XML:         "xml",
+	RawMediaType_RAW_MEDIA_TYPE_PDF:         "pdf",
+	RawMediaType_RAW_MEDIA_TYPE_TIFF:        "tiff",
+	RawMediaType_RAW_MEDIA_TYPE_JPG:         "jpg",
+	RawMediaType_RAW_MEDIA_TYPE_PNG:         "png",
+	RawMediaType_RAW_MEDIA_TYPE_SVG:         "svg",
+	RawMediaType_RAW_MEDIA_TYPE_WEBP:        "webp",
+	RawMediaType_RAW_MEDIA_TYPE_AVIF:        "avif",
+	RawMediaType_RAW_MEDIA_TYPE_GIF:         "gif",
+	RawMediaType_RAW_MEDIA_TYPE_APNG:        "apng",
+	RawMediaType_RAW_MEDIA_TYPE_MPEG:        "mpeg",
+	RawMediaType_RAW_MEDIA_TYPE_MP4:         "mp4",
+	RawMediaType_RAW_MEDIA_TYPE_WEBM:        "webm",
+	RawMediaType_RAW_MEDIA_TYPE_OGG:         "ogg",
+}
+
+var stringToMediaExtensionType = map[string]RawMediaType{}
+
+func init() {
+	for mt, ext := range mediaExtensionTypeToString {
+		stringToMediaExtensionType[ext] = mt
+	}
+}

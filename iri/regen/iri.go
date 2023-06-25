@@ -1,8 +1,8 @@
-// Package regen implements the IRI defined within Regen Ledger:
+// Package regen includes the IRI defined within Regen Ledger:
 // https://github.com/regen-network/regen-ledger/tree/v5.1.2/x/data
 //
-// This version modifies the original to support additional configuration
-// options including custom prefixes and IRI versioning.
+// This version modifies the original to support custom prefixes and
+// limits the amount of dependencies required.
 package regen
 
 import (
@@ -22,54 +22,22 @@ const (
 	IriGraph byte = 1
 )
 
-type IRIOptions struct {
-	Prefix  string
-	Version byte
-}
-
-func getOptions(options *IRIOptions) IRIOptions {
-	var o IRIOptions
-	if options != nil {
-		if options.Prefix != "" {
-			o.Prefix = options.Prefix
-		} else {
-			o.Prefix = DefaultIRIPrefix
-		}
-		if options.Version != 0 {
-			o.Version = options.Version
-		} else {
-			o.Version = DefaultIRIVersion
-		}
-	} else {
-		o.Prefix = DefaultIRIPrefix
-		o.Version = DefaultIRIVersion
-	}
-	return o
-}
-
 // ToIRI converts the ContentHash to an IRI (internationalized URI) using the regen IRI scheme.
 // A ContentHash IRI will look something like regen:113gdjFKcVCt13Za6vN7TtbgMM6LMSjRnu89BMCxeuHdkJ1hWUmy.rdf
 // which is some base58check encoded data followed by a file extension or pseudo-extension.
 // See ContentHash_Raw.ToIRI and ContentHash_Graph.ToIRI for more details on specific formatting.
-func (r ContentHash) ToIRI(options *IRIOptions) (string, error) {
+func (r ContentHash) ToIRI(prefix string) (string, error) {
 	if chr := r.Raw; chr != nil {
-		return chr.ToIRI(options)
+		return chr.ToIRI(prefix)
 	} else if chg := r.Graph; chg != nil {
-		return chg.ToIRI(options)
+		return chg.ToIRI(prefix)
 	}
 	return "", fmt.Errorf("invalid %T", r)
 }
 
 // ToIRI converts the ContentHash_Raw to an IRI (internationalized URI) based on the following
 // pattern: regen:{base58check(concat( byte(0x0), byte(digest_algorithm), hash))}.{media_type extension}
-func (chr ContentHash_Raw) ToIRI(options *IRIOptions) (string, error) {
-	opts := getOptions(options)
-
-	// only one version supported at this time
-	if opts.Version != IriVersion0 {
-		return "", fmt.Errorf("invalid IRI version option %v", opts.Version)
-	}
-
+func (chr ContentHash_Raw) ToIRI(prefix string) (string, error) {
 	err := chr.Validate()
 	if err != nil {
 		return "", err
@@ -79,27 +47,22 @@ func (chr ContentHash_Raw) ToIRI(options *IRIOptions) (string, error) {
 	bz[0] = IriRaw
 	bz[1] = byte(chr.DigestAlgorithm)
 	copy(bz[2:], chr.Hash)
-	hashStr := base58.CheckEncode(bz, opts.Version)
+
+	// only one version for now
+	hashStr := base58.CheckEncode(bz, IriVersion0)
 
 	ext, err := chr.MediaType.ToExtension()
 	if err != nil {
 		return "", err
 	}
 
-	return fmt.Sprintf("%s:%s.%s", opts.Prefix, hashStr, ext), nil
+	return fmt.Sprintf("%s:%s.%s", prefix, hashStr, ext), nil
 }
 
 // ToIRI converts the ContentHash_Graph to an IRI (internationalized URI) based on the following
 // pattern: regen:{base58check(concat(byte(0x1), byte(canonicalization_algorithm),
 // byte(merkle_tree), byte(digest_algorithm), hash))}.rdf
-func (chg ContentHash_Graph) ToIRI(options *IRIOptions) (string, error) {
-	opts := getOptions(options)
-
-	// only one version supported at this time
-	if opts.Version != IriVersion0 {
-		return "", fmt.Errorf("invalid IRI version option %v", opts.Version)
-	}
-
+func (chg ContentHash_Graph) ToIRI(prefix string) (string, error) {
 	err := chg.Validate()
 	if err != nil {
 		return "", err
@@ -111,9 +74,11 @@ func (chg ContentHash_Graph) ToIRI(options *IRIOptions) (string, error) {
 	bz[2] = byte(chg.MerkleTree)
 	bz[3] = byte(chg.DigestAlgorithm)
 	copy(bz[4:], chg.Hash)
-	hashStr := base58.CheckEncode(bz, opts.Version)
 
-	return fmt.Sprintf("%s:%s.rdf", opts.Prefix, hashStr), nil
+	// only one version for now
+	hashStr := base58.CheckEncode(bz, IriVersion0)
+
+	return fmt.Sprintf("%s:%s.rdf", prefix, hashStr), nil
 }
 
 // ToExtension converts the media type to a file extension based on the mediaTypeExtensions map.
@@ -124,35 +89,6 @@ func (rmt RawMediaType) ToExtension() (string, error) {
 	}
 
 	return ext, nil
-}
-
-var mediaExtensionTypeToString = map[RawMediaType]string{
-	RawMediaType_RAW_MEDIA_TYPE_UNSPECIFIED: "bin",
-	RawMediaType_RAW_MEDIA_TYPE_TEXT_PLAIN:  "txt",
-	RawMediaType_RAW_MEDIA_TYPE_CSV:         "csv",
-	RawMediaType_RAW_MEDIA_TYPE_JSON:        "json",
-	RawMediaType_RAW_MEDIA_TYPE_XML:         "xml",
-	RawMediaType_RAW_MEDIA_TYPE_PDF:         "pdf",
-	RawMediaType_RAW_MEDIA_TYPE_TIFF:        "tiff",
-	RawMediaType_RAW_MEDIA_TYPE_JPG:         "jpg",
-	RawMediaType_RAW_MEDIA_TYPE_PNG:         "png",
-	RawMediaType_RAW_MEDIA_TYPE_SVG:         "svg",
-	RawMediaType_RAW_MEDIA_TYPE_WEBP:        "webp",
-	RawMediaType_RAW_MEDIA_TYPE_AVIF:        "avif",
-	RawMediaType_RAW_MEDIA_TYPE_GIF:         "gif",
-	RawMediaType_RAW_MEDIA_TYPE_APNG:        "apng",
-	RawMediaType_RAW_MEDIA_TYPE_MPEG:        "mpeg",
-	RawMediaType_RAW_MEDIA_TYPE_MP4:         "mp4",
-	RawMediaType_RAW_MEDIA_TYPE_WEBM:        "webm",
-	RawMediaType_RAW_MEDIA_TYPE_OGG:         "ogg",
-}
-
-var stringToMediaExtensionType = map[string]RawMediaType{}
-
-func init() {
-	for mt, ext := range mediaExtensionTypeToString {
-		stringToMediaExtensionType[ext] = mt
-	}
 }
 
 // ParseIRI parses an IRI string representation of a ContentHash into a ContentHash struct
