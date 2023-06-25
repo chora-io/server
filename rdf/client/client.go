@@ -1,4 +1,4 @@
-package app
+package client
 
 import (
 	"bytes"
@@ -7,19 +7,19 @@ import (
 	"net/http"
 )
 
-type App struct {
+type Client struct {
 	url  string
 	http *http.Client
 }
 
-func NewApp(url string) App {
-	return App{
+func NewClient(url string) Client {
+	return Client{
 		url:  url,
 		http: &http.Client{},
 	}
 }
 
-func (a *App) Get() (string, error) {
+func (a *Client) Get() (string, error) {
 	res, err := a.http.Get(a.url)
 	if err != nil {
 		return "", fmt.Errorf("error: %s", err)
@@ -37,7 +37,7 @@ func (a *App) Get() (string, error) {
 	return string(body), nil
 }
 
-func (a *App) Post(bz []byte) (string, error) {
+func (a *Client) Post(bz []byte) (string, error) {
 	buf := bytes.NewBuffer(bz)
 
 	res, err := a.http.Post(a.url, "text/turtle", buf)

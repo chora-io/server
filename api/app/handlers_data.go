@@ -12,9 +12,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/piprate/json-gold/ld"
-	"github.com/regen-network/regen-ledger/x/data/v2"
 
 	db "github.com/choraio/server/db/client"
+	"github.com/choraio/server/iri/regen"
 )
 
 func Auth(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
@@ -34,7 +34,7 @@ func GetData(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
 
 	iri := vars["iri"]
 
-	_, err := data.ParseIRI(iri)
+	_, err := regen.ParseIRI(iri)
 	if err != nil {
 		respondError(
 			rw,
@@ -124,14 +124,14 @@ func PostData(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ch := data.ContentHash_Graph{
+	ch := regen.ContentHash_Graph{
 		Hash:                      hash.Sum(nil),
-		DigestAlgorithm:           data.DigestAlgorithm_DIGEST_ALGORITHM_BLAKE2B_256,
-		CanonicalizationAlgorithm: data.GraphCanonicalizationAlgorithm_GRAPH_CANONICALIZATION_ALGORITHM_URDNA2015,
-		MerkleTree:                data.GraphMerkleTree_GRAPH_MERKLE_TREE_NONE_UNSPECIFIED,
+		DigestAlgorithm:           regen.DigestAlgorithm_DIGEST_ALGORITHM_BLAKE2B_256,
+		CanonicalizationAlgorithm: regen.GraphCanonicalizationAlgorithm_GRAPH_CANONICALIZATION_ALGORITHM_URDNA2015,
+		MerkleTree:                regen.GraphMerkleTree_GRAPH_MERKLE_TREE_NONE_UNSPECIFIED,
 	}
 
-	iri, err := ch.ToIRI(&data.IRIOptions{Prefix: "chora"})
+	iri, err := ch.ToIRI(&regen.IRIOptions{Prefix: "chora"})
 	if err != nil {
 		respondError(rw, http.StatusInternalServerError, err.Error())
 		return

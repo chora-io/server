@@ -1,11 +1,5 @@
 @prefix chora: <https://schema.chora.network#> .
 
-<chora:event/EventSubmit>
-    a <chora:event/EventSubmit> ;
-    <chora:event/EventSubmit#data> "chora:13toVfvC2YxrrfSXWB5h2BGHiXZURsKxWUz72uDRDSPMCrYPguGUXSC.rdf" ;
-    <chora:event/EventSubmit#signer> "chora1jx34255cgvxpthkg572ma6rhq6crwl6xh7g0md" ;
-.
-
 <chora:data/DataID/Gx5HJ>
     a <chora:data/DataID> ;
     <chora:data/DataID#id> "Gx5HJ" ;
