@@ -3,8 +3,8 @@ module github.com/choraio/server
 go 1.20
 
 require (
-	github.com/choraio/server/api v0.0.0
-	github.com/choraio/server/idx v0.0.0
+	github.com/choraio/server/api v0.1.0-alpha2
+	github.com/choraio/server/idx v0.1.0-alpha2
 )
 
 require (
@@ -130,9 +130,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	pgregory.net/rapid v0.5.5 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
-)
-
-replace (
-	github.com/choraio/server/api => ./api
-	github.com/choraio/server/idx => ./idx
 )
