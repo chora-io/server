@@ -19,10 +19,10 @@ import (
 
 func NewRootCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "idx [db] [rpc] [chain-id] [start-block]",
+		Use:     "idx [rpc] [chain-id] [start-block]",
 		Short:   "A process runner for indexing blockchain state",
 		Long:    "A process runner for indexing blockchain state",
-		Example: "idx postgres://postgres:password@localhost:5432/postgres?sslmode=disable localhost:9090 chora-local 1",
+		Example: "idx localhost:9090 chora-local 1",
 		Args:    cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// set context signalling cancellation when SIGINT or SIGTERM is received
@@ -35,20 +35,20 @@ func NewRootCmd() *cobra.Command {
 			log := zerolog.New(os.Stdout)
 
 			// initialize and set db client
-			db, err := db.NewDatabase(args[0], log)
+			db, err := db.NewDatabase(cfg.DatabaseUrl, log)
 			if err != nil {
 				return err
 			}
 
 			// create clients that wrap db and logger
-			c, err := client.NewClient(args[1], db, log)
+			c, err := client.NewClient(args[0], db, log)
 			if err != nil {
 				return err
 			}
 			// ...
 
 			// parse start block
-			startBlock, err := strconv.ParseInt(args[3], 0, 64)
+			startBlock, err := strconv.ParseInt(args[2], 0, 64)
 			if err != nil {
 				return err
 			}
@@ -56,7 +56,7 @@ func NewRootCmd() *cobra.Command {
 			// set parameters for each process
 			groupProposalsParams := process.Params{
 				Name:       "group-proposals",
-				ChainId:    args[2],
+				ChainId:    args[1],
 				Client:     c,
 				StartBlock: startBlock,
 			}

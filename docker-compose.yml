@@ -56,7 +56,7 @@ services:
       dockerfile: idx/Dockerfile
     environment:
       DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "go run ./cmd/idx" ]
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd/idx localhost:9090 chora-local 1" ]
     networks:
       - default
     depends_on:

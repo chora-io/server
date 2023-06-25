@@ -2,7 +2,7 @@
 // https://github.com/regen-network/regen-ledger/tree/v5.1.2/x/data
 //
 // This version modifies the original to support custom prefixes and
-// limits the amount of dependencies required.
+// to limit the amount of dependencies.
 package regen
 
 import (

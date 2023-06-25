@@ -62,8 +62,8 @@ func (r *Runner) RunProcess(f process.Function, p process.Params) {
 		defer fmt.Println("runner", "stopping process", p.Name)
 
 		// set and initialize backoff
-		backoffDuration := r.cfg.RunnerBackoffDuration
-		backoffMaxRetries := r.cfg.RunnerBackoffMaxRetries
+		backoffDuration := r.cfg.IdxBackoffDuration
+		backoffMaxRetries := r.cfg.IdxBackoffMaxRetries
 		backoffRetryCount := uint64(0)
 
 		fmt.Println("runner", "starting process", p.Name)

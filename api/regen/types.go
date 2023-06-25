@@ -2,7 +2,7 @@
 // https://github.com/regen-network/regen-ledger/tree/v5.1.2/x/data
 //
 // This version modifies the original to support custom prefixes and
-// limits the amount of dependencies required.
+// to limit the amount of dependencies.
 package regen
 
 import (
@@ -88,6 +88,8 @@ var DigestAlgorithmLength = map[DigestAlgorithm]int{
 	DigestAlgorithm_DIGEST_ALGORITHM_BLAKE2B_256: 256,
 }
 
+func (m DigestAlgorithm) String() string { return "DigestAlgorithm" }
+
 // Validate validates DigestAlgorithm.
 func (da DigestAlgorithm) Validate(hash []byte) error {
 	if reflect.DeepEqual(hash, []byte(nil)) {
@@ -123,6 +125,8 @@ var GraphCanonicalizationAlgorithm_name = map[int32]string{
 	0: "GRAPH_CANONICALIZATION_ALGORITHM_UNSPECIFIED",
 	1: "GRAPH_CANONICALIZATION_ALGORITHM_URDNA2015",
 }
+
+func (gca GraphCanonicalizationAlgorithm) String() string { return "GraphCanonicalizationAlgorithm" }
 
 // Validate validates GraphCanonicalizationAlgorithm.
 func (gca GraphCanonicalizationAlgorithm) Validate() error {

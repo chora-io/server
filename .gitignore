@@ -6,6 +6,3 @@
 
 # coverage report
 coverage.txt
-
-# data volumes
-/data

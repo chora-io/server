@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/choraio/server/db v0.0.0
+	github.com/cosmos/btcutil v1.0.5
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/piprate/json-gold v0.5.0
@@ -13,7 +14,6 @@ require (
 )
 
 require (
-	github.com/cosmos/btcutil v1.0.5 // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -39,6 +39,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace (
-	github.com/choraio/server/db => ../db
-)
+replace github.com/choraio/server/db => ../db

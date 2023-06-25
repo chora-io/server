@@ -5,7 +5,6 @@ go 1.20
 require (
 	github.com/choraio/server/api v0.0.0
 	github.com/choraio/server/idx v0.0.0
-	github.com/choraio/server/iri v0.0.0
 )
 
 require (
@@ -137,5 +136,4 @@ replace (
 	github.com/choraio/server/api => ./api
 	github.com/choraio/server/db => ./db
 	github.com/choraio/server/idx => ./idx
-	github.com/choraio/server/iri => ./iri
 )
