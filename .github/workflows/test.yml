@@ -27,7 +27,7 @@ jobs:
       pull-requests: read  # for technote-space/get-diff-action to get git reference
     strategy:
       matrix:
-        module: ["api", "db", "idx", "state"]
+        module: ["api", "db", "idx", "iri", "rdf"]
     steps:
       - uses: actions/checkout@v3
 
@@ -103,28 +103,52 @@ jobs:
           (env.GIT_DIFF && matrix.module == 'idx') ||
           github.ref == 'refs/heads/main'
 
-      # state module
+      # iri module
 
       - uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
-            state/**/**.go
-            state/go.mod
-            state/go.sum
+            iri/**/**.go
+            iri/go.mod
+            iri/go.sum
       - uses: actions/setup-go@v4
         with:
-          go-version-file: 'state/go.mod'
+          go-version-file: 'iri/go.mod'
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
-      - run: make test-state
+      - run: make test-iri
         if: |
-          (env.GIT_DIFF && matrix.module == 'state') ||
+          (env.GIT_DIFF && matrix.module == 'iri') ||
           github.ref == 'refs/heads/main'
       - uses: actions/upload-artifact@v3
         with:
-          name: coverage-state
-          path: coverage-state.out
+          name: coverage-iri
+          path: coverage-iri.out
         if: |
-          (env.GIT_DIFF && matrix.module == 'state') ||
+          (env.GIT_DIFF && matrix.module == 'iri') ||
+          github.ref == 'refs/heads/main'
+
+      # rdf module
+
+      - uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            rdf/**/**.go
+            rdf/go.mod
+            rdf/go.sum
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: 'rdf/go.mod'
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - run: make test-rdf
+        if: |
+          (env.GIT_DIFF && matrix.module == 'rdf') ||
+          github.ref == 'refs/heads/main'
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage-rdf
+          path: coverage-rdf.out
+        if: |
+          (env.GIT_DIFF && matrix.module == 'rdf') ||
           github.ref == 'refs/heads/main'
 
   coverage:
