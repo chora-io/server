@@ -133,10 +133,6 @@ test-idx:
 	@echo "Testing Module ./idx"
 	@cd idx && go test ./... -coverprofile=../coverage-idx.out -covermode=atomic
 
-test-iri:
-	@echo "Testing Module ./iri"
-	@cd iri && go test ./... -coverprofile=../coverage-iri.out -covermode=atomic
-
 test-rdf:
 	@echo "Testing Module ./rdf"
 	@cd rdf && go test ./... -coverprofile=../coverage-rdf.out -covermode=atomic
@@ -149,7 +145,7 @@ test-clean:
 	@find . -name 'coverage.txt' -delete
 	@find . -name 'coverage*.out' -delete
 
-.PHONY: test test-all test-api test-db test-idx test-iri test-rdf test-coverage test-clean
+.PHONY: test test-all test-api test-db test-idx test-rdf test-coverage test-clean
 
 ###############################################################################
 ###                               Go Version                                ###

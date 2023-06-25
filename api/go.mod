@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	github.com/choraio/server/db v0.0.0
-	github.com/choraio/server/iri v0.0.0
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/piprate/json-gold v0.5.0
@@ -42,5 +41,4 @@ require (
 
 replace (
 	github.com/choraio/server/db => ../db
-	github.com/choraio/server/iri => ../iri
 )
