@@ -3,7 +3,7 @@ module github.com/choraio/server/api
 go 1.20
 
 require (
-	github.com/choraio/server/db v0.0.0
+	github.com/choraio/server/db v0.1.0-alpha2
 	github.com/cosmos/btcutil v1.0.5
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
@@ -38,5 +38,3 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/choraio/server/db => ../db

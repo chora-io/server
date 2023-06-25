@@ -23,7 +23,7 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
-	github.com/choraio/server/db v0.0.0 // indirect
+	github.com/choraio/server/db v0.1.0-alpha2 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/cometbft/cometbft v0.37.1 // indirect
@@ -134,6 +134,5 @@ require (
 
 replace (
 	github.com/choraio/server/api => ./api
-	github.com/choraio/server/db => ./db
 	github.com/choraio/server/idx => ./idx
 )

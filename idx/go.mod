@@ -3,7 +3,7 @@ module github.com/choraio/server/idx
 go 1.20
 
 require (
-	github.com/choraio/server/db v0.0.0
+	github.com/choraio/server/db v0.1.0-alpha2
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/rs/zerolog v1.29.1
 	github.com/spf13/cobra v1.6.1
@@ -127,5 +127,3 @@ require (
 	pgregory.net/rapid v0.5.5 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
-
-replace github.com/choraio/server/db => ../db
