@@ -64,7 +64,7 @@ func (c Client) Close() error {
 
 // GetGroupEventProposalPruned gets any array of group.v1.EventProposalPruned from block height.
 func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposalPruned, error) {
-	// get all transactions from block height // TODO: limit to
+	// get all transactions from block height
 	txs, err := tx.NewServiceClient(c.conn).GetTxsEvent(c.ctx, &tx.GetTxsEventRequest{
 		Events: []string{
 			fmt.Sprintf(`tx.height=%d`, height),
@@ -121,6 +121,14 @@ func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessag
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	// TODO: fix encoding of nested any types
+	// go run ./cmd/idx testnet.chora.io:9090 chora-testnet-1 2646260
+	for i, m := range resp.Proposal.Messages {
+		if m.TypeUrl == "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy" {
+			resp.Proposal.Messages[i] = nil
+		}
 	}
 
 	// get json encoding of proposal
