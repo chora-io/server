@@ -1,4 +1,4 @@
-FROM golang:1.19
+FROM golang:1.20
 
 # Download all dependencies from go.mod before copying the rest of the source files. This
 # ensures that downloading the dependencies (which takes a long time) doesn't happen each
