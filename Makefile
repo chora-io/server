@@ -10,23 +10,42 @@ gen:
 .PHONY: gen
 
 ###############################################################################
-###                                Database                                 ###
+###                                 Fuseki                                  ###
 ###############################################################################
 
-db:
+fuseki:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up db
+	@docker-compose up fuseki
 
-.PHONY: db
+.PHONY: fuseki
 
 ###############################################################################
-###                                   App                                   ###
+###                                Postgres                                 ###
 ###############################################################################
 
-app:
-	@go run ./cmd/app
+postgres:
+	@docker-compose down -v --remove-orphans
+	@docker-compose up postgres
 
-.PHONY: app
+.PHONY: postgres
+
+###############################################################################
+###                                   Api                                   ###
+###############################################################################
+
+api:
+	@go run ./cmd/api
+
+.PHONY: api
+
+###############################################################################
+###                                 Indexer                                 ###
+###############################################################################
+
+idx:
+	@go run ./cmd/idx localhost:9090 chora-local 1
+
+.PHONY: idx
 
 ###############################################################################
 ###                                  Local                                  ###
@@ -34,7 +53,7 @@ app:
 
 local:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up --abort-on-container-exit --exit-code-from app
+	@docker-compose up
 
 .PHONY: local
 
@@ -102,10 +121,21 @@ test-all:
 		go test ./...; \
 	done
 
-test-app:
-	@echo "Testing Module ."
-	@go test ./... \
-		-coverprofile=coverage-app.out -covermode=atomic
+test-api:
+	@echo "Testing Module ./api"
+	@cd api && go test ./... -coverprofile=../coverage-api.out -covermode=atomic
+
+test-db:
+	@echo "Testing Module ./db"
+	@cd db && go test ./... -coverprofile=../coverage-db.out -covermode=atomic
+
+test-idx:
+	@echo "Testing Module ./idx"
+	@cd idx && go test ./... -coverprofile=../coverage-idx.out -covermode=atomic
+
+test-rdf:
+	@echo "Testing Module ./rdf"
+	@cd rdf && go test ./... -coverprofile=../coverage-rdf.out -covermode=atomic
 
 test-coverage:
 	@cat coverage*.out | grep -v "mode: atomic" >> coverage.txt
@@ -115,7 +145,7 @@ test-clean:
 	@find . -name 'coverage.txt' -delete
 	@find . -name 'coverage*.out' -delete
 
-.PHONY: test test-all test-app test-coverage test-clean
+.PHONY: test test-all test-api test-db test-idx test-rdf test-coverage test-clean
 
 ###############################################################################
 ###                               Go Version                                ###
@@ -124,7 +154,7 @@ test-clean:
 GO_MAJOR_VERSION = $(shell go version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f1)
 GO_MINOR_VERSION = $(shell go version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f2)
 MIN_GO_MAJOR_VERSION = 1
-MIN_GO_MINOR_VERSION = 19
+MIN_GO_MINOR_VERSION = 20
 GO_VERSION_ERROR = Golang version $(GO_MAJOR_VERSION).$(GO_MINOR_VERSION) is not supported, \
 please update to at least $(MIN_GO_MAJOR_VERSION).$(MIN_GO_MINOR_VERSION)
 

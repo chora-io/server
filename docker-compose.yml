@@ -1,10 +1,10 @@
 services:
-  db:
+  postgres:
     image: postgres:15
-    container_name: db_container
     user: postgres
     environment:
-      POSTGRES_PASSWORD: password
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
     expose:
       - 5432
     ports:
@@ -17,14 +17,30 @@ services:
       timeout: 10s
       retries: 100
 
-  app:
+  fuseki:
+    image: stain/jena-fuseki:jena4
+    expose:
+      - 3030
+    ports:
+      - 3030:3030
+    networks:
+      - default
+    environment:
+      - ADMIN_PASSWORD=fuseki
+      - FUSEKI_DATASET_1=resources
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:3030 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 100
+
+  api:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: app_container
+      dockerfile: api/Dockerfile
     environment:
-      APP_DATABASE_URL: "postgres://postgres:password@db:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "app" ]
+      DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd/api" ]
     expose:
       - 3000
     ports:
@@ -32,7 +48,20 @@ services:
     networks:
       - default
     depends_on:
-      db:
+      postgres:
+        condition: service_healthy
+
+  idx:
+    build:
+      context: .
+      dockerfile: idx/Dockerfile
+    environment:
+      DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd/idx localhost:9090 chora-local 1" ]
+    networks:
+      - default
+    depends_on:
+      postgres:
         condition: service_healthy
 
 networks:

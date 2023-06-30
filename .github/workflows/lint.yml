@@ -28,22 +28,82 @@ jobs:
       pull-requests: read  # for technote-space/get-diff-action to get git reference
     strategy:
       matrix:
-        module: ["app"]
+        module: ["api", "db", "idx", "rdf"]
     steps:
       - uses: actions/checkout@v3
+
+      # api module
+
       - uses: technote-space/get-diff-action@v6
-        id: git-diff-app
+        id: git-diff-api
         with:
           PATTERNS: |
-            **/**.go
-            go.mod
-            go.sum
-        if: matrix.module == 'app'
+            api/**/**.go
+            api/go.mod
+            api/go.sum
+        if: matrix.module == 'api'
       - uses: actions/setup-go@v4
         with:
-          go-version-file: 'go.mod'
+          go-version-file: api/go.mod
         if: env.GIT_DIFF
       - uses: golangci/golangci-lint-action@v3
         with:
-          working-directory: "."
-        if: steps.git-diff-app.outputs.diff
+          working-directory: api
+        if: steps.git-diff-api.outputs.diff
+
+      # db module
+
+      - uses: technote-space/get-diff-action@v6
+        id: git-diff-db
+        with:
+          PATTERNS: |
+            db/**/**.go
+            db/go.mod
+            db/go.sum
+        if: matrix.module == 'db'
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: db/go.mod
+        if: env.GIT_DIFF
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: db
+        if: steps.git-diff-api.outputs.diff
+
+      # idx module
+
+      - uses: technote-space/get-diff-action@v6
+        id: git-diff-idx
+        with:
+          PATTERNS: |
+            idx/**/**.go
+            idx/go.mod
+            idx/go.sum
+        if: matrix.module == 'idx'
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: idx/go.mod
+        if: env.GIT_DIFF
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: idx
+        if: steps.git-diff-api.outputs.diff
+
+      # rdf module
+
+      - uses: technote-space/get-diff-action@v6
+        id: git-diff-rdf
+        with:
+          PATTERNS: |
+            rdf/**/**.go
+            rdf/go.mod
+            rdf/go.sum
+        if: matrix.module == 'rdf'
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: rdf/go.mod
+        if: env.GIT_DIFF
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: rdf
+        if: steps.git-diff-api.outputs.diff
