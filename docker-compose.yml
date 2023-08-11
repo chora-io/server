@@ -3,14 +3,10 @@ services:
     image: postgres:15
     user: postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
+      POSTGRES_PASSWORD: password
+    network_mode: host
     expose:
       - 5432
-    ports:
-      - 5432:5432
-    networks:
-      - default
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 1s
@@ -19,15 +15,12 @@ services:
 
   fuseki:
     image: stain/jena-fuseki:jena4
+    environment:
+      ADMIN_PASSWORD: fuseki
+      FUSEKI_DATASET_1: resources
+    network_mode: host
     expose:
       - 3030
-    ports:
-      - 3030:3030
-    networks:
-      - default
-    environment:
-      - ADMIN_PASSWORD=fuseki
-      - FUSEKI_DATASET_1=resources
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost:3030 || exit 1"]
       interval: 1s
@@ -39,14 +32,11 @@ services:
       context: .
       dockerfile: api/Dockerfile
     environment:
-      DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
+      DATABASE_URL: "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
     entrypoint: [ "/bin/sh", "-c", "go run ./cmd/api" ]
+    network_mode: host
     expose:
       - 3000
-    ports:
-      - 3000:3000
-    networks:
-      - default
     depends_on:
       postgres:
         condition: service_healthy
@@ -56,14 +46,9 @@ services:
       context: .
       dockerfile: idx/Dockerfile
     environment:
-      DATABASE_URL: "postgres://postgres:password@postgres:5432/postgres?sslmode=disable"
+      DATABASE_URL: "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
     entrypoint: [ "/bin/sh", "-c", "go run ./cmd/idx localhost:9090 chora-local 1" ]
-    networks:
-      - default
+    network_mode: host
     depends_on:
       postgres:
         condition: service_healthy
-
-networks:
-  default:
-    driver: bridge
