@@ -1,0 +1,137 @@
+{
+  "group_members": [
+    {
+      "group_id": "1",
+      "member": {
+        "added_at": "2023-01-01T00:00:00Z",
+        "address": "chora19gayv6d9zx27hs4gfk344wxf3mdx9s2w3vqvr0",
+        "metadata": "chora:13toVgAuyZF5uLrDx4FSkJAhKqJHcHCcQbAXKMwPcYnFBwRyWZKwu9x.rdf",
+        "weight": "1"
+      }
+    },
+    {
+      "group_id": "1",
+      "member": {
+        "added_at": "2023-01-01T00:00:00Z",
+        "address": "chora1jx34255cgvxpthkg572ma6rhq6crwl6xh7g0md",
+        "metadata": "chora:13toVgreSNsuF4yknA3tutdDVmy4berwCsECEWLVNuu7LnhTvQucAVf.rdf",
+        "weight": "1"
+      }
+    },
+    {
+      "group_id": "1",
+      "member": {
+        "added_at": "2023-01-01T00:00:00Z",
+        "address": "chora1k50tgf3jcjjaa6dz63tml7fy8n7wl8v44rpd60",
+        "metadata": "chora:13toVhMZW81LXu1b75jdpPe5kHauFsgnwrYk541qPtAC8dempwGQtN2.rdf",
+        "weight": "1"
+      }
+    },
+    {
+      "group_id": "1",
+      "member": {
+        "added_at": "2023-01-01T00:00:00Z",
+        "address": "chora1eute2zprd6w0y9apcm6e2gj5exkj3jgzazf7rj",
+        "metadata": "chora:13toVgHZQcvE1TS6KzCQhpuhJ6dcyKFKnYkQM6J79uPLq7prArb2gPS.rdf",
+        "weight": "1"
+      }
+    }
+  ],
+  "group_policies": [
+    {
+      "address": "chora1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08eshlxmc0",
+      "admin": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
+      "created_at": "2023-01-01T00:00:00Z",
+      "decision_policy": {
+        "@type": "/cosmos.group.v1.ThresholdDecisionPolicy",
+        "threshold": "1",
+        "windows": {
+          "min_execution_period": "0s",
+          "voting_period": "3600s"
+        }
+      },
+      "group_id": "1",
+      "metadata": "chora:13toVgv2KxZTpf6HSFwHFRotLwSLjb3mvvn83wmcve9iBfpaoq1NDLZ.rdf",
+      "version": "1"
+    },
+    {
+      "address": "chora1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvslw4vrd",
+      "admin": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
+      "created_at": "2023-01-01T00:00:00Z",
+      "decision_policy": {
+        "@type": "/cosmos.group.v1.PercentageDecisionPolicy",
+        "percentage": "0.5",
+        "windows": {
+          "min_execution_period": "0s",
+          "voting_period": "3600s"
+        }
+      },
+      "group_id": "1",
+      "metadata": "chora:13toVh21baKVbWVLEZLQuxwsh3NpnDieEnRXgnxLCpW9fUvGQE1vd4X.rdf",
+      "version": "1"
+    },
+    {
+      "address": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
+      "admin": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
+      "created_at": "2023-01-01T00:00:00Z",
+      "decision_policy": {
+        "@type": "/cosmos.group.v1.ThresholdDecisionPolicy",
+        "threshold": "2",
+        "windows": {
+          "min_execution_period": "3600s",
+          "voting_period": "3600s"
+        }
+      },
+      "group_id": "1",
+      "metadata": "chora:13toVg41sKJB6fSDEAuUAxWsS39P5TG21Fsf2yonFzeBM9rh2xWWzLt.rdf",
+      "version": "1"
+    },
+    {
+      "address": "chora1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsdnjkmu",
+      "admin": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
+      "created_at": "2023-01-01T00:00:00Z",
+      "decision_policy": {
+        "@type": "/cosmos.group.v1.PercentageDecisionPolicy",
+        "percentage": "0.5",
+        "windows": {
+          "min_execution_period": "0s",
+          "voting_period": "3600s"
+        }
+      },
+      "group_id": "1",
+      "metadata": "chora:13toVhmVtYLmWVVq7hWN4TbHDoWwa83VDHfK943JmNTcWWofb2AFQzP.rdf",
+      "version": "1"
+    },
+    {
+      "address": "chora17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtpsy33hf9",
+      "admin": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
+      "created_at": "2023-01-01T00:00:00Z",
+      "decision_policy": {
+        "@type": "/cosmos.group.v1.PercentageDecisionPolicy",
+        "percentage": "0.75",
+        "windows": {
+          "min_execution_period": "3600s",
+          "voting_period": "3600s"
+        }
+      },
+      "group_id": "1",
+      "metadata": "chora:13toVh48LAR8M1jwY4RYiMiHnHFvw7vWWFerQy4RJVTqPjLPqm7sCs7.rdf",
+      "version": "1"
+    }
+  ],
+  "group_policy_seq": "5",
+  "group_seq": "1",
+  "groups": [
+    {
+      "admin": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
+      "created_at": "2023-01-01T00:00:00Z",
+      "id": "1",
+      "metadata": "chora:13toVgqPqUq7pLobCdUsdakkEavthyoYmZtp1M3LH1x34rBNaheSyTK.rdf",
+      "total_weight": "4",
+      "version": "1"
+    }
+  ],
+  "proposal_seq": "1",
+  "proposals": [],
+  "votes": []
+}

@@ -1,8 +1,11 @@
 services:
   postgres:
-    image: postgres:15
-    user: postgres
+    build:
+      context: .
+      dockerfile: docker/postgres.Dockerfile
+    entrypoint: ["/bin/sh", "-c", "./scripts/postgres_start.sh"]
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     network_mode: host
     expose:

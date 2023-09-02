@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog"
+	_ "golang.org/x/crypto/blake2b"
 
 	db "github.com/choraio/server/db/client"
 )

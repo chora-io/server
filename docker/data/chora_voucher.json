@@ -1,0 +1,35 @@
+{
+  "chora.voucher.v1.Balance": [
+    {
+      "address": "kaNVUphDDBXeyKeVvuh3BrA3f0Y=",
+      "amount": "100",
+      "expiration": "2024-01-01T08:00:00Z",
+      "id": "1"
+    },
+    {
+      "address": "kaNVUphDDBXeyKeVvuh3BrA3f0Y=",
+      "amount": "50",
+      "expiration": "2025-01-01T08:00:00Z",
+      "id": "1"
+    },
+    {
+      "address": "+oLtisXSV72umUBlz5ALnkiN7FM=",
+      "amount": "100",
+      "expiration": "2024-01-01T08:00:00Z",
+      "id": "1"
+    }
+  ],
+  "chora.voucher.v1.Voucher": [
+    2,
+    {
+      "id": "1",
+      "issuer": "8HYPXDXgWb2zIMmFy4uaqyOh5i6Na+n5q6644NC1csM=",
+      "metadata": "chora:13toVhHkkea9GmoZMeZnayM39RWJj1cjfhFUXg8FCDv2Qw3vYNAbwYS.rdf"
+    },
+    {
+      "id": "2",
+      "issuer": "8HYPXDXgWb2zIMmFy4uaqyOh5i6Na+n5q6644NC1csM=",
+      "metadata": "chora:13toVhP9o1vzvSbLCTLeycFBxekJMW7oG6uL9xhcKbrMekfnAEgja57.rdf"
+    }
+  ]
+}

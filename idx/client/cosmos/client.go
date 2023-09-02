@@ -50,11 +50,6 @@ func NewClient(rpcUrl string) (Client, error) {
 	return c, nil
 }
 
-type EventVoteWithVoter struct {
-	ProposalId uint64
-	Voter      string
-}
-
 // Close shuts down the client.
 func (c Client) Close() error {
 
@@ -67,7 +62,7 @@ func (c Client) Close() error {
 	return nil
 }
 
-// GetGroupEventProposalPruned gets any array of group.v1.EventProposalPruned from block height.
+// GetGroupEventProposalPruned gets an array of group.v1.EventProposalPruned from block height.
 func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposalPruned, error) {
 
 	// get all transactions from block height
@@ -118,7 +113,7 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposal
 	return events, nil
 }
 
-// GetGroupEventVote gets any array of group.v1.EventVote from block height. This method
+// GetGroupEventVote gets an array of group.v1.EventVote from block height. This method
 // also returns the voter address pulled from the tx message so that the vote can be queried
 // by proposal id and voter address (i.e. voter address is not provided by EventVote).
 func (c Client) GetGroupEventVote(height int64) ([]EventVoteWithVoter, error) {

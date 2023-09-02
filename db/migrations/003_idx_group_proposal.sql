@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE idx_group_proposal
+CREATE TABLE IF NOT EXISTS idx_group_proposal
 (
     chain_id                varchar         not null,
     proposal_id             bigint          not null,

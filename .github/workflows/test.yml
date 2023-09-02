@@ -34,7 +34,7 @@ jobs:
             **/go.mod
             **/go.sum
       - name: docker-test
-        run: docker-compose up --abort-on-container-exit --exit-code-from tester
+        run: docker-compose up --abort-on-container-exit --exit-code-from tester postgres chora idx tester
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
       - name: docker-logs
         run: docker-compose ps
@@ -42,14 +42,8 @@ jobs:
       - name: docker-logs-postgres
         run: docker-compose logs postgres
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
-      - name: docker-logs-fuseki
-        run: docker-compose logs fuseki
-        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
       - name: docker-logs-chora
         run: docker-compose logs chora
-        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
-      - name: docker-logs-api
-        run: docker-compose logs api
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
       - name: docker-logs-idx
         run: docker-compose logs idx

@@ -63,7 +63,7 @@ idx:
 
 local:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up postgres fuseki chora api idx
+	@docker-compose up postgres chora api idx
 
 .PHONY: local
 
@@ -73,7 +73,7 @@ local:
 
 e2e:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up --abort-on-container-exit --exit-code-from tester
+	@docker-compose up --abort-on-container-exit --exit-code-from tester postgres chora idx tester
 
 .PHONY: e2e
 

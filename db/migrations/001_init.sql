@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE data
+CREATE TABLE IF NOT EXISTS data
 (
     iri         varchar         primary key,
     jsonld      jsonb           unique not null

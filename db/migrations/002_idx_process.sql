@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE idx_process
+CREATE TABLE IF NOT EXISTS idx_process
 (
     chain_id                varchar         not null,
     process_name            varchar         not null,

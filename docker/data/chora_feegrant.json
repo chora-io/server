@@ -1,0 +1,60 @@
+{
+  "allowances": [
+    {
+      "allowance": {
+        "@type": "/cosmos.feegrant.v1beta1.BasicAllowance",
+        "expiration": "2024-01-01T08:00:00Z",
+        "spend_limit": [
+      {
+        "amount": "100",
+        "denom": "uchora"
+      }
+    ]
+      },
+      "grantee": "chora19gayv6d9zx27hs4gfk344wxf3mdx9s2w3vqvr0",
+      "granter": "chora1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsdnjkmu"
+    },
+    {
+      "allowance": {
+        "@type": "/cosmos.feegrant.v1beta1.BasicAllowance",
+        "expiration": "2024-01-01T08:00:00Z",
+        "spend_limit": [
+      {
+        "amount": "100",
+        "denom": "uchora"
+      }
+    ]
+      },
+      "grantee": "chora1jx34255cgvxpthkg572ma6rhq6crwl6xh7g0md",
+      "granter": "chora1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsdnjkmu"
+    },
+    {
+      "allowance": {
+        "@type": "/cosmos.feegrant.v1beta1.BasicAllowance",
+        "expiration": "2024-01-01T08:00:00Z",
+        "spend_limit": [
+      {
+        "amount": "100",
+        "denom": "uchora"
+      }
+    ]
+      },
+      "grantee": "chora1k50tgf3jcjjaa6dz63tml7fy8n7wl8v44rpd60",
+      "granter": "chora1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsdnjkmu"
+    },
+    {
+      "allowance": {
+        "@type": "/cosmos.feegrant.v1beta1.BasicAllowance",
+        "expiration": "2024-01-01T08:00:00Z",
+        "spend_limit": [
+      {
+        "amount": "100",
+        "denom": "uchora"
+      }
+    ]
+      },
+      "grantee": "chora1eute2zprd6w0y9apcm6e2gj5exkj3jgzazf7rj",
+      "granter": "chora1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsdnjkmu"
+    }
+  ]
+}

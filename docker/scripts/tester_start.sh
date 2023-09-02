@@ -2,8 +2,8 @@
 
 set -eo pipefail
 
-# wait for indexer to start
-sleep 10
+# wait for idx to start
+sleep 30
 
 # run tester test scripts
 /home/tester/scripts/test_idx_group_proposals.sh
