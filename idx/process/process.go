@@ -21,8 +21,9 @@ type Params struct {
 	// Client is the client that wraps the database and connects to the network.
 	Client client.Client
 
-	// StartBlock is the starting block height from which the process will start when no record of the
-	// process exists in the database. When a record does exist, start block is ignored.
+	// StartBlock is the overriding start block height from which the process will start. This forces each process
+	// to start at a specific block height. If not set, each process will either start from the last processed block
+	// or from the first block (i.e. block 1) if no last processed block exists.
 	StartBlock int64
 }
 
@@ -35,8 +36,8 @@ func (p Params) ValidateParams() error {
 		return fmt.Errorf("chain id cannot be empty")
 	}
 
-	if p.StartBlock == 0 {
-		return fmt.Errorf("start block cannot be empty")
+	if p.StartBlock < 0 {
+		return fmt.Errorf("start block cannot be negative")
 	}
 
 	return nil

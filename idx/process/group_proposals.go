@@ -3,19 +3,42 @@ package process
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 )
 
 func GroupProposals(ctx context.Context, p Params) error {
-	// get latest block height from chain
+	// get latest block from configured client
 	latestBlock, err := p.Client.GetLatestBlockHeight()
 	if err != nil {
 		return err
 	}
 
-	// select last processed block from database
-	lastBlock, err := p.Client.SelectProcessLastBlock(ctx, p.ChainId, p.Name)
+	// declare last block
+	var lastBlock int64
+
+	// override last block if start block provided
+	if p.StartBlock != 0 {
+		lastBlock = p.StartBlock - 1
+	} else {
+		// select last processed block from database
+		lastBlock, err = p.Client.SelectProcessLastBlock(ctx, p.ChainId, p.Name)
+
+		// handle no last processed block in database
+		if errors.Is(err, sql.ErrNoRows) {
+			fmt.Println(p.Name, "last process block not found")
+			fmt.Println(p.Name, "inserting last processed block 0")
+
+			// insert last processed block
+			err = p.Client.InsertProcessLastBlock(ctx, p.ChainId, p.Name, lastBlock)
+			if err != nil {
+				return err
+			}
+		} else if err != nil {
+			return err
+		}
+	}
 
 	// handle process in sync
 	if lastBlock == latestBlock {
@@ -27,7 +50,7 @@ func GroupProposals(ctx context.Context, p Params) error {
 	if latestBlock < lastBlock {
 		fmt.Println(p.Name, "updating last processed block to latest block")
 
-		// set last block to latest block
+		// set last processed block to latest block
 		lastBlock = latestBlock
 
 		// update last processed block to latest block
@@ -37,29 +60,11 @@ func GroupProposals(ctx context.Context, p Params) error {
 		}
 	}
 
-	// handle last block error
-	if err == sql.ErrNoRows {
-		fmt.Println(p.Name, "inserting start block as last processed block")
-
-		// set last block to start block
-		lastBlock = p.StartBlock
-
-		// insert start block as last processed block
-		err = p.Client.InsertProcessLastBlock(ctx, p.ChainId, p.Name, p.StartBlock)
-		if err != nil {
-			return err
-		}
-	} else if err != nil {
-		return err
-	}
-
 	fmt.Println(p.Name, "last block", lastBlock)
 
 	nextBlock := lastBlock + 1
 
 	fmt.Println(p.Name, "next block", nextBlock)
-
-	// TODO: refactor above code into reusable client method
 
 	// query next block for proposal pruned events
 	events, err := p.Client.GetGroupEventProposalPruned(nextBlock)

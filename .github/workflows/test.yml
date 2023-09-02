@@ -21,6 +21,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read  # for technote-space/get-diff-action to get git reference
+    steps:
+    steps:
+      - uses: actions/checkout@v3
+      - uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            **/**.go
+            **/go.mod
+            **/go.sum
+      - name: docker-test
+        run: docker-compose up --abort-on-container-exit --exit-code-from tester
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - name: docker-logs
+        run: docker-compose ps
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - name: docker-logs-postgres
+        run: docker-compose logs postgres
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - name: docker-logs-fuseki
+        run: docker-compose logs fuseki
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - name: docker-logs-chora
+        run: docker-compose logs chora
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - name: docker-logs-api
+        run: docker-compose logs api
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - name: docker-logs-idx
+        run: docker-compose logs idx
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - name: docker-logs-tester
+        run: docker-compose logs tester
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+
   unit:
     runs-on: ubuntu-latest
     permissions:

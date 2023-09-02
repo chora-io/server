@@ -7,7 +7,7 @@ import (
 	"github.com/lib/pq"
 	"github.com/pressly/goose/v3"
 	"github.com/rs/zerolog"
-	"github.com/simukti/sqldb-logger"
+	sqldblogger "github.com/simukti/sqldb-logger"
 	"github.com/simukti/sqldb-logger/logadapter/zerologadapter"
 
 	"github.com/choraio/server/db/migrations"

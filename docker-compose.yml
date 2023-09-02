@@ -27,10 +27,25 @@ services:
       timeout: 10s
       retries: 100
 
+  chora:
+    build:
+      context: .
+      dockerfile: docker/chora.Dockerfile
+    entrypoint: ["/bin/sh", "-c", "./scripts/chora_start.sh"]
+    network_mode: host
+    expose:
+      - 1317
+      - 26657
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:26657 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 100
+
   api:
     build:
       context: .
-      dockerfile: api/Dockerfile
+      dockerfile: docker/api.Dockerfile
     environment:
       DATABASE_URL: "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
     entrypoint: [ "/bin/sh", "-c", "go run ./cmd/api" ]
@@ -44,11 +59,27 @@ services:
   idx:
     build:
       context: .
-      dockerfile: idx/Dockerfile
+      dockerfile: docker/idx.Dockerfile
     environment:
       DATABASE_URL: "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
-    entrypoint: [ "/bin/sh", "-c", "go run ./cmd/idx localhost:9090 chora-local 1" ]
+    entrypoint: [ "/bin/sh", "-c", "go run ./cmd/idx localhost:9090 chora-local" ]
     network_mode: host
     depends_on:
       postgres:
         condition: service_healthy
+      chora:
+        condition: service_healthy
+
+  tester:
+    build:
+      context: .
+      dockerfile: docker/tester.Dockerfile
+    entrypoint: ["/bin/sh", "-c", "./scripts/tester_start.sh"]
+    network_mode: host
+    depends_on:
+      postgres:
+        condition: service_healthy
+      chora:
+        condition: service_healthy
+      idx:
+        condition: service_started

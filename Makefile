@@ -10,6 +10,16 @@ gen:
 .PHONY: gen
 
 ###############################################################################
+###                                Postgres                                 ###
+###############################################################################
+
+postgres:
+	@docker-compose down -v --remove-orphans
+	@docker-compose up postgres
+
+.PHONY: postgres
+
+###############################################################################
 ###                                 Fuseki                                  ###
 ###############################################################################
 
@@ -20,14 +30,14 @@ fuseki:
 .PHONY: fuseki
 
 ###############################################################################
-###                                Postgres                                 ###
+###                                  Chora                                  ###
 ###############################################################################
 
-postgres:
+chora:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up postgres
+	@docker-compose up chora
 
-.PHONY: postgres
+.PHONY: chora
 
 ###############################################################################
 ###                                   Api                                   ###
@@ -53,9 +63,19 @@ idx:
 
 local:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up
+	@docker-compose up postgres fuseki chora api idx
 
 .PHONY: local
+
+###############################################################################
+###                                E2E Tests                                ###
+###############################################################################
+
+e2e:
+	@docker-compose down -v --remove-orphans
+	@docker-compose up --abort-on-container-exit --exit-code-from tester
+
+.PHONY: e2e
 
 ###############################################################################
 ###                              Documentation                              ###
@@ -177,7 +197,7 @@ go-version:
 ###############################################################################
 
 tools: go-version
-	@go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
+	@go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	@go install github.com/client9/misspell/cmd/misspell@latest
 	@go install golang.org/x/tools/cmd/goimports@latest
@@ -189,6 +209,6 @@ tools: go-version
 ###############################################################################
 
 clean: test-clean
-	@docker-compose down -v --remove-orphans --rmi all
+	@docker-compose down -v --remove-orphans
 
 .PHONY: clean

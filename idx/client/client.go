@@ -59,6 +59,15 @@ func (c Client) InsertGroupProposal(ctx context.Context, chainId string, proposa
 	return nil
 }
 
+// InsertGroupVote adds a group vote to the database.
+func (c Client) InsertGroupVote(ctx context.Context, chainId string, proposalId int64, voter string, vote json.RawMessage) error {
+	err := c.db.Writer().InsertIdxGroupVote(ctx, chainId, proposalId, voter, vote)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // InsertProcessLastBlock adds a process with block height to the database.
 func (c Client) InsertProcessLastBlock(ctx context.Context, chainId, processName string, lastBlock int64) error {
 	err := c.db.Writer().InsertIdxProcessLastBlock(ctx, chainId, processName, lastBlock)
@@ -86,6 +95,15 @@ func (c Client) UpdateGroupProposal(ctx context.Context, chainId string, proposa
 	return nil
 }
 
+// UpdateGroupVote updates a group proposal in the database.
+func (c Client) UpdateGroupVote(ctx context.Context, chainId string, proposalId int64, voter string, vote json.RawMessage) error {
+	err := c.db.Writer().UpdateIdxGroupVote(ctx, chainId, proposalId, voter, vote)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // UpdateProcessLastBlock updates the last processed block for a given process.
 func (c Client) UpdateProcessLastBlock(ctx context.Context, chainId, processName string, lastBlock int64) error {
 	err := c.db.Writer().UpdateIdxProcessLastBlock(ctx, chainId, processName, lastBlock)
@@ -102,9 +120,19 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposal
 	return c.cc.GetGroupEventProposalPruned(height)
 }
 
+// GetGroupEventVote gets any array of group.v1.EventVote from block height.
+func (c Client) GetGroupEventVote(height int64) ([]cosmos.EventVoteWithVoter, error) {
+	return c.cc.GetGroupEventVote(height)
+}
+
 // GetGroupProposal gets a group proposal by proposal id at block height.
 func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, error) {
 	return c.cc.GetGroupProposal(height, proposalId)
+}
+
+// GetGroupVote gets a group vote by proposal id and voter address.
+func (c Client) GetGroupVote(height int64, proposalId int64, voter string) (json.RawMessage, error) {
+	return c.cc.GetGroupVote(height, proposalId, voter)
 }
 
 // GetLatestBlockHeight gets the latest block height.

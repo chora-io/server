@@ -18,11 +18,17 @@ type Writer interface {
 	// InsertIdxGroupProposal writes data to the database.
 	InsertIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error
 
+	// InsertIdxGroupVote writes data to the database.
+	InsertIdxGroupVote(ctx context.Context, chainId string, proposalId int64, voter string, vote json.RawMessage) error
+
 	// InsertIdxProcessLastBlock writes data to the database.
 	InsertIdxProcessLastBlock(ctx context.Context, chainId string, processName string, lastBlack int64) error
 
 	// UpdateIdxGroupProposal writes data to the database.
 	UpdateIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error
+
+	// UpdateIdxGroupVote writes data to the database.
+	UpdateIdxGroupVote(ctx context.Context, chainId string, proposalId int64, voter string, vote json.RawMessage) error
 
 	// UpdateIdxProcessLastBlock writes data to the database.
 	UpdateIdxProcessLastBlock(ctx context.Context, chainId string, processName string, lastBlock int64) error
@@ -53,6 +59,15 @@ func (w *writer) InsertIdxGroupProposal(ctx context.Context, chainId string, pro
 	})
 }
 
+func (w *writer) InsertIdxGroupVote(ctx context.Context, chainId string, proposalId int64, voter string, vote json.RawMessage) error {
+	return w.q.InsertIdxGroupVote(ctx, InsertIdxGroupVoteParams{
+		ChainID:    chainId,
+		ProposalID: proposalId,
+		Voter:      voter,
+		Vote:       vote,
+	})
+}
+
 func (w *writer) InsertIdxProcessLastBlock(ctx context.Context, chainId string, processName string, lastBlack int64) error {
 	return w.q.InsertIdxProcessLastBlock(ctx, InsertIdxProcessLastBlockParams{
 		ChainID:     chainId,
@@ -66,6 +81,15 @@ func (w *writer) UpdateIdxGroupProposal(ctx context.Context, chainId string, pro
 		ChainID:    chainId,
 		ProposalID: proposalId,
 		Proposal:   proposal,
+	})
+}
+
+func (w *writer) UpdateIdxGroupVote(ctx context.Context, chainId string, proposalId int64, voter string, vote json.RawMessage) error {
+	return w.q.UpdateIdxGroupVote(ctx, UpdateIdxGroupVoteParams{
+		ChainID:    chainId,
+		ProposalID: proposalId,
+		Voter:      voter,
+		Vote:       vote,
 	})
 }
 

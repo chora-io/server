@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"strconv"
 
-	db "github.com/choraio/server/db/client"
 	"github.com/gorilla/mux"
+
+	db "github.com/choraio/server/db/client"
 )
 
 func GetIdxGroupProposal(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {

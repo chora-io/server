@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 
 	"github.com/rs/zerolog"
@@ -17,13 +16,17 @@ import (
 	"github.com/choraio/server/idx/runner"
 )
 
+const (
+	FlagStartBlock string = "start-block"
+)
+
 func NewRootCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "idx [rpc] [chain-id] [start-block]",
+		Use:     "idx [rpc] [chain-id]",
 		Short:   "A process runner for indexing blockchain state",
 		Long:    "A process runner for indexing blockchain state",
-		Example: "idx localhost:9090 chora-local 1",
-		Args:    cobra.ExactArgs(3),
+		Example: "idx localhost:9090 chora-local --start-block 1",
+		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// set context signalling cancellation when SIGINT or SIGTERM is received
 			ctx, _ := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -47,8 +50,8 @@ func NewRootCmd() *cobra.Command {
 			}
 			// ...
 
-			// parse start block
-			startBlock, err := strconv.ParseInt(args[2], 0, 64)
+			// get start block (default 1)
+			startBlock, err := cmd.Flags().GetInt64(FlagStartBlock)
 			if err != nil {
 				return err
 			}
@@ -60,10 +63,20 @@ func NewRootCmd() *cobra.Command {
 				Client:     c,
 				StartBlock: startBlock,
 			}
+			groupVotesParams := process.Params{
+				Name:       "group-votes",
+				ChainId:    args[1],
+				Client:     c,
+				StartBlock: startBlock,
+			}
 			// ...
 
 			// validate process parameters for each process
 			err = groupProposalsParams.ValidateParams()
+			if err != nil {
+				return err
+			}
+			err = groupVotesParams.ValidateParams()
 			if err != nil {
 				return err
 			}
@@ -74,6 +87,7 @@ func NewRootCmd() *cobra.Command {
 
 			// run processes
 			r.RunProcess(process.GroupProposals, groupProposalsParams)
+			r.RunProcess(process.GroupVotes, groupVotesParams)
 			// ...
 
 			// shut down runner
@@ -89,6 +103,8 @@ func NewRootCmd() *cobra.Command {
 			return nil
 		},
 	}
+
+	cmd.Flags().Int64(FlagStartBlock, 0, "override the starting block height")
 
 	return cmd
 }
