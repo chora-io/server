@@ -52,3 +52,51 @@ func GetIdxGroupProposals(dbr db.Reader, rw http.ResponseWriter, r *http.Request
 
 	respondJSON(rw, http.StatusOK, NewGetIdxGroupProposalsResponse(d))
 }
+
+func GetIdxGroupVote(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	chainId := vars["chain_id"]
+	proposalId := vars["proposal_id"]
+	voter := vars["voter"]
+
+	parsedId, err := strconv.ParseInt(proposalId, 0, 64)
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+	}
+
+	d, err := dbr.SelectIdxGroupVote(r.Context(), chainId, parsedId, voter)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			respondError(
+				rw,
+				http.StatusNotFound,
+				fmt.Sprintf("proposal with id %s does not exist", proposalId),
+			)
+		} else {
+			respondError(rw, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	respondJSON(rw, http.StatusOK, NewGetIdxGroupVoteResponse(d))
+}
+
+func GetIdxGroupVotes(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	chainId := vars["chain_id"]
+	proposalId := vars["proposal_id"]
+
+	parsedId, err := strconv.ParseInt(proposalId, 0, 64)
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+	}
+
+	d, err := dbr.SelectIdxGroupVotes(r.Context(), chainId, parsedId)
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+	}
+
+	respondJSON(rw, http.StatusOK, NewGetIdxGroupVotesResponse(d))
+}

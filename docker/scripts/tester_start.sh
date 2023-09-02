@@ -3,7 +3,7 @@
 set -eo pipefail
 
 # wait for indexer to start
-sleep 5
+sleep 10
 
 # run tester test scripts
 /home/tester/scripts/test_idx_group_proposals.sh

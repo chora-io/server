@@ -23,3 +23,25 @@ func NewGetIdxGroupProposalsResponse(proposals []json.RawMessage) GetIdxGroupPro
 		Proposals: proposals,
 	}
 }
+
+type GetIdxGroupVoteResponse struct {
+	// Vote is the vote.
+	Vote json.RawMessage `json:"vote"`
+}
+
+func NewGetIdxGroupVoteResponse(vote json.RawMessage) GetIdxGroupVoteResponse {
+	return GetIdxGroupVoteResponse{
+		Vote: vote,
+	}
+}
+
+type GetIdxGroupVotesResponse struct {
+	// Votes are the votes.
+	Votes []json.RawMessage `json:"votes"`
+}
+
+func NewGetIdxGroupVotesResponse(votes []json.RawMessage) GetIdxGroupVotesResponse {
+	return GetIdxGroupVotesResponse{
+		Votes: votes,
+	}
+}

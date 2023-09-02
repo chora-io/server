@@ -21,6 +21,12 @@ type Reader interface {
 	// SelectIdxGroupProposals reads data from the database.
 	SelectIdxGroupProposals(ctx context.Context, chainId string) ([]json.RawMessage, error)
 
+	// SelectIdxGroupVote reads data from the database.
+	SelectIdxGroupVote(ctx context.Context, chainId string, proposalId int64, vote string) (json.RawMessage, error)
+
+	// SelectIdxGroupVotes reads data from the database.
+	SelectIdxGroupVotes(ctx context.Context, chainId string, proposalId int64) ([]json.RawMessage, error)
+
 	// SelectIdxProcessLastBlock reads data from the database.
 	SelectIdxProcessLastBlock(ctx context.Context, chainId string, processName string) (int64, error)
 }
@@ -51,6 +57,23 @@ func (r *reader) SelectIdxGroupProposal(ctx context.Context, chainId string, pro
 // SelectIdxGroupProposals reads data from the database.
 func (r *reader) SelectIdxGroupProposals(ctx context.Context, chainId string) ([]json.RawMessage, error) {
 	return r.q.SelectIdxGroupProposals(ctx, chainId)
+}
+
+// SelectIdxGroupVote reads data from the database.
+func (r *reader) SelectIdxGroupVote(ctx context.Context, chainId string, proposalId int64, voter string) (json.RawMessage, error) {
+	return r.q.SelectIdxGroupVote(ctx, SelectIdxGroupVoteParams{
+		ChainID:    chainId,
+		ProposalID: proposalId,
+		Voter:      voter,
+	})
+}
+
+// SelectIdxGroupVotes reads data from the database.
+func (r *reader) SelectIdxGroupVotes(ctx context.Context, chainId string, proposalId int64) ([]json.RawMessage, error) {
+	return r.q.SelectIdxGroupVotes(ctx, SelectIdxGroupVotesParams{
+		ChainID:    chainId,
+		ProposalID: proposalId,
+	})
 }
 
 // SelectIdxProcessLastBlock reads data from the database.

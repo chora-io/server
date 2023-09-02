@@ -69,6 +69,7 @@ func (c Client) Close() error {
 
 // GetGroupEventProposalPruned gets any array of group.v1.EventProposalPruned from block height.
 func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposalPruned, error) {
+
 	// get all transactions from block height
 	txs, err := sdktx.NewServiceClient(c.conn).GetTxsEvent(c.ctx, &sdktx.GetTxsEventRequest{
 		Events: []string{
@@ -95,16 +96,20 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposal
 
 			// parse and append proposal pruned events
 			if e.Type == "cosmos.group.v1.EventProposalPruned" {
+
+				// parse typed event
 				protoEvent, err := types.ParseTypedEvent(e)
 				if err != nil {
 					return nil, err
 				}
 
+				// type cast parsed event
 				event, ok := protoEvent.(*group.EventProposalPruned)
 				if !ok {
 					return nil, fmt.Errorf("expected %T got %T", group.EventProposalPruned{}, protoEvent)
 				}
 
+				// append type cast event
 				events = append(events, *event)
 			}
 		}
@@ -117,6 +122,7 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposal
 // also returns the voter address pulled from the tx message so that the vote can be queried
 // by proposal id and voter address (i.e. voter address is not provided by EventVote).
 func (c Client) GetGroupEventVote(height int64) ([]EventVoteWithVoter, error) {
+
 	// get all transactions from block height
 	txs, err := sdktx.NewServiceClient(c.conn).GetTxsEvent(c.ctx, &sdktx.GetTxsEventRequest{
 		Events: []string{
@@ -138,51 +144,58 @@ func (c Client) GetGroupEventVote(height int64) ([]EventVoteWithVoter, error) {
 			continue
 		}
 
-		// declare voter address string
+		// declare voter (for voter workaround)
 		var voter string
+
+		// unmarshal transaction (for voter workaround)
+		var tx sdktx.Tx
+		err := c.cdc.Unmarshal(txr.Tx.Value, &tx)
+		if err != nil {
+			return nil, err
+		}
+
+		// loop through transaction messages (for voter workaround)
+		for _, m := range tx.Body.Messages {
+
+			// NOTE: If there are two MsgVote messages within the same transaction,
+			// the transaction will fail because only one can be executed successfully
+			// given there is only one signer per transaction, therefore, we are not
+			// concerned if there are multiple MsgVote within the same transaction.
+
+			// find first vote message within transaction messages
+			if voter == "" && m.TypeUrl == "/cosmos.group.v1.MsgVote" {
+
+				// unmarshal vote message
+				var msgVote group.MsgVote
+				err := c.cdc.Unmarshal(m.Value, &msgVote)
+				if err != nil {
+					return nil, err
+				}
+
+				// set voter address
+				voter = msgVote.Voter
+			}
+		}
 
 		// loop through transaction events
 		for _, e := range txr.Events {
 
-			// unmarshal transaction
-			var tx sdktx.Tx
-			err := c.cdc.Unmarshal(txr.Tx.Value, &tx)
-			if err != nil {
-				return nil, err
-			}
-
-			// loop through transaction messages
-			for _, m := range tx.Body.Messages {
-
-				// TODO: handle more than one MsgVote within a single transaction...?
-
-				// find vote message within transaction messages
-				if m.TypeUrl == "/cosmos.group.v1.MsgVote" {
-
-					// unmarshal vote message
-					var msgVote group.MsgVote
-					err := c.cdc.Unmarshal(m.Value, &msgVote)
-					if err != nil {
-						return nil, err
-					}
-
-					// set voter address
-					voter = msgVote.Voter
-				}
-			}
-
 			// parse and append vote events
 			if e.Type == "cosmos.group.v1.EventVote" {
+
+				// parse typed event
 				protoEvent, err := types.ParseTypedEvent(e)
 				if err != nil {
 					return nil, err
 				}
 
+				// type cast parsed event
 				event, ok := protoEvent.(*group.EventVote)
 				if !ok {
 					return nil, fmt.Errorf("expected %T got %T", group.EventVote{}, protoEvent)
 				}
 
+				// append type cast event (including voter)
 				events = append(events, EventVoteWithVoter{
 					ProposalId: event.ProposalId,
 					Voter:      voter,
@@ -196,6 +209,7 @@ func (c Client) GetGroupEventVote(height int64) ([]EventVoteWithVoter, error) {
 
 // GetGroupProposal gets a group proposal by proposal id at block height.
 func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, error) {
+
 	// convert block height to string
 	blockHeight := strconv.FormatInt(height, 10)
 
@@ -229,6 +243,7 @@ func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessag
 
 // GetGroupVote gets a group vote by proposal id and voter address.
 func (c Client) GetGroupVote(height int64, proposalId int64, voter string) (json.RawMessage, error) {
+
 	// convert block height to string
 	blockHeight := strconv.FormatInt(height, 10)
 
@@ -255,9 +270,13 @@ func (c Client) GetGroupVote(height int64, proposalId int64, voter string) (json
 
 // GetLatestBlockHeight gets the latest block height.
 func (c Client) GetLatestBlockHeight() (int64, error) {
+
+	// get latest block
 	res, err := tmservice.NewServiceClient(c.conn).GetLatestBlock(c.ctx, &tmservice.GetLatestBlockRequest{})
 	if err != nil {
 		return 0, err
 	}
+
+	// return latest block height
 	return res.SdkBlock.Header.Height, nil
 }
