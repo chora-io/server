@@ -3,9 +3,12 @@ package process
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
+
+	"github.com/cosmos/cosmos-sdk/x/group"
 )
 
 func GroupProposals(ctx context.Context, p Params) error {
@@ -77,17 +80,41 @@ func GroupProposals(ctx context.Context, p Params) error {
 		proposalId := int64(event.ProposalId)
 
 		// fetch proposal at last block height
-		proposal, err := p.Client.GetGroupProposal(lastBlock, proposalId)
+		proposal, groupId, err := p.Client.GetGroupProposal(lastBlock, proposalId)
 
 		// TODO: handle proposal not found error
 		if err != nil {
 			return err
 		}
 
+		// unmarshal proposal so that we can check and update
+		var update group.Proposal
+		err = json.Unmarshal(proposal, &update)
+		if err != nil {
+			return err
+		}
+
+		var updated json.RawMessage
+
+		// TODO: handle proposal accepted but not executed..?
+		if update.Status == 2 {
+
+			fmt.Println(p.Name, "updating group proposal executor result", p.ChainId, proposalId)
+
+			// update executor result from not run to success
+			update.ExecutorResult = group.ProposalExecutorResult(2)
+
+			// marshal updated proposal
+			updated, err = json.Marshal(update)
+			if err != nil {
+				return err
+			}
+		}
+
 		fmt.Println(p.Name, "adding group proposal", p.ChainId, proposalId)
 
 		// add group proposal to database
-		err = p.Client.InsertGroupProposal(ctx, p.ChainId, proposalId, proposal)
+		err = p.Client.InsertGroupProposal(ctx, p.ChainId, proposalId, groupId, updated)
 		if err != nil && strings.Contains(err.Error(), "duplicate key value ") {
 			fmt.Println(p.Name, "error", err.Error())
 

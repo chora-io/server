@@ -38,11 +38,16 @@ func (q *Queries) SelectIdxGroupProposal(ctx context.Context, arg SelectIdxGroup
 }
 
 const selectIdxGroupProposals = `-- name: SelectIdxGroupProposals :many
-select proposal from idx_group_proposal where chain_id=$1
+select proposal from idx_group_proposal where chain_id=$1 and group_id=$2
 `
 
-func (q *Queries) SelectIdxGroupProposals(ctx context.Context, chainID string) ([]json.RawMessage, error) {
-	rows, err := q.db.QueryContext(ctx, selectIdxGroupProposals, chainID)
+type SelectIdxGroupProposalsParams struct {
+	ChainID string
+	GroupID int64
+}
+
+func (q *Queries) SelectIdxGroupProposals(ctx context.Context, arg SelectIdxGroupProposalsParams) ([]json.RawMessage, error) {
+	rows, err := q.db.QueryContext(ctx, selectIdxGroupProposals, arg.ChainID, arg.GroupID)
 	if err != nil {
 		return nil, err
 	}

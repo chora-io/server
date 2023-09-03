@@ -25,17 +25,23 @@ func (q *Queries) InsertData(ctx context.Context, arg InsertDataParams) error {
 }
 
 const insertIdxGroupProposal = `-- name: InsertIdxGroupProposal :exec
-insert into idx_group_proposal (chain_id, proposal_id, proposal) values ($1, $2, $3)
+insert into idx_group_proposal (chain_id, proposal_id, group_id, proposal) values ($1, $2, $3, $4)
 `
 
 type InsertIdxGroupProposalParams struct {
 	ChainID    string
 	ProposalID int64
+	GroupID    int64
 	Proposal   json.RawMessage
 }
 
 func (q *Queries) InsertIdxGroupProposal(ctx context.Context, arg InsertIdxGroupProposalParams) error {
-	_, err := q.db.ExecContext(ctx, insertIdxGroupProposal, arg.ChainID, arg.ProposalID, arg.Proposal)
+	_, err := q.db.ExecContext(ctx, insertIdxGroupProposal,
+		arg.ChainID,
+		arg.ProposalID,
+		arg.GroupID,
+		arg.Proposal,
+	)
 	return err
 }
 

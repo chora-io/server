@@ -18,6 +18,7 @@ type Datum struct {
 type IdxGroupProposal struct {
 	ChainID    string
 	ProposalID int64
+	GroupID    int64
 	Proposal   json.RawMessage
 }
 

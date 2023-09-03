@@ -51,8 +51,8 @@ func (c Client) Close() error {
 // database queries
 
 // InsertGroupProposal adds a group proposal to the database.
-func (c Client) InsertGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
-	err := c.db.Writer().InsertIdxGroupProposal(ctx, chainId, proposalId, proposal)
+func (c Client) InsertGroupProposal(ctx context.Context, chainId string, proposalId int64, groupId int64, proposal json.RawMessage) error {
+	err := c.db.Writer().InsertIdxGroupProposal(ctx, chainId, proposalId, groupId, proposal)
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func (c Client) GetGroupEventVote(height int64) ([]cosmos.EventVoteWithVoter, er
 }
 
 // GetGroupProposal gets a group proposal by proposal id at block height.
-func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, error) {
+func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, int64, error) {
 	return c.cc.GetGroupProposal(height, proposalId)
 }
 

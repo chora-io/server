@@ -47,7 +47,7 @@
         "threshold": "1",
         "windows": {
           "min_execution_period": "0s",
-          "voting_period": "3600s"
+          "voting_period": "300s"
         }
       },
       "group_id": "1",
@@ -59,11 +59,11 @@
       "admin": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
       "created_at": "2023-01-01T00:00:00Z",
       "decision_policy": {
-        "@type": "/cosmos.group.v1.PercentageDecisionPolicy",
-        "percentage": "0.5",
+        "@type": "/cosmos.group.v1.ThresholdDecisionPolicy",
+        "threshold": "1",
         "windows": {
           "min_execution_period": "0s",
-          "voting_period": "3600s"
+          "voting_period": "300s"
         }
       },
       "group_id": "1",
@@ -76,10 +76,10 @@
       "created_at": "2023-01-01T00:00:00Z",
       "decision_policy": {
         "@type": "/cosmos.group.v1.ThresholdDecisionPolicy",
-        "threshold": "2",
+        "threshold": "1",
         "windows": {
-          "min_execution_period": "3600s",
-          "voting_period": "3600s"
+          "min_execution_period": "0s",
+          "voting_period": "300s"
         }
       },
       "group_id": "1",
@@ -91,11 +91,11 @@
       "admin": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
       "created_at": "2023-01-01T00:00:00Z",
       "decision_policy": {
-        "@type": "/cosmos.group.v1.PercentageDecisionPolicy",
-        "percentage": "0.5",
+        "@type": "/cosmos.group.v1.ThresholdDecisionPolicy",
+        "threshold": "1",
         "windows": {
           "min_execution_period": "0s",
-          "voting_period": "3600s"
+          "voting_period": "300s"
         }
       },
       "group_id": "1",
@@ -107,11 +107,11 @@
       "admin": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7",
       "created_at": "2023-01-01T00:00:00Z",
       "decision_policy": {
-        "@type": "/cosmos.group.v1.PercentageDecisionPolicy",
-        "percentage": "0.75",
+        "@type": "/cosmos.group.v1.ThresholdDecisionPolicy",
+        "threshold": "1",
         "windows": {
-          "min_execution_period": "3600s",
-          "voting_period": "3600s"
+          "min_execution_period": "0s",
+          "voting_period": "300s"
         }
       },
       "group_id": "1",
@@ -131,7 +131,7 @@
       "version": "1"
     }
   ],
-  "proposal_seq": "1",
+  "proposal_seq": "0",
   "proposals": [],
   "votes": []
 }

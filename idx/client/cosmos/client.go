@@ -146,11 +146,16 @@ func (c Client) GetGroupEventVote(height int64) ([]EventVoteWithVoter, error) {
 		var tx sdktx.Tx
 		err := c.cdc.Unmarshal(txr.Tx.Value, &tx)
 		if err != nil {
+
+			// TODO: handle unregistered messages or register all to codec
+
 			return nil, err
 		}
 
 		// loop through transaction messages (for voter workaround)
 		for _, m := range tx.Body.Messages {
+
+			// TODO: handle MsgVote wrapped in anther message (gov proposal, group proposal, authz exec, intertx)
 
 			// NOTE: If there are two MsgVote messages within the same transaction,
 			// the transaction will fail because only one can be executed successfully
@@ -203,7 +208,7 @@ func (c Client) GetGroupEventVote(height int64) ([]EventVoteWithVoter, error) {
 }
 
 // GetGroupProposal gets a group proposal by proposal id at block height.
-func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, error) {
+func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, int64, error) {
 
 	// convert block height to string
 	blockHeight := strconv.FormatInt(height, 10)
@@ -216,7 +221,15 @@ func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessag
 		ProposalId: uint64(proposalId),
 	})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
+	}
+
+	// query policy at block height using context with block height
+	policyResp, err := group.NewQueryClient(c.conn).GroupPolicyInfo(ctx, &group.QueryGroupPolicyInfoRequest{
+		Address: resp.Proposal.GroupPolicyAddress,
+	})
+	if err != nil {
+		return nil, 0, err
 	}
 
 	// TODO: fix encoding of nested any types
@@ -230,10 +243,10 @@ func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessag
 	// get json encoding of proposal
 	bz, err := json.Marshal(resp.Proposal)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return bz, nil
+	return bz, int64(policyResp.Info.GroupId), nil
 }
 
 // GetGroupVote gets a group vote by proposal id and voter address.

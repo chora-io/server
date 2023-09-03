@@ -7,11 +7,13 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	bankmodule "github.com/cosmos/cosmos-sdk/x/bank"
 	groupmodule "github.com/cosmos/cosmos-sdk/x/group/module"
 )
 
 var ModuleBasics = []module.AppModuleBasic{
 	groupmodule.AppModuleBasic{},
+	bankmodule.AppModuleBasic{},
 }
 
 type Codec struct {

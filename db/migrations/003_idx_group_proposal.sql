@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS idx_group_proposal
 (
     chain_id                varchar         not null,
     proposal_id             bigint          not null,
+    group_id                bigint          not null,
     proposal                jsonb           not null,
     primary key (chain_id, proposal_id)
 );

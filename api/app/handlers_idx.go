@@ -44,8 +44,14 @@ func GetIdxGroupProposals(dbr db.Reader, rw http.ResponseWriter, r *http.Request
 	vars := mux.Vars(r)
 
 	chainId := vars["chain_id"]
+	groupId := vars["group_id"]
 
-	d, err := dbr.SelectIdxGroupProposals(r.Context(), chainId)
+	parsedId, err := strconv.ParseInt(groupId, 0, 64)
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+	}
+
+	d, err := dbr.SelectIdxGroupProposals(r.Context(), chainId, parsedId)
 	if err != nil {
 		respondError(rw, http.StatusInternalServerError, err.Error())
 	}

@@ -16,7 +16,7 @@ type Writer interface {
 	// indexer queries
 
 	// InsertIdxGroupProposal writes data to the database.
-	InsertIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error
+	InsertIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, groupId int64, proposal json.RawMessage) error
 
 	// InsertIdxGroupVote writes data to the database.
 	InsertIdxGroupVote(ctx context.Context, chainId string, proposalId int64, voter string, vote json.RawMessage) error
@@ -51,10 +51,11 @@ func (w *writer) InsertData(ctx context.Context, iri string, jsonld json.RawMess
 
 // indexer queries
 
-func (w *writer) InsertIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
+func (w *writer) InsertIdxGroupProposal(ctx context.Context, chainId string, proposalId int64, groupId int64, proposal json.RawMessage) error {
 	return w.q.InsertIdxGroupProposal(ctx, InsertIdxGroupProposalParams{
 		ChainID:    chainId,
 		ProposalID: proposalId,
+		GroupID:    groupId,
 		Proposal:   proposal,
 	})
 }

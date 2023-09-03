@@ -19,7 +19,7 @@ type Reader interface {
 	SelectIdxGroupProposal(ctx context.Context, chainId string, proposalId int64) (json.RawMessage, error)
 
 	// SelectIdxGroupProposals reads data from the database.
-	SelectIdxGroupProposals(ctx context.Context, chainId string) ([]json.RawMessage, error)
+	SelectIdxGroupProposals(ctx context.Context, chainId string, groupId int64) ([]json.RawMessage, error)
 
 	// SelectIdxGroupVote reads data from the database.
 	SelectIdxGroupVote(ctx context.Context, chainId string, proposalId int64, vote string) (json.RawMessage, error)
@@ -35,6 +35,11 @@ var _ Reader = &reader{}
 
 type reader struct {
 	q *Queries
+}
+
+// GroupProposalParams is used to select proposals by group_id.
+type GroupProposalParams struct {
+	GroupID string `json:"group_id"`
 }
 
 // data queries
@@ -55,8 +60,11 @@ func (r *reader) SelectIdxGroupProposal(ctx context.Context, chainId string, pro
 }
 
 // SelectIdxGroupProposals reads data from the database.
-func (r *reader) SelectIdxGroupProposals(ctx context.Context, chainId string) ([]json.RawMessage, error) {
-	return r.q.SelectIdxGroupProposals(ctx, chainId)
+func (r *reader) SelectIdxGroupProposals(ctx context.Context, chainId string, groupId int64) ([]json.RawMessage, error) {
+	return r.q.SelectIdxGroupProposals(ctx, SelectIdxGroupProposalsParams{
+		ChainID: chainId,
+		GroupID: groupId,
+	})
 }
 
 // SelectIdxGroupVote reads data from the database.

@@ -1,11 +1,11 @@
 FROM golang:1.20
 
+# set chora version
+ENV GIT_CHECKOUT='main'
+
 # install dependencies
 RUN apt-get update
 RUN apt-get install jq -y
-
-# set version and chain
-ENV GIT_CHECKOUT='main'
 
 # clone chora repository
 RUN git clone https://github.com/choraio/chora /home/chora
@@ -29,18 +29,26 @@ RUN chora config keyring-backend test
 # update stake to uchora
 RUN sed -i "s/stake/uchora/g" /root/.chora/config/genesis.json
 
-# add validator and user accounts
+# add local validator and test user accounts
 RUN printf "trouble alarm laptop turn call stem lend brown play planet grocery survey smooth seed describe hood praise whale smile repeat dry sauce front future\n\n" | chora keys --keyring-backend test add validator -i
 RUN printf "cool trust waste core unusual report duck amazing fault juice wish century across ghost cigar diary correct draw glimpse face crush rapid quit equip\n\n" | chora keys --keyring-backend test add user1 -i
 RUN printf "music debris chicken erode flag law demise over fall always put bounce ring school dumb ivory spin saddle ostrich better seminar heart beach kingdom\n\n" | chora keys --keyring-backend test add user2 -i
 
-# add validator to genesis
+# add local validator account to genesis
 RUN chora add-genesis-account validator 1000000000uchora --keyring-backend test
-RUN chora gentx validator 1000000uchora
 
-# add test users to genesis
+# add local test user accounts to genesis
 RUN chora add-genesis-account user1 1000000000uchora --keyring-backend test
 RUN chora add-genesis-account user2 1000000000uchora --keyring-backend test
+
+# add chora coop user accounts to genesis
+RUN chora add-genesis-account chora1jx34255cgvxpthkg572ma6rhq6crwl6xh7g0md 1000000000uchora
+RUN chora add-genesis-account chora19gayv6d9zx27hs4gfk344wxf3mdx9s2w3vqvr0 1000000000uchora
+RUN chora add-genesis-account chora1k50tgf3jcjjaa6dz63tml7fy8n7wl8v44rpd60 1000000000uchora
+RUN chora add-genesis-account chora1eute2zprd6w0y9apcm6e2gj5exkj3jgzazf7rj 1000000000uchora
+
+# generate validator genesis transaction
+RUN chora gentx validator 1000000uchora
 
 # prepare genesis file
 RUN chora collect-gentxs
