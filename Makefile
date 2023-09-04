@@ -23,28 +23,25 @@ build:
 ###                                Postgres                                 ###
 ###############################################################################
 
-postgres:
-	@docker-compose down -v --remove-orphans
-	@docker-compose up postgres
+db:
+	@docker-compose up db
 
-.PHONY: postgres
+.PHONY: db
 
 ###############################################################################
 ###                                 Fuseki                                  ###
 ###############################################################################
 
-fuseki:
-	@docker-compose down -v --remove-orphans
-	@docker-compose up fuseki
+rdf:
+	@docker-compose up rdf
 
-.PHONY: fuseki
+.PHONY: rdf
 
 ###############################################################################
 ###                                  Chora                                  ###
 ###############################################################################
 
 chora:
-	@docker-compose down -v --remove-orphans
 	@docker-compose up chora
 
 .PHONY: chora
@@ -72,8 +69,7 @@ idx:
 ###############################################################################
 
 local:
-	@docker-compose down -v --remove-orphans
-	@docker-compose up postgres chora api idx
+	@docker-compose up db chora api idx
 
 .PHONY: local
 
@@ -83,7 +79,7 @@ local:
 
 e2e:
 	@docker-compose down -v --remove-orphans
-	@docker-compose up --abort-on-container-exit --exit-code-from tester postgres chora idx tester
+	@docker-compose up --abort-on-container-exit --exit-code-from tester db chora idx tester
 
 .PHONY: e2e
 

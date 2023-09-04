@@ -19,5 +19,5 @@ idx help
 ## Example
 
 ```
-DATABASE_URL=postgres://postgres:password@localhost:5432/postgres?sslmode=disable idx localhost:9090 chora-local --start-block 1
+DATABASE_URL=postgres://postgres:password@localhost:5432/server?sslmode=disable idx localhost:9090 chora-local --start-block 1
 ```

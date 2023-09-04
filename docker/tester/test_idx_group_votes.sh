@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# TODO: group id
-group_id=2
+# one seed, second test
+group_id=3
 
 # test account address
 address1=chora1l2pwmzk96ftmmt5egpjulyqtneygmmzns8r2ea
@@ -80,9 +80,9 @@ chora tx group vote "$proposal_id" "$address1" VOTE_OPTION_YES "" --from "$addre
 # vote "yes" on proposal with user 2
 chora tx group vote "$proposal_id" "$address2" VOTE_OPTION_YES "" --from "$address2" $chora_tx_flags
 
-# wait for transactions to be processed
-sleep 10
+# wait for voting period to end and transactions to be processed
+sleep 20
 
 # TODO: confirm votes indexed in database
-psql postgres://postgres:password@localhost:5432/postgres -c "SELECT * from idx_group_vote;"
+psql postgres://postgres:password@localhost:5432/server -c "SELECT * from idx_group_vote;"
 # TODO: if votes NOT found, then exit 1

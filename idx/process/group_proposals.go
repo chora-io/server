@@ -2,72 +2,23 @@ package process
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/x/group"
 )
 
+// GroupProposals is a process function for indexing group proposals.
 func GroupProposals(ctx context.Context, p Params) error {
-	// get latest block from configured client
-	latestBlock, err := p.Client.GetLatestBlockHeight()
+
+	// determine last block and next block for process
+	lastBlock, nextBlock, err := AdvanceProcess(ctx, p)
 	if err != nil {
 		return err
-	}
-
-	// declare last block
-	var lastBlock int64
-
-	// override last block if start block provided
-	if p.StartBlock != 0 {
-		lastBlock = p.StartBlock - 1
-	} else {
-		// select last processed block from database
-		lastBlock, err = p.Client.SelectProcessLastBlock(ctx, p.ChainId, p.Name)
-
-		// handle no last processed block in database
-		if errors.Is(err, sql.ErrNoRows) {
-			fmt.Println(p.Name, "last process block not found")
-			fmt.Println(p.Name, "inserting last processed block 0")
-
-			// insert last processed block
-			err = p.Client.InsertProcessLastBlock(ctx, p.ChainId, p.Name, lastBlock)
-			if err != nil {
-				return err
-			}
-		} else if err != nil {
-			return err
-		}
-	}
-
-	// handle process in sync
-	if lastBlock == latestBlock {
-		fmt.Println(p.Name, "synced", lastBlock, latestBlock)
+	} else if lastBlock == nextBlock {
 		return nil // do nothing because process is in sync
 	}
-
-	// handle process mismatch
-	if latestBlock < lastBlock {
-		fmt.Println(p.Name, "updating last processed block to latest block")
-
-		// set last processed block to latest block
-		lastBlock = latestBlock
-
-		// update last processed block to latest block
-		err = p.Client.UpdateProcessLastBlock(ctx, p.ChainId, p.Name, latestBlock)
-		if err != nil {
-			return err
-		}
-	}
-
-	fmt.Println(p.Name, "last block", lastBlock)
-
-	nextBlock := lastBlock + 1
-
-	fmt.Println(p.Name, "next block", nextBlock)
 
 	// query next block for proposal pruned events
 	events, err := p.Client.GetGroupEventProposalPruned(nextBlock)

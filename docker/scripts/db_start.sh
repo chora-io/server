@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # start in background
-pg_ctl -D ${PGDATA} -l /var/log/postgresql/logfile start
+pg_ctl -D ${PGDATA} -l ${LOGDIR}/logfile start
 
 # wait for startup to finish
 wait_postgresql() {
@@ -13,4 +13,4 @@ wait_postgresql() {
 wait_postgresql
 
 # continue running and tail logs
-tail -f /var/log/postgresql/logfile
+tail -f ${LOGDIR}/logfile

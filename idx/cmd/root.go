@@ -43,12 +43,11 @@ func NewRootCmd() *cobra.Command {
 				return err
 			}
 
-			// create clients that wrap db and logger
+			// create client that wraps db and logger
 			c, err := client.NewClient(args[0], db, log)
 			if err != nil {
 				return err
 			}
-			// ...
 
 			// get start block (default 1)
 			startBlock, err := cmd.Flags().GetInt64(FlagStartBlock)
@@ -96,15 +95,14 @@ func NewRootCmd() *cobra.Command {
 			// shut down db
 			db.Close()
 
-			// shut down clients
+			// shut down client
 			c.Close()
-			// ...
 
 			return nil
 		},
 	}
 
-	cmd.Flags().Int64(FlagStartBlock, 0, "override the starting block height")
+	cmd.Flags().Int64(FlagStartBlock, 1, "the starting block for a new process")
 
 	return cmd
 }

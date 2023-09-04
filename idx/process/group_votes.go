@@ -2,62 +2,20 @@ package process
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"strings"
 )
 
+// GroupVotes is a process function for indexing group votes.
 func GroupVotes(ctx context.Context, p Params) error {
-	// get latest block from configured client
-	latestBlock, err := p.Client.GetLatestBlockHeight()
+
+	// determine last block and next block for process
+	lastBlock, nextBlock, err := AdvanceProcess(ctx, p)
 	if err != nil {
 		return err
-	}
-
-	// select last processed block from database
-	lastBlock, err := p.Client.SelectProcessLastBlock(ctx, p.ChainId, p.Name)
-
-	// handle process in sync
-	if lastBlock == latestBlock {
-		fmt.Println(p.Name, "synced", lastBlock, latestBlock)
+	} else if lastBlock == nextBlock {
 		return nil // do nothing because process is in sync
 	}
-
-	// handle process mismatch
-	if latestBlock < lastBlock {
-		fmt.Println(p.Name, "updating last processed block to latest block")
-
-		// set last processed block to latest block
-		lastBlock = latestBlock
-
-		// update last processed block to latest block
-		err = p.Client.UpdateProcessLastBlock(ctx, p.ChainId, p.Name, latestBlock)
-		if err != nil {
-			return err
-		}
-	}
-
-	// handle process error
-	if err == sql.ErrNoRows {
-		fmt.Println(p.Name, "inserting (start block - 1) as last processed block")
-
-		// set last processed block to (start block - 1)
-		lastBlock = p.StartBlock - 1
-
-		// insert (start block - 1) as last processed block
-		err = p.Client.InsertProcessLastBlock(ctx, p.ChainId, p.Name, lastBlock)
-		if err != nil {
-			return err
-		}
-	} else if err != nil {
-		return err
-	}
-
-	fmt.Println(p.Name, "last block", lastBlock)
-
-	nextBlock := lastBlock + 1
-
-	fmt.Println(p.Name, "next block", nextBlock)
 
 	// query next block for vote events
 	events, err := p.Client.GetGroupEventVote(nextBlock)

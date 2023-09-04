@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# TODO: group id
-group_id=1
+# one seed, first test
+group_id=2
 
 # test account address
 address1=chora1l2pwmzk96ftmmt5egpjulyqtneygmmzns8r2ea
@@ -71,8 +71,8 @@ proposal_id=$(chora q group proposals-by-group-policy "$policy_address" --output
 # vote "yes" on proposal with user 1
 chora tx group vote "$proposal_id" "$address1" VOTE_OPTION_YES "" --from "$address1" $chora_tx_flags
 
-# wait for transaction to be processed
-sleep 10
+# wait for voting period to end and transaction to be processed
+sleep 20
 
 # execute proposal
 chora tx group exec "$proposal_id" --from "$address1" $chora_tx_flags
@@ -81,5 +81,5 @@ chora tx group exec "$proposal_id" --from "$address1" $chora_tx_flags
 sleep 10
 
 # TODO: confirm proposal indexed in database
-psql postgres://postgres:password@localhost:5432/postgres -c "SELECT * from idx_group_proposal;"
+psql postgres://postgres:password@localhost:5432/server -c "SELECT * from idx_group_proposal;"
 # TODO: if proposal NOT found, then exit 1

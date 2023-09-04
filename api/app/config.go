@@ -21,7 +21,7 @@ func LoadConfig() Config {
 	v := viper.New()
 	v.SetDefault("API_ALLOWED_ORIGINS", "*")
 	v.SetDefault("API_PORT", 3000)
-	v.SetDefault("DATABASE_URL", "postgres://postgres:password@localhost:5432/postgres?sslmode=disable")
+	v.SetDefault("DATABASE_URL", "postgres://postgres:password@localhost:5432/server?sslmode=disable")
 	v.SetDefault("SERVER_ENV", "local")
 	v.AutomaticEnv()
 	if err := v.Unmarshal(&cfg); err != nil {

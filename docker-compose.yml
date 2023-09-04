@@ -1,9 +1,9 @@
 services:
-  postgres:
+  db:
     build:
       context: .
-      dockerfile: docker/postgres.Dockerfile
-    entrypoint: ["/bin/sh", "-c", "./scripts/postgres_start.sh"]
+      dockerfile: docker/db.Dockerfile
+    entrypoint: ["/bin/sh", "-c", "./scripts/db_start.sh"]
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -16,7 +16,7 @@ services:
       timeout: 10s
       retries: 100
 
-  fuseki:
+  rdf:
     image: stain/jena-fuseki:jena4
     environment:
       ADMIN_PASSWORD: fuseki
@@ -50,13 +50,13 @@ services:
       context: .
       dockerfile: docker/api.Dockerfile
     environment:
-      DATABASE_URL: "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
+      DATABASE_URL: "postgres://postgres:password@localhost:5432/server?sslmode=disable"
     entrypoint: [ "/bin/sh", "-c", "go run ./cmd/api" ]
     network_mode: host
     expose:
       - 3000
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
 
   idx:
@@ -64,11 +64,11 @@ services:
       context: .
       dockerfile: docker/idx.Dockerfile
     environment:
-      DATABASE_URL: "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
+      DATABASE_URL: "postgres://postgres:password@localhost:5432/server?sslmode=disable"
     entrypoint: [ "/bin/sh", "-c", "go run ./cmd/idx localhost:9090 chora-local" ]
     network_mode: host
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
       chora:
         condition: service_healthy
@@ -80,7 +80,7 @@ services:
     entrypoint: ["/bin/sh", "-c", "./scripts/tester_start.sh"]
     network_mode: host
     depends_on:
-      postgres:
+      db:
         condition: service_healthy
       chora:
         condition: service_healthy

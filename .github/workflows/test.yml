@@ -34,13 +34,13 @@ jobs:
             **/go.mod
             **/go.sum
       - name: docker-test
-        run: docker-compose up --abort-on-container-exit --exit-code-from tester postgres chora idx tester
+        run: make e2e
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
       - name: docker-logs
         run: docker-compose ps
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
-      - name: docker-logs-postgres
-        run: docker-compose logs postgres
+      - name: docker-logs-db
+        run: docker-compose logs db
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
       - name: docker-logs-chora
         run: docker-compose logs chora
