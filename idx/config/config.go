@@ -26,8 +26,8 @@ func LoadConfig() Config {
 	cfg := Config{}
 	v := viper.New()
 	v.SetDefault("DATABASE_URL", "postgres://postgres:password@localhost:5432/server?sslmode=disable")
-	v.SetDefault("IDX_RUNNER_BACKOFF", "500ms")
-	v.SetDefault("IDX_RUNNER_MAX_RETRIES", 3)
+	v.SetDefault("IDX_RUNNER_BACKOFF", "1s")
+	v.SetDefault("IDX_RUNNER_MAX_RETRIES", 10)
 	v.SetDefault("SERVER_ENV", "local")
 	v.AutomaticEnv()
 	if err := v.Unmarshal(&cfg); err != nil {
