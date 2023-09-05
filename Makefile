@@ -69,6 +69,7 @@ idx:
 ###############################################################################
 
 local:
+	@docker-compose down -v --remove-orphans
 	@docker-compose up db chora api idx
 
 .PHONY: local

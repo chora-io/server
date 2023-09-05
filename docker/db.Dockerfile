@@ -1,41 +1,42 @@
 FROM postgres:15
 
-# Set data directory
+# set data directory
 ENV PGDATA=/var/pgdata
 ENV LOGDIR=/var/log/postgresql
 
-# Create directory to store PostgreSQL data and logs
+# install dependencies
+RUN apt-get update
+RUN apt-get install jq -y
+
+# create directory to store PostgreSQL data and logs
 RUN mkdir -p ${PGDATA} ${LOGDIR}
 
-# Change owner of directory to postgres group and user
+# change owner of directory to postgres group and user
 RUN chown -R postgres:postgres ${PGDATA} ${LOGDIR}
 
-# Change working directory
+# change working directory
 WORKDIR /home/db
 
-# Copy migrations
+# copy migrations
 COPY db/migrations /home/db/migrations
 
-# Copy init script
+# copy data seed file
+COPY docker/data/db_data.json /home/db/data/
+
+# copy init script
 COPY docker/scripts/db_init.sh /home/db/scripts/
 
-# Copy seed script
-COPY docker/scripts/db_seed.sh /home/db/scripts/
-
-# Copy start script
+# copy start script
 COPY docker/scripts/db_start.sh /home/db/scripts/
 
-# Make init script executable
+# make init script executable
 RUN ["chmod", "+x", "/home/db/scripts/db_init.sh"]
 
-# Make seed script executable
-RUN ["chmod", "+x", "/home/db/scripts/db_seed.sh"]
-
-# Make start script executable
+# make start script executable
 RUN ["chmod", "+x", "/home/db/scripts/db_start.sh"]
 
-# Set user to run init script and db container
+# set user to run init script and db container
 USER postgres
 
-# Run init script
+# run init script
 RUN /home/db/scripts/db_init.sh

@@ -3,7 +3,7 @@
 set -eo pipefail
 
 # wait for idx startup
-sleep 10
+sleep 5
 
 # run tester test scripts
 /home/tester/scripts/test_idx_group_proposals.sh
