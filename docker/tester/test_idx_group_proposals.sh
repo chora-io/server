@@ -9,6 +9,10 @@ address1=chora1l2pwmzk96ftmmt5egpjulyqtneygmmzns8r2ea
 # transaction flags
 chora_tx_flags="--keyring-backend test --chain-id chora-local --yes"
 
+##############################
+#        Test Setup          #
+##############################
+
 # set group members json
 cat > members.json <<EOL
 {
@@ -49,11 +53,67 @@ sleep 10
 # set group policy address
 policy_address=$(chora q group group-policies-by-group $group_id --output json | jq -r '.group_policies[-1].address')
 
+########################################
+#     Test Proposal (no messages)      #
+########################################
+
 # set group proposal json
 cat > proposal.json <<EOL
 {
   "group_policy_address": "$policy_address",
   "messages": [],
+  "metadata": "",
+  "proposers": ["$address1"]
+}
+EOL
+
+# create group proposal
+chora tx group submit-proposal proposal.json --from "$address1" $chora_tx_flags
+
+# wait for transaction to be processed
+sleep 10
+
+# set proposal id
+proposal_id=$(chora q group proposals-by-group-policy "$policy_address" --output json | jq -r '.proposals[-1].id')
+
+# vote "yes" on proposal with user 1
+chora tx group vote "$proposal_id" "$address1" VOTE_OPTION_YES "" --from "$address1" $chora_tx_flags
+
+# wait for voting period to end and transaction to be processed
+sleep 20
+
+# execute proposal
+chora tx group exec "$proposal_id" --from "$address1" $chora_tx_flags
+
+# wait for transaction to be processed
+sleep 10
+
+# TODO: confirm proposal indexed in database
+psql postgres://postgres:password@localhost:5432/server -c "SELECT * from idx_group_proposal;"
+# TODO: if proposal NOT found, then exit 1
+
+########################################
+#     Test Proposal (w/ messages)      #
+########################################
+
+# set group proposal json
+cat > proposal.json <<EOL
+{
+  "group_policy_address": "$policy_address",
+  "messages": [
+    {
+      "@type": "/cosmos.authz.v1beta1.MsgGrant",
+      "granter": "$policy_address",
+      "grantee": "chora1l2pwmzk96ftmmt5egpjulyqtneygmmzns8r2ea",
+      "grant": {
+        "authorization": {
+          "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
+          "msg": "/cosmos.bank.v1beta1.MsgSend"
+        },
+        "expiration": "2024-01-01T00:00:00Z"
+      }
+    }
+  ],
   "metadata": "",
   "proposers": ["$address1"]
 }

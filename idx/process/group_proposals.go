@@ -33,7 +33,7 @@ func GroupProposals(ctx context.Context, p Params) error {
 		// fetch proposal at last block height
 		proposal, groupId, err := p.Client.GetGroupProposal(lastBlock, proposalId)
 
-		// TODO: handle proposal not found error
+		// TODO: handle proposal not found error (i.e. syncing a non-archive node)
 		if err != nil {
 			return err
 		}
@@ -67,12 +67,12 @@ func GroupProposals(ctx context.Context, p Params) error {
 		// add group proposal to database
 		err = p.Client.InsertGroupProposal(ctx, p.ChainId, proposalId, groupId, updated)
 		if err != nil && strings.Contains(err.Error(), "duplicate key value ") {
-			fmt.Println(p.Name, "error", err.Error())
+			fmt.Println(p.Name, "group proposal exists", p.ChainId, proposalId)
 
 			fmt.Println(p.Name, "updating group proposal", p.ChainId, proposalId)
 
 			// update group proposal in database
-			err = p.Client.UpdateGroupProposal(ctx, p.ChainId, proposalId, proposal)
+			err = p.Client.UpdateGroupProposal(ctx, p.ChainId, proposalId, updated)
 			if err != nil {
 				return err
 			}
@@ -81,7 +81,6 @@ func GroupProposals(ctx context.Context, p Params) error {
 		}
 
 		fmt.Println(p.Name, "successfully processed event", p.ChainId, event.String())
-		fmt.Println(p.Name, "successfully added proposal", p.ChainId, proposalId)
 	}
 
 	// increment last processed block in database

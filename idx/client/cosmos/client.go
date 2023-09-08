@@ -232,16 +232,8 @@ func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessag
 		return nil, 0, err
 	}
 
-	// TODO: fix encoding of nested any types
-	// go run ./cmd/idx testnet.chora.io:9090 chora-testnet-1 2646260
-	for i, m := range resp.Proposal.Messages {
-		if m.TypeUrl == "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy" {
-			resp.Proposal.Messages[i] = nil
-		}
-	}
-
 	// get json encoding of proposal
-	bz, err := json.Marshal(resp.Proposal)
+	bz, err := c.cdc.MarshalJSON(resp.Proposal)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -268,7 +260,7 @@ func (c Client) GetGroupVote(height int64, proposalId int64, voter string) (json
 	}
 
 	// get json encoding of vote
-	bz, err := json.Marshal(resp.Vote)
+	bz, err := c.cdc.MarshalJSON(resp.Vote)
 	if err != nil {
 		return nil, err
 	}

@@ -77,6 +77,11 @@ func (r *Runner) RunProcess(f process.Function, p process.Params) {
 
 				// update retry count
 				runnerRetryCount++
+			} else if runnerRetryCount > 0 {
+				fmt.Println("runner", "process success after error", p.Name)
+
+				// reset retry count
+				runnerRetryCount = 0
 			}
 
 			// wait for context done or backoff duration

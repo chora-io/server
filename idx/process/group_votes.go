@@ -33,7 +33,7 @@ func GroupVotes(ctx context.Context, p Params) error {
 		// fetch vote at next block height
 		vote, err := p.Client.GetGroupVote(nextBlock, proposalId, voter)
 
-		// TODO: handle vote not found error
+		// TODO: handle vote not found error (i.e. syncing a non-archive node)
 		if err != nil {
 			return err
 		}
@@ -43,7 +43,7 @@ func GroupVotes(ctx context.Context, p Params) error {
 		// add group vote to database
 		err = p.Client.InsertGroupVote(ctx, p.ChainId, proposalId, voter, vote)
 		if err != nil && strings.Contains(err.Error(), "duplicate key value ") {
-			fmt.Println(p.Name, "error", err.Error())
+			fmt.Println(p.Name, "group vote exists", p.ChainId, proposalId, voter)
 
 			fmt.Println(p.Name, "updating group vote", p.ChainId, proposalId, voter)
 
@@ -57,7 +57,6 @@ func GroupVotes(ctx context.Context, p Params) error {
 		}
 
 		fmt.Println(p.Name, "successfully processed event", p.ChainId, event)
-		fmt.Println(p.Name, "successfully added vote", p.ChainId, proposalId, voter)
 	}
 
 	// increment last processed block in database
