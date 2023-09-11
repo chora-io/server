@@ -143,3 +143,56 @@ sleep 10
 # TODO: confirm proposal indexed in database
 psql postgres://postgres:password@localhost:5432/server -c "SELECT * from idx_group_proposal;"
 # TODO: if proposal NOT found, then exit 1
+
+########################################
+#    Test Proposal (w/ nested any)     #
+########################################
+
+# set group proposal json
+cat > proposal.json <<EOL
+{
+  "group_policy_address": "$policy_address",
+  "messages": [
+    {
+      "@type": "/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy",
+      "admin": "$policy_address",
+      "group_policy_address": "$policy_address",
+      "decision_policy": {
+        "@type": "/cosmos.group.v1.ThresholdDecisionPolicy",
+        "threshold": "1",
+        "windows": {
+          "voting_period": "10s",
+          "min_execution_period": "0s"
+        }
+      }
+    }
+  ],
+  "metadata": "",
+  "proposers": ["$address1"]
+}
+EOL
+
+# create group proposal
+chora tx group submit-proposal proposal.json --from "$address1" $chora_tx_flags
+
+# wait for transaction to be processed
+sleep 10
+
+# set proposal id
+proposal_id=$(chora q group proposals-by-group-policy "$policy_address" --output json | jq -r '.proposals[-1].id')
+
+# vote "yes" on proposal with user 1
+chora tx group vote "$proposal_id" "$address1" VOTE_OPTION_YES "" --from "$address1" $chora_tx_flags
+
+# wait for voting period to end and transaction to be processed
+sleep 10
+
+# execute proposal
+chora tx group exec "$proposal_id" --from "$address1" $chora_tx_flags
+
+# wait for transaction to be processed
+sleep 10
+
+# TODO: confirm proposal indexed in database
+psql postgres://postgres:password@localhost:5432/server -c "SELECT * from idx_group_proposal;"
+# TODO: if proposal NOT found, then exit 1

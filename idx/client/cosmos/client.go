@@ -62,6 +62,11 @@ func (c Client) Close() error {
 	return nil
 }
 
+// Codec returns the client codec.
+func (c Client) Codec() *Codec {
+	return c.cdc
+}
+
 // GetGroupEventProposalPruned gets an array of group.v1.EventProposalPruned from block height.
 func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposalPruned, error) {
 
@@ -116,7 +121,7 @@ func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposal
 // GetGroupEventVote gets an array of group.v1.EventVote from block height. This method
 // also returns the voter address pulled from the tx message so that the vote can be queried
 // by proposal id and voter address (i.e. voter address is not provided by EventVote).
-func (c Client) GetGroupEventVote(height int64) ([]EventVoteWithVoter, error) {
+func (c Client) GetGroupEventVote(height uint64) ([]EventVoteWithVoter, error) {
 
 	// get all transactions from block height
 	txs, err := sdktx.NewServiceClient(c.conn).GetTxsEvent(c.ctx, &sdktx.GetTxsEventRequest{
@@ -208,17 +213,17 @@ func (c Client) GetGroupEventVote(height int64) ([]EventVoteWithVoter, error) {
 }
 
 // GetGroupProposal gets a group proposal by proposal id at block height.
-func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, int64, error) {
+func (c Client) GetGroupProposal(height uint64, proposalId uint64) (json.RawMessage, uint64, error) {
 
 	// convert block height to string
-	blockHeight := strconv.FormatInt(height, 10)
+	blockHeight := strconv.FormatUint(height, 10)
 
 	// set context to use block height in header
 	ctx := metadata.AppendToOutgoingContext(c.ctx, grpctypes.GRPCBlockHeightHeader, blockHeight)
 
 	// query proposal at block height using context with block height
 	resp, err := group.NewQueryClient(c.conn).Proposal(ctx, &group.QueryProposalRequest{
-		ProposalId: uint64(proposalId),
+		ProposalId: proposalId,
 	})
 	if err != nil {
 		return nil, 0, err
@@ -238,21 +243,21 @@ func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessag
 		return nil, 0, err
 	}
 
-	return bz, int64(policyResp.Info.GroupId), nil
+	return bz, policyResp.Info.GroupId, nil
 }
 
 // GetGroupVote gets a group vote by proposal id and voter address.
-func (c Client) GetGroupVote(height int64, proposalId int64, voter string) (json.RawMessage, error) {
+func (c Client) GetGroupVote(height uint64, proposalId uint64, voter string) (json.RawMessage, error) {
 
 	// convert block height to string
-	blockHeight := strconv.FormatInt(height, 10)
+	blockHeight := strconv.FormatUint(height, 10)
 
 	// set context to use block height in header
 	ctx := metadata.AppendToOutgoingContext(c.ctx, grpctypes.GRPCBlockHeightHeader, blockHeight)
 
 	// query vote at block height using context with block height
 	resp, err := group.NewQueryClient(c.conn).VoteByProposalVoter(ctx, &group.QueryVoteByProposalVoterRequest{
-		ProposalId: uint64(proposalId),
+		ProposalId: proposalId,
 		Voter:      voter,
 	})
 	if err != nil {
@@ -269,7 +274,7 @@ func (c Client) GetGroupVote(height int64, proposalId int64, voter string) (json
 }
 
 // GetLatestBlockHeight gets the latest block height.
-func (c Client) GetLatestBlockHeight() (int64, error) {
+func (c Client) GetLatestBlockHeight() (uint64, error) {
 
 	// get latest block
 	res, err := tmservice.NewServiceClient(c.conn).GetLatestBlock(c.ctx, &tmservice.GetLatestBlockRequest{})
@@ -278,5 +283,5 @@ func (c Client) GetLatestBlockHeight() (int64, error) {
 	}
 
 	// return latest block height
-	return res.SdkBlock.Header.Height, nil
+	return uint64(res.SdkBlock.Header.Height), nil
 }

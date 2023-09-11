@@ -28,7 +28,7 @@ func GroupProposals(ctx context.Context, p Params) error {
 
 	for _, event := range events {
 		// get proposal id from event
-		proposalId := int64(event.ProposalId)
+		proposalId := event.ProposalId
 
 		// fetch proposal at last block height
 		proposal, groupId, err := p.Client.GetGroupProposal(lastBlock, proposalId)
@@ -40,7 +40,7 @@ func GroupProposals(ctx context.Context, p Params) error {
 
 		// unmarshal proposal so that we can check and update
 		var update group.Proposal
-		err = json.Unmarshal(proposal, &update)
+		err = p.Client.Codec().UnmarshalJSON(proposal, &update)
 		if err != nil {
 			return err
 		}
@@ -56,7 +56,7 @@ func GroupProposals(ctx context.Context, p Params) error {
 			update.ExecutorResult = group.ProposalExecutorResult(2)
 
 			// marshal updated proposal
-			updated, err = json.Marshal(update)
+			updated, err = p.Client.Codec().MarshalJSON(&update)
 			if err != nil {
 				return err
 			}
@@ -80,7 +80,7 @@ func GroupProposals(ctx context.Context, p Params) error {
 			return err
 		}
 
-		fmt.Println(p.Name, "successfully processed event", p.ChainId, event.String())
+		fmt.Println(p.Name, "successfully processed event", p.ChainId, proposalId)
 	}
 
 	// increment last processed block in database

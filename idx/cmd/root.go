@@ -50,7 +50,7 @@ func NewRootCmd() *cobra.Command {
 			}
 
 			// get start block (default 1)
-			startBlock, err := cmd.Flags().GetInt64(FlagStartBlock)
+			startBlock, err := cmd.Flags().GetUint64(FlagStartBlock)
 			if err != nil {
 				return err
 			}
@@ -102,7 +102,7 @@ func NewRootCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int64(FlagStartBlock, 1, "the starting block for a new process")
+	cmd.Flags().Uint64(FlagStartBlock, 1, "the starting block for a new process")
 
 	return cmd
 }

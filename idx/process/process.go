@@ -23,7 +23,7 @@ type Params struct {
 	Client client.Client
 
 	// StartBlock is the starting block height used when starting a new process (default 1).
-	StartBlock int64
+	StartBlock uint64
 }
 
 func (p Params) ValidateParams() error {
@@ -43,7 +43,7 @@ func (p Params) ValidateParams() error {
 }
 
 // AdvanceProcess determines the last block and next block for the process
-func AdvanceProcess(ctx context.Context, p Params) (int64, int64, error) {
+func AdvanceProcess(ctx context.Context, p Params) (uint64, uint64, error) {
 
 	// get latest block from connected network (chain)
 	latestBlock, err := p.Client.GetLatestBlockHeight()

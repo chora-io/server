@@ -48,11 +48,16 @@ func (c Client) Close() error {
 	return nil
 }
 
+// Codec returns the client codec.
+func (c Client) Codec() *cosmos.Codec {
+	return c.cc.Codec()
+}
+
 // database queries
 
 // InsertGroupProposal adds a group proposal to the database.
-func (c Client) InsertGroupProposal(ctx context.Context, chainId string, proposalId int64, groupId int64, proposal json.RawMessage) error {
-	err := c.db.Writer().InsertIdxGroupProposal(ctx, chainId, proposalId, groupId, proposal)
+func (c Client) InsertGroupProposal(ctx context.Context, chainId string, proposalId uint64, groupId uint64, proposal json.RawMessage) error {
+	err := c.db.Writer().InsertIdxGroupProposal(ctx, chainId, int64(proposalId), int64(groupId), proposal)
 	if err != nil {
 		return err
 	}
@@ -60,8 +65,8 @@ func (c Client) InsertGroupProposal(ctx context.Context, chainId string, proposa
 }
 
 // InsertGroupVote adds a group vote to the database.
-func (c Client) InsertGroupVote(ctx context.Context, chainId string, proposalId int64, voter string, vote json.RawMessage) error {
-	err := c.db.Writer().InsertIdxGroupVote(ctx, chainId, proposalId, voter, vote)
+func (c Client) InsertGroupVote(ctx context.Context, chainId string, proposalId uint64, voter string, vote json.RawMessage) error {
+	err := c.db.Writer().InsertIdxGroupVote(ctx, chainId, int64(proposalId), voter, vote)
 	if err != nil {
 		return err
 	}
@@ -69,8 +74,8 @@ func (c Client) InsertGroupVote(ctx context.Context, chainId string, proposalId 
 }
 
 // InsertProcessLastBlock adds a process with block height to the database.
-func (c Client) InsertProcessLastBlock(ctx context.Context, chainId, processName string, lastBlock int64) error {
-	err := c.db.Writer().InsertIdxProcessLastBlock(ctx, chainId, processName, lastBlock)
+func (c Client) InsertProcessLastBlock(ctx context.Context, chainId, processName string, lastBlock uint64) error {
+	err := c.db.Writer().InsertIdxProcessLastBlock(ctx, chainId, processName, int64(lastBlock))
 	if err != nil {
 		return err
 	}
@@ -78,17 +83,17 @@ func (c Client) InsertProcessLastBlock(ctx context.Context, chainId, processName
 }
 
 // SelectProcessLastBlock gets the last processed block for a given process.
-func (c Client) SelectProcessLastBlock(ctx context.Context, chainId, processName string) (int64, error) {
+func (c Client) SelectProcessLastBlock(ctx context.Context, chainId, processName string) (uint64, error) {
 	lastBlock, err := c.db.Reader().SelectIdxProcessLastBlock(ctx, chainId, processName)
 	if err != nil {
 		return 0, err
 	}
-	return lastBlock, nil
+	return uint64(lastBlock), nil
 }
 
 // UpdateGroupProposal updates a group proposal in the database.
-func (c Client) UpdateGroupProposal(ctx context.Context, chainId string, proposalId int64, proposal json.RawMessage) error {
-	err := c.db.Writer().UpdateIdxGroupProposal(ctx, chainId, proposalId, proposal)
+func (c Client) UpdateGroupProposal(ctx context.Context, chainId string, proposalId uint64, proposal json.RawMessage) error {
+	err := c.db.Writer().UpdateIdxGroupProposal(ctx, chainId, int64(proposalId), proposal)
 	if err != nil {
 		return err
 	}
@@ -96,8 +101,8 @@ func (c Client) UpdateGroupProposal(ctx context.Context, chainId string, proposa
 }
 
 // UpdateGroupVote updates a group proposal in the database.
-func (c Client) UpdateGroupVote(ctx context.Context, chainId string, proposalId int64, voter string, vote json.RawMessage) error {
-	err := c.db.Writer().UpdateIdxGroupVote(ctx, chainId, proposalId, voter, vote)
+func (c Client) UpdateGroupVote(ctx context.Context, chainId string, proposalId uint64, voter string, vote json.RawMessage) error {
+	err := c.db.Writer().UpdateIdxGroupVote(ctx, chainId, int64(proposalId), voter, vote)
 	if err != nil {
 		return err
 	}
@@ -105,8 +110,8 @@ func (c Client) UpdateGroupVote(ctx context.Context, chainId string, proposalId 
 }
 
 // UpdateProcessLastBlock updates the last processed block for a given process.
-func (c Client) UpdateProcessLastBlock(ctx context.Context, chainId, processName string, lastBlock int64) error {
-	err := c.db.Writer().UpdateIdxProcessLastBlock(ctx, chainId, processName, lastBlock)
+func (c Client) UpdateProcessLastBlock(ctx context.Context, chainId, processName string, lastBlock uint64) error {
+	err := c.db.Writer().UpdateIdxProcessLastBlock(ctx, chainId, processName, int64(lastBlock))
 	if err != nil {
 		return err
 	}
@@ -116,26 +121,26 @@ func (c Client) UpdateProcessLastBlock(ctx context.Context, chainId, processName
 // cosmos blockchain queries
 
 // GetGroupEventProposalPruned gets any array of group.v1.EventProposalPruned from block height.
-func (c Client) GetGroupEventProposalPruned(height int64) ([]group.EventProposalPruned, error) {
-	return c.cc.GetGroupEventProposalPruned(height)
+func (c Client) GetGroupEventProposalPruned(height uint64) ([]group.EventProposalPruned, error) {
+	return c.cc.GetGroupEventProposalPruned(int64(height))
 }
 
 // GetGroupEventVote gets any array of group.v1.EventVote from block height.
-func (c Client) GetGroupEventVote(height int64) ([]cosmos.EventVoteWithVoter, error) {
+func (c Client) GetGroupEventVote(height uint64) ([]cosmos.EventVoteWithVoter, error) {
 	return c.cc.GetGroupEventVote(height)
 }
 
 // GetGroupProposal gets a group proposal by proposal id at block height.
-func (c Client) GetGroupProposal(height int64, proposalId int64) (json.RawMessage, int64, error) {
+func (c Client) GetGroupProposal(height uint64, proposalId uint64) (json.RawMessage, uint64, error) {
 	return c.cc.GetGroupProposal(height, proposalId)
 }
 
 // GetGroupVote gets a group vote by proposal id and voter address.
-func (c Client) GetGroupVote(height int64, proposalId int64, voter string) (json.RawMessage, error) {
+func (c Client) GetGroupVote(height uint64, proposalId uint64, voter string) (json.RawMessage, error) {
 	return c.cc.GetGroupVote(height, proposalId, voter)
 }
 
 // GetLatestBlockHeight gets the latest block height.
-func (c Client) GetLatestBlockHeight() (int64, error) {
+func (c Client) GetLatestBlockHeight() (uint64, error) {
 	return c.cc.GetLatestBlockHeight()
 }

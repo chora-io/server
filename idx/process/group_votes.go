@@ -25,7 +25,7 @@ func GroupVotes(ctx context.Context, p Params) error {
 
 	for _, event := range events {
 		// get proposal id from event
-		proposalId := int64(event.ProposalId)
+		proposalId := event.ProposalId
 
 		// get voter address from event
 		voter := event.Voter
@@ -56,7 +56,7 @@ func GroupVotes(ctx context.Context, p Params) error {
 			return err
 		}
 
-		fmt.Println(p.Name, "successfully processed event", p.ChainId, event)
+		fmt.Println(p.Name, "successfully processed event", p.ChainId, proposalId, voter)
 	}
 
 	// increment last processed block in database
