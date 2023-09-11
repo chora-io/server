@@ -10,6 +10,17 @@ import (
 	"encoding/json"
 )
 
+const selectAuthUser = `-- name: SelectAuthUser :one
+select address, created_at, last_authenticated from auth_user where address=$1
+`
+
+func (q *Queries) SelectAuthUser(ctx context.Context, address string) (AuthUser, error) {
+	row := q.db.QueryRowContext(ctx, selectAuthUser, address)
+	var i AuthUser
+	err := row.Scan(&i.Address, &i.CreatedAt, &i.LastAuthenticated)
+	return i, err
+}
+
 const selectData = `-- name: SelectData :one
 select iri, jsonld from data where iri=$1
 `

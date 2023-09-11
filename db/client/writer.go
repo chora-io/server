@@ -8,6 +8,14 @@ import (
 // Writer is the interface that wraps database writes.
 type Writer interface {
 
+	// auth queries
+
+	// InsertAuthUser writes data to the database.
+	InsertAuthUser(ctx context.Context, address string) error
+
+	// UpdateAuthUserLastAuthenticated writes data to the database.
+	UpdateAuthUserLastAuthenticated(ctx context.Context, address string) error
+
 	// data queries
 
 	// InsertData writes data to the database.
@@ -38,6 +46,16 @@ var _ Writer = &writer{}
 
 type writer struct {
 	q *Queries
+}
+
+// auth queries
+
+func (w *writer) InsertAuthUser(ctx context.Context, address string) error {
+	return w.q.InsertAuthUser(ctx, address)
+}
+
+func (w *writer) UpdateAuthUserLastAuthenticated(ctx context.Context, address string) error {
+	return w.q.UpdateAuthUserLastAuthenticated(ctx, address)
 }
 
 // data queries

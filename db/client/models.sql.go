@@ -6,7 +6,15 @@ package client
 
 import (
 	"encoding/json"
+	"time"
 )
+
+// authenticated user
+type AuthUser struct {
+	Address           string
+	CreatedAt         time.Time
+	LastAuthenticated time.Time
+}
 
 // the data table stores linked data
 type Datum struct {

@@ -1,3 +1,6 @@
+-- name: SelectAuthUser :one
+select * from auth_user where address=$1;
+
 -- name: SelectData :one
 select iri, jsonld from data where iri=$1;
 

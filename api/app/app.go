@@ -17,6 +17,7 @@ type App struct {
 	env string
 	dbr db.Reader
 	dbw db.Writer
+	jsk string
 	rtr *mux.Router
 	aos string
 	log zerolog.Logger
@@ -33,13 +34,16 @@ func Initialize(cfg Config, log zerolog.Logger) *App {
 		env: cfg.ServerEnv,
 		dbr: db.Reader(),
 		dbw: db.Writer(),
+		jsk: cfg.JwtSecretKey,
 		rtr: mux.NewRouter(),
 		aos: cfg.ApiAllowedOrigins,
 		log: log,
 	}
 
-	// authenticate
-	app.get("/auth", app.handleGetRequest(Auth))
+	// auth requests
+	app.post("/auth", app.handleAuthRequest(PostAuth))
+	app.post("/auth/keplr", app.handleAuthRequest(PostAuthKeplr))
+	app.post("/auth/login", app.handleAuthRequest(PostAuthLogin))
 
 	// data requests
 	app.get("/data/{iri}", app.handleGetRequest(GetData))
@@ -83,6 +87,12 @@ func (a *App) post(path string, f func(w http.ResponseWriter, r *http.Request)) 
 func (a *App) handleIndexRequest() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./html/index.html")
+	}
+}
+
+func (a *App) handleAuthRequest(handler AuthHandler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		handler(a.jsk, a.dbr, a.dbw, w, r)
 	}
 }
 

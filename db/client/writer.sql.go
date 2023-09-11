@@ -10,6 +10,15 @@ import (
 	"encoding/json"
 )
 
+const insertAuthUser = `-- name: InsertAuthUser :exec
+insert into auth_user (address, created_at, last_authenticated) values ($1, now(), now())
+`
+
+func (q *Queries) InsertAuthUser(ctx context.Context, address string) error {
+	_, err := q.db.ExecContext(ctx, insertAuthUser, address)
+	return err
+}
+
 const insertData = `-- name: InsertData :exec
 insert into data (iri, jsonld) values ($1, $2)
 `
@@ -78,6 +87,15 @@ type InsertIdxProcessLastBlockParams struct {
 
 func (q *Queries) InsertIdxProcessLastBlock(ctx context.Context, arg InsertIdxProcessLastBlockParams) error {
 	_, err := q.db.ExecContext(ctx, insertIdxProcessLastBlock, arg.ChainID, arg.ProcessName, arg.LastBlock)
+	return err
+}
+
+const updateAuthUserLastAuthenticated = `-- name: UpdateAuthUserLastAuthenticated :exec
+update auth_user set last_authenticated=now() where address=$1
+`
+
+func (q *Queries) UpdateAuthUserLastAuthenticated(ctx context.Context, address string) error {
+	_, err := q.db.ExecContext(ctx, updateAuthUserLastAuthenticated, address)
 	return err
 }
 

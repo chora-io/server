@@ -1,3 +1,9 @@
+-- name: InsertAuthUser :exec
+insert into auth_user (address, created_at, last_authenticated) values ($1, now(), now());
+
+-- name: UpdateAuthUserLastAuthenticated :exec
+update auth_user set last_authenticated=now() where address=$1;
+
 -- name: InsertData :exec
 insert into data (iri, jsonld) values ($1, $2);
 

@@ -8,6 +8,11 @@ import (
 // Reader is the interface that wraps database reads.
 type Reader interface {
 
+	// auth queries
+
+	// SelectAuthUser reads data from the database.
+	SelectAuthUser(ctx context.Context, address string) (AuthUser, error)
+
 	// data queries
 
 	// GetData reads data from the database.
@@ -40,6 +45,13 @@ type reader struct {
 // GroupProposalParams is used to select proposals by group_id.
 type GroupProposalParams struct {
 	GroupID string `json:"group_id"`
+}
+
+// auth queries
+
+// SelectAuthUser reads data from the database.
+func (r *reader) SelectAuthUser(ctx context.Context, address string) (AuthUser, error) {
+	return r.q.SelectAuthUser(ctx, address)
 }
 
 // data queries
