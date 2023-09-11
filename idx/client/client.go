@@ -82,6 +82,15 @@ func (c Client) InsertProcessLastBlock(ctx context.Context, chainId, processName
 	return nil
 }
 
+// InsertSkippedBlock adds a process with block height to the database.
+func (c Client) InsertSkippedBlock(ctx context.Context, chainId, processName string, skippedBlock uint64, reason string) error {
+	err := c.db.Writer().InsertIdxSkippedBlock(ctx, chainId, processName, int64(skippedBlock), reason)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // SelectProcessLastBlock gets the last processed block for a given process.
 func (c Client) SelectProcessLastBlock(ctx context.Context, chainId, processName string) (uint64, error) {
 	lastBlock, err := c.db.Reader().SelectIdxProcessLastBlock(ctx, chainId, processName)

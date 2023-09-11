@@ -20,7 +20,20 @@ func GroupVotes(ctx context.Context, p Params) error {
 	// query next block for vote events
 	events, err := p.Client.GetGroupEventVote(nextBlock)
 	if err != nil {
-		return err
+
+		// TODO: resolve codec errors and reconsider skipped blocks
+
+		fmt.Println(p.Name, "error", p.ChainId, nextBlock, err.Error())
+
+		// insert skipped block and error message to retry in a separate process
+		err := p.Client.InsertSkippedBlock(ctx, p.ChainId, p.Name, nextBlock, err.Error())
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate key value") {
+				// skipped block already recorded
+			} else {
+				return err
+			}
+		}
 	}
 
 	for _, event := range events {
@@ -32,17 +45,30 @@ func GroupVotes(ctx context.Context, p Params) error {
 
 		// fetch vote at next block height
 		vote, err := p.Client.GetGroupVote(nextBlock, proposalId, voter)
-
-		// TODO: handle vote not found error (i.e. syncing a non-archive node)
 		if err != nil {
-			return err
+
+			// TODO: resolve codec errors and reconsider skipped blocks
+
+			fmt.Println(p.Name, "error", p.ChainId, nextBlock, err.Error())
+
+			// insert skipped block and error message to retry in a separate process
+			err := p.Client.InsertSkippedBlock(ctx, p.ChainId, p.Name, nextBlock, err.Error())
+			if err != nil {
+				if strings.Contains(err.Error(), "duplicate key value") {
+					continue // skipped block already recorded
+				}
+				return err
+			}
+
+			// skip this event
+			continue
 		}
 
 		fmt.Println(p.Name, "adding group vote", p.ChainId, proposalId, voter)
 
 		// add group vote to database
 		err = p.Client.InsertGroupVote(ctx, p.ChainId, proposalId, voter, vote)
-		if err != nil && strings.Contains(err.Error(), "duplicate key value ") {
+		if err != nil && strings.Contains(err.Error(), "duplicate key value") {
 			fmt.Println(p.Name, "group vote exists", p.ChainId, proposalId, voter)
 
 			fmt.Println(p.Name, "updating group vote", p.ChainId, proposalId, voter)
@@ -55,8 +81,6 @@ func GroupVotes(ctx context.Context, p Params) error {
 		} else if err != nil {
 			return err
 		}
-
-		fmt.Println(p.Name, "successfully processed event", p.ChainId, proposalId, voter)
 	}
 
 	// increment last processed block in database

@@ -32,10 +32,23 @@ func GroupProposals(ctx context.Context, p Params) error {
 
 		// fetch proposal at last block height
 		proposal, groupId, err := p.Client.GetGroupProposal(lastBlock, proposalId)
-
-		// TODO: handle proposal not found error (i.e. syncing a non-archive node)
 		if err != nil {
-			return err
+
+			// TODO: resolve codec errors and reconsider skipped blocks
+
+			fmt.Println(p.Name, "error", p.ChainId, nextBlock, err.Error())
+
+			// insert skipped block and error message to retry in a separate process
+			err := p.Client.InsertSkippedBlock(ctx, p.ChainId, p.Name, nextBlock, err.Error())
+			if err != nil {
+				if strings.Contains(err.Error(), "duplicate key value") {
+					continue // skipped block already recorded
+				}
+				return err
+			}
+
+			// skip this event
+			continue
 		}
 
 		// unmarshal proposal so that we can check and update
@@ -66,7 +79,7 @@ func GroupProposals(ctx context.Context, p Params) error {
 
 		// add group proposal to database
 		err = p.Client.InsertGroupProposal(ctx, p.ChainId, proposalId, groupId, updated)
-		if err != nil && strings.Contains(err.Error(), "duplicate key value ") {
+		if err != nil && strings.Contains(err.Error(), "duplicate key value") {
 			fmt.Println(p.Name, "group proposal exists", p.ChainId, proposalId)
 
 			fmt.Println(p.Name, "updating group proposal", p.ChainId, proposalId)
@@ -79,8 +92,6 @@ func GroupProposals(ctx context.Context, p Params) error {
 		} else if err != nil {
 			return err
 		}
-
-		fmt.Println(p.Name, "successfully processed event", p.ChainId, proposalId)
 	}
 
 	// increment last processed block in database

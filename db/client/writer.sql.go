@@ -90,6 +90,27 @@ func (q *Queries) InsertIdxProcessLastBlock(ctx context.Context, arg InsertIdxPr
 	return err
 }
 
+const insertIdxSkippedBlock = `-- name: InsertIdxSkippedBlock :exec
+insert into idx_skipped_block (chain_id, process_name, skipped_block, reason) values ($1, $2, $3, $4)
+`
+
+type InsertIdxSkippedBlockParams struct {
+	ChainID      string
+	ProcessName  string
+	SkippedBlock int64
+	Reason       string
+}
+
+func (q *Queries) InsertIdxSkippedBlock(ctx context.Context, arg InsertIdxSkippedBlockParams) error {
+	_, err := q.db.ExecContext(ctx, insertIdxSkippedBlock,
+		arg.ChainID,
+		arg.ProcessName,
+		arg.SkippedBlock,
+		arg.Reason,
+	)
+	return err
+}
+
 const updateAuthUserLastAuthenticated = `-- name: UpdateAuthUserLastAuthenticated :exec
 update auth_user set last_authenticated=now() where address=$1
 `

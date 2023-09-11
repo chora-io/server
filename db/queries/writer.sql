@@ -24,3 +24,6 @@ insert into idx_process (chain_id, process_name, last_block) values ($1, $2, $3)
 
 -- name: UpdateIdxProcessLastBlock :exec
 update idx_process set last_block=$3 where chain_id=$1 and process_name=$2;
+
+-- name: InsertIdxSkippedBlock :exec
+insert into idx_skipped_block (chain_id, process_name, skipped_block, reason) values ($1, $2, $3, $4);

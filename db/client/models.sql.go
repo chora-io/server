@@ -44,3 +44,11 @@ type IdxProcess struct {
 	ProcessName string
 	LastBlock   int64
 }
+
+// the idx skipped table stores skipped blocks to retry later
+type IdxSkippedBlock struct {
+	ChainID      string
+	ProcessName  string
+	SkippedBlock int64
+	Reason       string
+}

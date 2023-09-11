@@ -185,7 +185,7 @@ proposal_id=$(chora q group proposals-by-group-policy "$policy_address" --output
 chora tx group vote "$proposal_id" "$address1" VOTE_OPTION_YES "" --from "$address1" $chora_tx_flags
 
 # wait for voting period to end and transaction to be processed
-sleep 10
+sleep 20
 
 # execute proposal
 chora tx group exec "$proposal_id" --from "$address1" $chora_tx_flags
@@ -196,3 +196,52 @@ sleep 10
 # TODO: confirm proposal indexed in database
 psql postgres://postgres:password@localhost:5432/server -c "SELECT * from idx_group_proposal;"
 # TODO: if proposal NOT found, then exit 1
+
+########################################
+#    Test Proposal (w/ unregistered)     #
+########################################
+
+# set group proposal json
+cat > proposal.json <<EOL
+{
+  "group_policy_address": "$policy_address",
+  "messages": [
+    {
+      "@type": "/regen.data.v1.MsgDefineResolver",
+      "manager": "$policy_address",
+      "resolver_url": "https://foo.bar/"
+    }
+  ],
+  "metadata": "",
+  "proposers": ["$address1"]
+}
+EOL
+
+# create group proposal
+chora tx group submit-proposal proposal.json --from "$address1" $chora_tx_flags
+
+# wait for transaction to be processed
+sleep 10
+
+# set proposal id
+proposal_id=$(chora q group proposals-by-group-policy "$policy_address" --output json | jq -r '.proposals[-1].id')
+
+# vote "yes" on proposal with user 1
+chora tx group vote "$proposal_id" "$address1" VOTE_OPTION_YES "" --from "$address1" $chora_tx_flags
+
+# wait for voting period to end and transaction to be processed
+sleep 20
+
+# execute proposal
+chora tx group exec "$proposal_id" --from "$address1" $chora_tx_flags
+
+# wait for transaction to be processed
+sleep 10
+
+# TODO: confirm proposal NOT indexed in database
+psql postgres://postgres:password@localhost:5432/server -c "SELECT * from idx_group_proposal;"
+# TODO: if proposal found, then exit 1
+
+# TODO: confirm skipped block added to database
+psql postgres://postgres:password@localhost:5432/server -c "SELECT * from idx_skipped_block;"
+# TODO: if skipped block NOT found, then exit 1
