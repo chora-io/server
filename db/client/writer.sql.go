@@ -7,15 +7,34 @@ package client
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 )
 
-const insertAuthUser = `-- name: InsertAuthUser :exec
-insert into auth_user (address, created_at, last_authenticated) values ($1, now(), now())
+const insertAuthUserWithAddress = `-- name: InsertAuthUserWithAddress :exec
+insert into auth_user (id, address, created_at) values (gen_random_uuid(), $1, now())
 `
 
-func (q *Queries) InsertAuthUser(ctx context.Context, address string) error {
-	_, err := q.db.ExecContext(ctx, insertAuthUser, address)
+func (q *Queries) InsertAuthUserWithAddress(ctx context.Context, address sql.NullString) error {
+	_, err := q.db.ExecContext(ctx, insertAuthUserWithAddress, address)
+	return err
+}
+
+const insertAuthUserWithEmail = `-- name: InsertAuthUserWithEmail :exec
+insert into auth_user (id, email, created_at) values (gen_random_uuid(), $1, now())
+`
+
+func (q *Queries) InsertAuthUserWithEmail(ctx context.Context, email sql.NullString) error {
+	_, err := q.db.ExecContext(ctx, insertAuthUserWithEmail, email)
+	return err
+}
+
+const insertAuthUserWithUsername = `-- name: InsertAuthUserWithUsername :exec
+insert into auth_user (id, username, created_at) values (gen_random_uuid(), $1, now())
+`
+
+func (q *Queries) InsertAuthUserWithUsername(ctx context.Context, username sql.NullString) error {
+	_, err := q.db.ExecContext(ctx, insertAuthUserWithUsername, username)
 	return err
 }
 
@@ -111,12 +130,45 @@ func (q *Queries) InsertIdxSkippedBlock(ctx context.Context, arg InsertIdxSkippe
 	return err
 }
 
-const updateAuthUserLastAuthenticated = `-- name: UpdateAuthUserLastAuthenticated :exec
-update auth_user set last_authenticated=now() where address=$1
+const updateAuthUserAddress = `-- name: UpdateAuthUserAddress :exec
+update auth_user set address=$2 where id=$1
 `
 
-func (q *Queries) UpdateAuthUserLastAuthenticated(ctx context.Context, address string) error {
-	_, err := q.db.ExecContext(ctx, updateAuthUserLastAuthenticated, address)
+type UpdateAuthUserAddressParams struct {
+	ID      string
+	Address sql.NullString
+}
+
+func (q *Queries) UpdateAuthUserAddress(ctx context.Context, arg UpdateAuthUserAddressParams) error {
+	_, err := q.db.ExecContext(ctx, updateAuthUserAddress, arg.ID, arg.Address)
+	return err
+}
+
+const updateAuthUserEmail = `-- name: UpdateAuthUserEmail :exec
+update auth_user set email=$2 where id=$1
+`
+
+type UpdateAuthUserEmailParams struct {
+	ID    string
+	Email sql.NullString
+}
+
+func (q *Queries) UpdateAuthUserEmail(ctx context.Context, arg UpdateAuthUserEmailParams) error {
+	_, err := q.db.ExecContext(ctx, updateAuthUserEmail, arg.ID, arg.Email)
+	return err
+}
+
+const updateAuthUserUsername = `-- name: UpdateAuthUserUsername :exec
+update auth_user set username=$2 where id=$1
+`
+
+type UpdateAuthUserUsernameParams struct {
+	ID       string
+	Username sql.NullString
+}
+
+func (q *Queries) UpdateAuthUserUsername(ctx context.Context, arg UpdateAuthUserUsernameParams) error {
+	_, err := q.db.ExecContext(ctx, updateAuthUserUsername, arg.ID, arg.Username)
 	return err
 }
 

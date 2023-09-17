@@ -1,8 +1,20 @@
--- name: InsertAuthUser :exec
-insert into auth_user (address, created_at, last_authenticated) values ($1, now(), now());
+-- name: InsertAuthUserWithEmail :exec
+insert into auth_user (id, email, created_at) values (gen_random_uuid(), $1, now());
 
--- name: UpdateAuthUserLastAuthenticated :exec
-update auth_user set last_authenticated=now() where address=$1;
+-- name: InsertAuthUserWithAddress :exec
+insert into auth_user (id, address, created_at) values (gen_random_uuid(), $1, now());
+
+-- name: InsertAuthUserWithUsername :exec
+insert into auth_user (id, username, created_at) values (gen_random_uuid(), $1, now());
+
+-- name: UpdateAuthUserEmail :exec
+update auth_user set email=$2 where id=$1;
+
+-- name: UpdateAuthUserAddress :exec
+update auth_user set address=$2 where id=$1;
+
+-- name: UpdateAuthUserUsername :exec
+update auth_user set username=$2 where id=$1;
 
 -- name: InsertData :exec
 insert into data (iri, jsonld) values ($1, $2);

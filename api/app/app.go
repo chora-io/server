@@ -42,6 +42,7 @@ func Initialize(cfg Config, log zerolog.Logger) *App {
 
 	// auth requests
 	app.post("/auth", app.handleAuthRequest(PostAuth))
+	app.post("/auth/email", app.handleAuthRequest(PostAuthEmail))
 	app.post("/auth/keplr", app.handleAuthRequest(PostAuthKeplr))
 	app.post("/auth/login", app.handleAuthRequest(PostAuthLogin))
 

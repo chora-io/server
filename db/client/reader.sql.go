@@ -7,17 +7,75 @@ package client
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 )
 
 const selectAuthUser = `-- name: SelectAuthUser :one
-select address, created_at, last_authenticated from auth_user where address=$1
+select id, email, address, username, created_at from auth_user where id=$1
 `
 
-func (q *Queries) SelectAuthUser(ctx context.Context, address string) (AuthUser, error) {
-	row := q.db.QueryRowContext(ctx, selectAuthUser, address)
+func (q *Queries) SelectAuthUser(ctx context.Context, id string) (AuthUser, error) {
+	row := q.db.QueryRowContext(ctx, selectAuthUser, id)
 	var i AuthUser
-	err := row.Scan(&i.Address, &i.CreatedAt, &i.LastAuthenticated)
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Address,
+		&i.Username,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const selectAuthUserByAddress = `-- name: SelectAuthUserByAddress :one
+select id, email, address, username, created_at from auth_user where address=$1
+`
+
+func (q *Queries) SelectAuthUserByAddress(ctx context.Context, address sql.NullString) (AuthUser, error) {
+	row := q.db.QueryRowContext(ctx, selectAuthUserByAddress, address)
+	var i AuthUser
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Address,
+		&i.Username,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const selectAuthUserByEmail = `-- name: SelectAuthUserByEmail :one
+select id, email, address, username, created_at from auth_user where email=$1
+`
+
+func (q *Queries) SelectAuthUserByEmail(ctx context.Context, email sql.NullString) (AuthUser, error) {
+	row := q.db.QueryRowContext(ctx, selectAuthUserByEmail, email)
+	var i AuthUser
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Address,
+		&i.Username,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const selectAuthUserByUsername = `-- name: SelectAuthUserByUsername :one
+select id, email, address, username, created_at from auth_user where username=$1
+`
+
+func (q *Queries) SelectAuthUserByUsername(ctx context.Context, username sql.NullString) (AuthUser, error) {
+	row := q.db.QueryRowContext(ctx, selectAuthUserByUsername, username)
+	var i AuthUser
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Address,
+		&i.Username,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 

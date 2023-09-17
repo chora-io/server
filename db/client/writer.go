@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 )
 
@@ -10,11 +11,23 @@ type Writer interface {
 
 	// auth queries
 
-	// InsertAuthUser writes data to the database.
-	InsertAuthUser(ctx context.Context, address string) error
+	// InsertAuthUserWithEmail writes data to the database.
+	InsertAuthUserWithEmail(ctx context.Context, email string) error
 
-	// UpdateAuthUserLastAuthenticated writes data to the database.
-	UpdateAuthUserLastAuthenticated(ctx context.Context, address string) error
+	// InsertAuthUserWithAddress writes data to the database.
+	InsertAuthUserWithAddress(ctx context.Context, address string) error
+
+	// InsertAuthUserWithUsername writes data to the database.
+	InsertAuthUserWithUsername(ctx context.Context, username string) error
+
+	// UpdateAuthUserEmail writes data to the database.
+	UpdateAuthUserEmail(ctx context.Context, userId string, email string) error
+
+	// UpdateAuthUserAddress writes data to the database.
+	UpdateAuthUserAddress(ctx context.Context, userId string, address string) error
+
+	// UpdateAuthUserUsername writes data to the database.
+	UpdateAuthUserUsername(ctx context.Context, userId string, username string) error
 
 	// data queries
 
@@ -53,12 +66,55 @@ type writer struct {
 
 // auth queries
 
-func (w *writer) InsertAuthUser(ctx context.Context, address string) error {
-	return w.q.InsertAuthUser(ctx, address)
+func (w *writer) InsertAuthUserWithEmail(ctx context.Context, email string) error {
+	return w.q.InsertAuthUserWithEmail(ctx, sql.NullString{
+		String: email,
+		Valid:  len(email) > 0,
+	})
 }
 
-func (w *writer) UpdateAuthUserLastAuthenticated(ctx context.Context, address string) error {
-	return w.q.UpdateAuthUserLastAuthenticated(ctx, address)
+func (w *writer) InsertAuthUserWithAddress(ctx context.Context, address string) error {
+	return w.q.InsertAuthUserWithAddress(ctx, sql.NullString{
+		String: address,
+		Valid:  len(address) > 0,
+	})
+}
+
+func (w *writer) InsertAuthUserWithUsername(ctx context.Context, username string) error {
+	return w.q.InsertAuthUserWithUsername(ctx, sql.NullString{
+		String: username,
+		Valid:  len(username) > 0,
+	})
+}
+
+func (w *writer) UpdateAuthUserEmail(ctx context.Context, userId string, email string) error {
+	return w.q.UpdateAuthUserEmail(ctx, UpdateAuthUserEmailParams{
+		ID: userId,
+		Email: sql.NullString{
+			String: email,
+			Valid:  len(email) > 0,
+		},
+	})
+}
+
+func (w *writer) UpdateAuthUserAddress(ctx context.Context, userId string, address string) error {
+	return w.q.UpdateAuthUserAddress(ctx, UpdateAuthUserAddressParams{
+		ID: userId,
+		Address: sql.NullString{
+			String: address,
+			Valid:  len(address) > 0,
+		},
+	})
+}
+
+func (w *writer) UpdateAuthUserUsername(ctx context.Context, userId string, username string) error {
+	return w.q.UpdateAuthUserUsername(ctx, UpdateAuthUserUsernameParams{
+		ID: userId,
+		Username: sql.NullString{
+			String: username,
+			Valid:  len(username) > 0,
+		},
+	})
 }
 
 // data queries

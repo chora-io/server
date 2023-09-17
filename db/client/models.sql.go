@@ -5,15 +5,18 @@
 package client
 
 import (
+	"database/sql"
 	"encoding/json"
 	"time"
 )
 
 // authenticated user
 type AuthUser struct {
-	Address           string
-	CreatedAt         time.Time
-	LastAuthenticated time.Time
+	ID        string
+	Email     sql.NullString
+	Address   sql.NullString
+	Username  sql.NullString
+	CreatedAt time.Time
 }
 
 // the data table stores linked data

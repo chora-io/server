@@ -25,30 +25,118 @@ func PostAuth(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWriter, 
 		return
 	}
 
-	// TODO: verify address is associated with token
-
-	// verify auth user exists
-	_, err = dbr.SelectAuthUser(r.Context(), req.Address)
-	if err != nil {
-		respondError(rw, http.StatusNotFound, err.Error())
-		return
-	}
-
-	// validate jwt token
-	err = auth.ValidateJWT(jsk, req.Token)
+	// validate jwt token and return subject
+	sub, err := auth.ValidateJWT(jsk, req.Token)
 	if err != nil {
 		respondError(rw, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	// update last authenticated
-	err = dbw.UpdateAuthUserLastAuthenticated(r.Context(), req.Address)
+	// get user from database using subject (user id)
+	user, err := dbr.SelectAuthUser(r.Context(), sub)
 	if err != nil {
 		respondError(rw, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondJSON(rw, http.StatusOK, NewPostAuthResponse(true))
+	respondJSON(rw, http.StatusOK, NewPostAuthResponse(UserInfo{
+		Id:        user.ID,
+		Email:     user.Email.String,
+		Address:   user.Address.String,
+		Username:  user.Username.String,
+		CreatedAt: user.CreatedAt,
+	}))
+}
+
+func PostAuthEmail(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
+	var req PostAuthEmailRequest
+
+	bz, err := io.ReadAll(r.Body)
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err = json.Unmarshal(bz, &req)
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if req.Email == "" {
+		respondError(rw, http.StatusBadRequest, "email cannot be empty")
+		return
+	}
+
+	// TODO: require access code
+	//if req.AccessCode == "" {
+	//	respondError(rw, http.StatusBadRequest, "access code cannot be empty")
+	//	return
+	//}
+
+	// declare auth user
+	var user db.AuthUser
+
+	// check for existing auth user if token provided
+	if req.Token != "" {
+
+		// validate jwt token and return subject
+		sub, err := auth.ValidateJWT(jsk, req.Token)
+		if err != nil {
+			respondError(rw, http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		// add or update email address for authenticated user
+		err = dbw.UpdateAuthUserEmail(r.Context(), sub, req.Email) // TODO: access code
+		if err != nil {
+			respondError(rw, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		// get user from database using subject (user id)
+		user, err = dbr.SelectAuthUser(r.Context(), sub)
+		if err != nil {
+			respondError(rw, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+	} else {
+
+		// check for existing auth user and create if not found
+		user, err = dbr.SelectAuthUserByEmail(r.Context(), req.Email) // TODO: access code
+		if err != nil {
+
+			// insert auth user with email
+			err = dbw.InsertAuthUserWithEmail(r.Context(), req.Email)
+			if err != nil {
+				respondError(rw, http.StatusInternalServerError, err.Error())
+				return
+			}
+
+			// get new auth user by email
+			user, err = dbr.SelectAuthUserByEmail(r.Context(), req.Email) // TODO: access code
+			if err != nil {
+				respondError(rw, http.StatusInternalServerError, err.Error())
+				return
+			}
+		}
+	}
+
+	// generate new jwt token using user id
+	token, err := auth.GenerateJWT(jsk, user.ID)
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondJSON(rw, http.StatusOK, NewPostAuthEmailResponse(token, UserInfo{
+		Id:        user.ID,
+		Email:     user.Email.String,
+		Address:   user.Address.String,
+		Username:  user.Username.String,
+		CreatedAt: user.CreatedAt,
+	}))
 }
 
 func PostAuthKeplr(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
@@ -66,39 +154,85 @@ func PostAuthKeplr(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 		return
 	}
 
+	if req.Address == "" {
+		respondError(rw, http.StatusBadRequest, "address cannot be empty")
+		return
+	}
+
+	if req.Signature == "" {
+		respondError(rw, http.StatusBadRequest, "signature cannot be empty")
+		return
+	}
+
 	// address must be a chora address
 	if !strings.Contains(req.Address, "chora") {
-		respondError(rw, http.StatusBadRequest, "invalid address")
+		respondError(rw, http.StatusBadRequest, "address must be a chora address")
 		return
 	}
 
-	// generate jwt token using address
-	token, err := auth.GenerateJWT(jsk, req.Address, req.Signature)
-	if err != nil {
-		respondError(rw, http.StatusInternalServerError, err.Error())
-		return
-	}
+	// declare auth user
+	var user db.AuthUser
 
-	// check if auth user exists
-	_, err = dbr.SelectAuthUser(r.Context(), req.Address)
-	if err != nil {
+	// check for existing auth user if token provided
+	if req.Token != "" {
 
-		// insert auth user
-		err = dbw.InsertAuthUser(r.Context(), req.Address)
+		// validate jwt token and return subject
+		sub, err := auth.ValidateJWT(jsk, req.Token)
+		if err != nil {
+			respondError(rw, http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		// add or update chora address for authenticated user
+		err = dbw.UpdateAuthUserAddress(r.Context(), sub, req.Address) // TODO: signature
 		if err != nil {
 			respondError(rw, http.StatusInternalServerError, err.Error())
 			return
 		}
+
+		// get user from database using subject (user id)
+		user, err = dbr.SelectAuthUser(r.Context(), sub)
+		if err != nil {
+			respondError(rw, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+	} else {
+
+		// check for existing auth user if not found
+		user, err = dbr.SelectAuthUserByAddress(r.Context(), req.Address) // TODO: signature
+		if err != nil {
+
+			// insert auth user with address (email not available)
+			err = dbw.InsertAuthUserWithAddress(r.Context(), req.Address)
+			if err != nil {
+				respondError(rw, http.StatusInternalServerError, err.Error())
+				return
+			}
+
+			// get new auth user by address
+			user, err = dbr.SelectAuthUserByAddress(r.Context(), req.Address) // TODO: signature
+			if err != nil {
+				respondError(rw, http.StatusInternalServerError, err.Error())
+				return
+			}
+		}
 	}
 
-	// update last authenticated
-	err = dbw.UpdateAuthUserLastAuthenticated(r.Context(), req.Address)
+	// generate new jwt token using user id
+	token, err := auth.GenerateJWT(jsk, user.ID)
 	if err != nil {
 		respondError(rw, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondJSON(rw, http.StatusOK, NewPostAuthKeplrResponse(token, true))
+	respondJSON(rw, http.StatusOK, NewPostAuthKeplrResponse(token, UserInfo{
+		Id:        user.ID,
+		Email:     user.Email.String,
+		Address:   user.Address.String,
+		Username:  user.Username.String,
+		CreatedAt: user.CreatedAt,
+	}))
 }
 
 func PostAuthLogin(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
@@ -116,35 +250,81 @@ func PostAuthLogin(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 		return
 	}
 
-	// TODO: create or access custodial account
-	address := "[custodial account address]"
-	signature := "[custodial account signature]"
-
-	// generate jwt token using address
-	token, err := auth.GenerateJWT(jsk, address, signature)
-	if err != nil {
-		respondError(rw, http.StatusInternalServerError, err.Error())
+	if req.Username == "" {
+		respondError(rw, http.StatusBadRequest, "username cannot be empty")
 		return
 	}
 
-	// check if auth user exists
-	_, err = dbr.SelectAuthUser(r.Context(), address)
-	if err != nil {
+	// TODO: require password
+	//if req.Password == "" {
+	//	respondError(rw, http.StatusBadRequest, "password cannot be empty")
+	//	return
+	//}
 
-		// insert auth user
-		err = dbw.InsertAuthUser(r.Context(), address)
+	// declare auth user
+	var user db.AuthUser
+
+	// TODO: hash and store hashed password in database
+	// hashedPassword := req.Password
+
+	// check for existing auth user if token provided
+	if req.Token != "" {
+
+		// validate jwt token and return subject
+		sub, err := auth.ValidateJWT(jsk, req.Token)
+		if err != nil {
+			respondError(rw, http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		// add or update username for authenticated user
+		err = dbw.UpdateAuthUserUsername(r.Context(), sub, req.Username) // TODO: hashed password
 		if err != nil {
 			respondError(rw, http.StatusInternalServerError, err.Error())
 			return
 		}
+
+		// get user from database using subject (user id)
+		user, err = dbr.SelectAuthUser(r.Context(), sub)
+		if err != nil {
+			respondError(rw, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+	} else {
+
+		// check for existing auth user and create if not found
+		user, err = dbr.SelectAuthUserByUsername(r.Context(), req.Username) // TODO: hashed password
+		if err != nil {
+
+			// insert auth user with username
+			err = dbw.InsertAuthUserWithUsername(r.Context(), req.Username)
+			if err != nil {
+				respondError(rw, http.StatusInternalServerError, err.Error())
+				return
+			}
+
+			// get new auth user by username
+			user, err = dbr.SelectAuthUserByUsername(r.Context(), req.Username) // TODO: hashed password
+			if err != nil {
+				respondError(rw, http.StatusInternalServerError, err.Error())
+				return
+			}
+		}
 	}
 
-	// update last authenticated
-	err = dbw.UpdateAuthUserLastAuthenticated(r.Context(), address)
+	// generate new jwt token using user id
+	token, err := auth.GenerateJWT(jsk, user.ID)
 	if err != nil {
 		respondError(rw, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondJSON(rw, http.StatusOK, NewPostAuthLoginResponse(token, true))
+	respondJSON(rw, http.StatusOK, NewPostAuthLoginResponse(token, UserInfo{
+		Id:        user.ID,
+		Email:     user.Email.String,
+		Address:   user.Address.String,
+		Username:  user.Username.String,
+		CreatedAt: user.CreatedAt,
+	}))
 }
