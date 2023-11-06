@@ -13,8 +13,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/piprate/json-gold/ld"
 
-	"github.com/choraio/server/api/regen"
-	db "github.com/choraio/server/db/client"
+	"github.com/chora-io/server/api/regen"
+	db "github.com/chora-io/server/db/client"
 )
 
 func GetData(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {

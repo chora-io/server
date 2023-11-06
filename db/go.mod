@@ -1,4 +1,4 @@
-module github.com/choraio/server/db
+module github.com/chora-io/server/db
 
 go 1.20
 

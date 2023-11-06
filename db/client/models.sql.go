@@ -13,8 +13,8 @@ import (
 // authenticated user
 type AuthUser struct {
 	ID        string
-	Email     sql.NullString
 	Address   sql.NullString
+	Email     sql.NullString
 	Username  sql.NullString
 	CreatedAt time.Time
 }

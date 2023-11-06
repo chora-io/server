@@ -1,9 +1,9 @@
-module github.com/choraio/server/idx
+module github.com/chora-io/server/idx
 
 go 1.20
 
 require (
-	github.com/choraio/server/db v0.0.0
+	github.com/chora-io/server/db v0.0.0
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/rs/zerolog v1.29.1
 	github.com/spf13/cobra v1.6.1
@@ -128,4 +128,4 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-replace github.com/choraio/server/db => ../db
+replace github.com/chora-io/server/db => ../db

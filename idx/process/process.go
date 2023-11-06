@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/choraio/server/idx/client"
+	"github.com/chora-io/server/idx/client"
 )
 
 // Function is the function used to advance the process.

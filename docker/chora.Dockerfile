@@ -8,7 +8,7 @@ RUN apt-get update
 RUN apt-get install jq -y
 
 # clone chora repository
-RUN git clone https://github.com/choraio/chora /home/chora
+RUN git clone https://github.com/chora-io/chora /home/chora
 
 # set working directory
 WORKDIR /home/chora

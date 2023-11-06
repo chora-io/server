@@ -7,7 +7,7 @@
 ## Installation
 
 ```
-go install github.com/choraio/server/cmd/idx@latest
+go install github.com/chora-io/server/cmd/idx@latest
 ```
 
 ## Usage

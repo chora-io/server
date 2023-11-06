@@ -30,9 +30,9 @@ import (
 	//intertxmodule "github.com/regen-network/regen-ledger/x/intertx/module"
 	//
 	// TODO: add chora modules / update cosmos sdk version
-	//contentmodule "github.com/choraio/mods/content/module"
-	//geonodemodule "github.com/choraio/mods/geonode/module"
-	//vouchermodule "github.com/choraio/mods/voucher/module"
+	//contentmodule "github.com/chora-io/mods/content/module"
+	//geonodemodule "github.com/chora-io/mods/geonode/module"
+	//vouchermodule "github.com/chora-io/mods/voucher/module"
 )
 
 var ModuleBasics = []module.AppModuleBasic{

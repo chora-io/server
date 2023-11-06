@@ -1,10 +1,10 @@
-module github.com/choraio/server
+module github.com/chora-io/server
 
 go 1.20
 
 require (
-	github.com/choraio/server/api v0.0.0
-	github.com/choraio/server/idx v0.0.0
+	github.com/chora-io/server/api v0.0.0
+	github.com/chora-io/server/idx v0.0.0
 )
 
 require (
@@ -23,8 +23,8 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
-	github.com/choraio/server/auth v0.0.0 // indirect
-	github.com/choraio/server/db v0.0.0 // indirect
+	github.com/chora-io/server/auth v0.0.0 // indirect
+	github.com/chora-io/server/db v0.0.0 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/cometbft/cometbft v0.37.1 // indirect
@@ -135,8 +135,8 @@ require (
 )
 
 replace (
-	github.com/choraio/server/api => ./api
-	github.com/choraio/server/auth => ./auth
-	github.com/choraio/server/db => ./db
-	github.com/choraio/server/idx => ./idx
+	github.com/chora-io/server/api => ./api
+	github.com/chora-io/server/auth => ./auth
+	github.com/chora-io/server/db => ./db
+	github.com/chora-io/server/idx => ./idx
 )

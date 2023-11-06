@@ -1,17 +1,17 @@
--- name: InsertAuthUserWithEmail :exec
-insert into auth_user (id, email, created_at) values (gen_random_uuid(), $1, now());
-
 -- name: InsertAuthUserWithAddress :exec
 insert into auth_user (id, address, created_at) values (gen_random_uuid(), $1, now());
+
+-- name: InsertAuthUserWithEmail :exec
+insert into auth_user (id, email, created_at) values (gen_random_uuid(), $1, now());
 
 -- name: InsertAuthUserWithUsername :exec
 insert into auth_user (id, username, created_at) values (gen_random_uuid(), $1, now());
 
--- name: UpdateAuthUserEmail :exec
-update auth_user set email=$2 where id=$1;
-
 -- name: UpdateAuthUserAddress :exec
 update auth_user set address=$2 where id=$1;
+
+-- name: UpdateAuthUserEmail :exec
+update auth_user set email=$2 where id=$1;
 
 -- name: UpdateAuthUserUsername :exec
 update auth_user set username=$2 where id=$1;

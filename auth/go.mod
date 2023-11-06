@@ -1,4 +1,4 @@
-module github.com/choraio/server/auth
+module github.com/chora-io/server/auth
 
 go 1.20
 

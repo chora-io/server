@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/choraio/server/rdf/client"
+	"github.com/chora-io/server/rdf/client"
 )
 
 func main() {

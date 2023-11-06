@@ -9,7 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	db "github.com/choraio/server/db/client"
+	db "github.com/chora-io/server/db/client"
 )
 
 func GetIdxGroupProposal(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {

@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/choraio/server/idx/config"
-	"github.com/choraio/server/idx/process"
+	"github.com/chora-io/server/idx/config"
+	"github.com/chora-io/server/idx/process"
 )
 
 // Runner runs continuous background processes.

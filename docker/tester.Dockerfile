@@ -8,7 +8,7 @@ RUN apt-get install jq libpq-dev postgresql-client -y
 ENV GIT_CHECKOUT='main'
 
 # clone chora repository
-RUN git clone https://github.com/choraio/chora /home/tester
+RUN git clone https://github.com/chora-io/chora /home/tester
 
 # set working directory
 WORKDIR /home/tester

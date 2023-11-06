@@ -12,7 +12,7 @@ import (
 )
 
 const selectAuthUser = `-- name: SelectAuthUser :one
-select id, email, address, username, created_at from auth_user where id=$1
+select id, address, email, username, created_at from auth_user where id=$1
 `
 
 func (q *Queries) SelectAuthUser(ctx context.Context, id string) (AuthUser, error) {
@@ -20,8 +20,8 @@ func (q *Queries) SelectAuthUser(ctx context.Context, id string) (AuthUser, erro
 	var i AuthUser
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
 		&i.Address,
+		&i.Email,
 		&i.Username,
 		&i.CreatedAt,
 	)
@@ -29,7 +29,7 @@ func (q *Queries) SelectAuthUser(ctx context.Context, id string) (AuthUser, erro
 }
 
 const selectAuthUserByAddress = `-- name: SelectAuthUserByAddress :one
-select id, email, address, username, created_at from auth_user where address=$1
+select id, address, email, username, created_at from auth_user where address=$1
 `
 
 func (q *Queries) SelectAuthUserByAddress(ctx context.Context, address sql.NullString) (AuthUser, error) {
@@ -37,8 +37,8 @@ func (q *Queries) SelectAuthUserByAddress(ctx context.Context, address sql.NullS
 	var i AuthUser
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
 		&i.Address,
+		&i.Email,
 		&i.Username,
 		&i.CreatedAt,
 	)
@@ -46,7 +46,7 @@ func (q *Queries) SelectAuthUserByAddress(ctx context.Context, address sql.NullS
 }
 
 const selectAuthUserByEmail = `-- name: SelectAuthUserByEmail :one
-select id, email, address, username, created_at from auth_user where email=$1
+select id, address, email, username, created_at from auth_user where email=$1
 `
 
 func (q *Queries) SelectAuthUserByEmail(ctx context.Context, email sql.NullString) (AuthUser, error) {
@@ -54,8 +54,8 @@ func (q *Queries) SelectAuthUserByEmail(ctx context.Context, email sql.NullStrin
 	var i AuthUser
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
 		&i.Address,
+		&i.Email,
 		&i.Username,
 		&i.CreatedAt,
 	)
@@ -63,7 +63,7 @@ func (q *Queries) SelectAuthUserByEmail(ctx context.Context, email sql.NullStrin
 }
 
 const selectAuthUserByUsername = `-- name: SelectAuthUserByUsername :one
-select id, email, address, username, created_at from auth_user where username=$1
+select id, address, email, username, created_at from auth_user where username=$1
 `
 
 func (q *Queries) SelectAuthUserByUsername(ctx context.Context, username sql.NullString) (AuthUser, error) {
@@ -71,8 +71,8 @@ func (q *Queries) SelectAuthUserByUsername(ctx context.Context, username sql.Nul
 	var i AuthUser
 	err := row.Scan(
 		&i.ID,
-		&i.Email,
 		&i.Address,
+		&i.Email,
 		&i.Username,
 		&i.CreatedAt,
 	)

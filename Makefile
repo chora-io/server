@@ -89,7 +89,7 @@ e2e:
 ###############################################################################
 
 docs:
-	@echo "Wait a few seconds and then visit http://localhost:6060/pkg/github.com/choraio/server/"
+	@echo "Wait a few seconds and then visit http://localhost:6060/pkg/github.com/chora-io/server/"
 	godoc -http=:6060
 
 .PHONY: docs
@@ -122,7 +122,7 @@ lint-fix: format
 
 format_filter = -name '*.go' -type f
 
-format_local = github.com/choraio/server
+format_local = github.com/chora-io/server
 
 format:
 	@echo "Formatting all go modules..."

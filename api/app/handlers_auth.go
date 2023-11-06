@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/choraio/server/auth"
-	db "github.com/choraio/server/db/client"
+	"github.com/chora-io/server/auth"
+	db "github.com/chora-io/server/db/client"
 )
 
 func PostAuth(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
@@ -87,8 +87,10 @@ func PostAuthEmail(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 			return
 		}
 
+		// TODO: validate email access code
+
 		// add or update email address for authenticated user
-		err = dbw.UpdateAuthUserEmail(r.Context(), sub, req.Email) // TODO: access code
+		err = dbw.UpdateAuthUserEmail(r.Context(), sub, req.Email)
 		if err != nil {
 			respondError(rw, http.StatusInternalServerError, err.Error())
 			return
@@ -104,7 +106,7 @@ func PostAuthEmail(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 	} else {
 
 		// check for existing auth user and create if not found
-		user, err = dbr.SelectAuthUserByEmail(r.Context(), req.Email) // TODO: access code
+		user, err = dbr.SelectAuthUserByEmail(r.Context(), req.Email)
 		if err != nil {
 
 			// insert auth user with email
@@ -115,7 +117,7 @@ func PostAuthEmail(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 			}
 
 			// get new auth user by email
-			user, err = dbr.SelectAuthUserByEmail(r.Context(), req.Email) // TODO: access code
+			user, err = dbr.SelectAuthUserByEmail(r.Context(), req.Email)
 			if err != nil {
 				respondError(rw, http.StatusInternalServerError, err.Error())
 				return
@@ -183,8 +185,10 @@ func PostAuthKeplr(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 			return
 		}
 
+		// TODO: validate keplr account signature
+
 		// add or update chora address for authenticated user
-		err = dbw.UpdateAuthUserAddress(r.Context(), sub, req.Address) // TODO: signature
+		err = dbw.UpdateAuthUserAddress(r.Context(), sub, req.Address)
 		if err != nil {
 			respondError(rw, http.StatusInternalServerError, err.Error())
 			return
@@ -200,10 +204,10 @@ func PostAuthKeplr(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 	} else {
 
 		// check for existing auth user if not found
-		user, err = dbr.SelectAuthUserByAddress(r.Context(), req.Address) // TODO: signature
+		user, err = dbr.SelectAuthUserByAddress(r.Context(), req.Address)
 		if err != nil {
 
-			// insert auth user with address (email not available)
+			// insert auth user with address
 			err = dbw.InsertAuthUserWithAddress(r.Context(), req.Address)
 			if err != nil {
 				respondError(rw, http.StatusInternalServerError, err.Error())
@@ -211,7 +215,7 @@ func PostAuthKeplr(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 			}
 
 			// get new auth user by address
-			user, err = dbr.SelectAuthUserByAddress(r.Context(), req.Address) // TODO: signature
+			user, err = dbr.SelectAuthUserByAddress(r.Context(), req.Address)
 			if err != nil {
 				respondError(rw, http.StatusInternalServerError, err.Error())
 				return
@@ -264,7 +268,7 @@ func PostAuthLogin(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 	// declare auth user
 	var user db.AuthUser
 
-	// TODO: hash and store hashed password in database
+	// TODO: hash password
 	// hashedPassword := req.Password
 
 	// check for existing auth user if token provided
@@ -277,8 +281,10 @@ func PostAuthLogin(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 			return
 		}
 
+		// TODO: validate hashed password
+
 		// add or update username for authenticated user
-		err = dbw.UpdateAuthUserUsername(r.Context(), sub, req.Username) // TODO: hashed password
+		err = dbw.UpdateAuthUserUsername(r.Context(), sub, req.Username)
 		if err != nil {
 			respondError(rw, http.StatusInternalServerError, err.Error())
 			return
@@ -294,7 +300,7 @@ func PostAuthLogin(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 	} else {
 
 		// check for existing auth user and create if not found
-		user, err = dbr.SelectAuthUserByUsername(r.Context(), req.Username) // TODO: hashed password
+		user, err = dbr.SelectAuthUserByUsername(r.Context(), req.Username)
 		if err != nil {
 
 			// insert auth user with username
@@ -305,7 +311,7 @@ func PostAuthLogin(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 			}
 
 			// get new auth user by username
-			user, err = dbr.SelectAuthUserByUsername(r.Context(), req.Username) // TODO: hashed password
+			user, err = dbr.SelectAuthUserByUsername(r.Context(), req.Username)
 			if err != nil {
 				respondError(rw, http.StatusInternalServerError, err.Error())
 				return

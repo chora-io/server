@@ -10,7 +10,7 @@ import (
 	sqldblogger "github.com/simukti/sqldb-logger"
 	"github.com/simukti/sqldb-logger/logadapter/zerologadapter"
 
-	"github.com/choraio/server/db/migrations"
+	"github.com/chora-io/server/db/migrations"
 )
 
 //go:generate sqlc generate

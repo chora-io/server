@@ -9,11 +9,11 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 
-	db "github.com/choraio/server/db/client"
-	"github.com/choraio/server/idx/client"
-	"github.com/choraio/server/idx/config"
-	"github.com/choraio/server/idx/process"
-	"github.com/choraio/server/idx/runner"
+	db "github.com/chora-io/server/db/client"
+	"github.com/chora-io/server/idx/client"
+	"github.com/chora-io/server/idx/config"
+	"github.com/chora-io/server/idx/process"
+	"github.com/chora-io/server/idx/runner"
 )
 
 const (

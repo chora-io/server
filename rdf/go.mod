@@ -1,3 +1,3 @@
-module github.com/choraio/server/rdf
+module github.com/chora-io/server/rdf
 
 go 1.20

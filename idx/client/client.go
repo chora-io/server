@@ -7,8 +7,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/group"
 	"github.com/rs/zerolog"
 
-	db "github.com/choraio/server/db/client"
-	"github.com/choraio/server/idx/client/cosmos"
+	db "github.com/chora-io/server/db/client"
+	"github.com/chora-io/server/idx/client/cosmos"
 )
 
 // Client is the client.

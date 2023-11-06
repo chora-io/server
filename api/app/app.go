@@ -10,7 +10,7 @@ import (
 	"github.com/rs/zerolog"
 	_ "golang.org/x/crypto/blake2b"
 
-	db "github.com/choraio/server/db/client"
+	db "github.com/chora-io/server/db/client"
 )
 
 type App struct {

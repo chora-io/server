@@ -14,11 +14,11 @@ type Reader interface {
 	// SelectAuthUser reads data from the database.
 	SelectAuthUser(ctx context.Context, userId string) (AuthUser, error)
 
-	// SelectAuthUserByEmail reads data from the database.
-	SelectAuthUserByEmail(ctx context.Context, email string) (AuthUser, error)
-
 	// SelectAuthUserByAddress reads data from the database.
 	SelectAuthUserByAddress(ctx context.Context, address string) (AuthUser, error)
+
+	// SelectAuthUserByEmail reads data from the database.
+	SelectAuthUserByEmail(ctx context.Context, email string) (AuthUser, error)
 
 	// SelectAuthUserByUsername reads data from the database.
 	SelectAuthUserByUsername(ctx context.Context, username string) (AuthUser, error)
@@ -64,19 +64,19 @@ func (r *reader) SelectAuthUser(ctx context.Context, userId string) (AuthUser, e
 	return r.q.SelectAuthUser(ctx, userId)
 }
 
-// SelectAuthUserByEmail reads data from the database.
-func (r *reader) SelectAuthUserByEmail(ctx context.Context, email string) (AuthUser, error) {
-	return r.q.SelectAuthUserByEmail(ctx, sql.NullString{
-		String: email,
-		Valid:  len(email) > 0,
-	})
-}
-
 // SelectAuthUserByAddress reads data from the database.
 func (r *reader) SelectAuthUserByAddress(ctx context.Context, address string) (AuthUser, error) {
 	return r.q.SelectAuthUserByAddress(ctx, sql.NullString{
 		String: address,
 		Valid:  len(address) > 0,
+	})
+}
+
+// SelectAuthUserByEmail reads data from the database.
+func (r *reader) SelectAuthUserByEmail(ctx context.Context, email string) (AuthUser, error) {
+	return r.q.SelectAuthUserByEmail(ctx, sql.NullString{
+		String: email,
+		Valid:  len(email) > 0,
 	})
 }
 

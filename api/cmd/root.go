@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 
-	"github.com/choraio/server/api/app"
+	"github.com/chora-io/server/api/app"
 )
 
 func NewRootCmd() *cobra.Command {

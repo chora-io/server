@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/choraio/server/api/cmd"
+	"github.com/chora-io/server/api/cmd"
 )
 
 func main() {

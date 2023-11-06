@@ -3,7 +3,7 @@ package app
 import (
 	"net/http"
 
-	db "github.com/choraio/server/db/client"
+	db "github.com/chora-io/server/db/client"
 )
 
 type AuthHandler func(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWriter, r *http.Request)
