@@ -3,7 +3,7 @@
     {
       "allowance": {
         "@type": "/cosmos.feegrant.v1beta1.BasicAllowance",
-        "expiration": "2024-01-01T08:00:00Z",
+        "expiration": "2025-01-01T08:00:00Z",
         "spend_limit": [
       {
         "amount": "100",
@@ -17,7 +17,7 @@
     {
       "allowance": {
         "@type": "/cosmos.feegrant.v1beta1.BasicAllowance",
-        "expiration": "2024-01-01T08:00:00Z",
+        "expiration": "2025-01-01T08:00:00Z",
         "spend_limit": [
       {
         "amount": "100",
@@ -31,7 +31,7 @@
     {
       "allowance": {
         "@type": "/cosmos.feegrant.v1beta1.BasicAllowance",
-        "expiration": "2024-01-01T08:00:00Z",
+        "expiration": "2025-01-01T08:00:00Z",
         "spend_limit": [
       {
         "amount": "100",
@@ -45,7 +45,7 @@
     {
       "allowance": {
         "@type": "/cosmos.feegrant.v1beta1.BasicAllowance",
-        "expiration": "2024-01-01T08:00:00Z",
+        "expiration": "2025-01-01T08:00:00Z",
         "spend_limit": [
       {
         "amount": "100",

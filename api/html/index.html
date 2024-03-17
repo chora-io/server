@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>chora | server</title>
+<title>chora server</title>
 <style>
   body {
     width: 90vw;
@@ -26,12 +26,17 @@ get data: <i>https://server.chora.io/data/{iri}</i>
 post data: <i>https://server.chora.io/data</i>
 </li>
 <li>
-get group proposal: <i>https://server.chora.io/idx/{chain-id}/group-proposal/{proposal_id}</i>
+get indexed group proposal: <i>https://server.chora.io/idx/{chain-id}/group-proposal/{proposal_id}</i>
 </li>
 <li>
-get group proposals: <i>https://server.chora.io/idx/{chain-id}/group-proposals</i>
+get indexed group proposals: <i>https://server.chora.io/idx/{chain-id}/group-proposals/{group_id}</i>
+</li>
+<li>
+get indexed group vote: <i>https://server.chora.io/idx/{chain-id}/group-vote/{proposal_id}/{voter}</i>
+</li>
+<li>
+get indexed group votes: <i>https://server.chora.io/idx/{chain-id}/group-votes/{proposal_id}</i>
 </li>
 </ul>
-<p><em>Thank you for using our services!</em></p>
 </body>
 </html>

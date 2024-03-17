@@ -1,4 +1,4 @@
-FROM golang:1.20
+FROM golang:1.21
 
 # set chora version
 ENV GIT_CHECKOUT='main'
@@ -20,11 +20,11 @@ RUN git checkout $GIT_CHECKOUT
 RUN make install
 
 # initialize validator node
-RUN chora --chain-id chora-local init validator
+RUN chora init validator --chain-id chora-local
 
 # set chora binary configuration
-RUN chora config chain-id chora-local
-RUN chora config keyring-backend test
+RUN chora config set client chain-id chora-local
+RUN chora config set client keyring-backend test
 
 # update stake to uchora
 RUN sed -i "s/stake/uchora/g" /root/.chora/config/genesis.json
@@ -35,23 +35,23 @@ RUN printf "cool trust waste core unusual report duck amazing fault juice wish c
 RUN printf "music debris chicken erode flag law demise over fall always put bounce ring school dumb ivory spin saddle ostrich better seminar heart beach kingdom\n\n" | chora keys --keyring-backend test add user2 -i
 
 # add local validator account to genesis
-RUN chora add-genesis-account validator 1000000000uchora --keyring-backend test
+RUN chora genesis add-genesis-account validator 1000000000uchora --keyring-backend test
 
 # add local test user accounts to genesis
-RUN chora add-genesis-account user1 1000000000uchora --keyring-backend test
-RUN chora add-genesis-account user2 1000000000uchora --keyring-backend test
+RUN chora genesis add-genesis-account user1 1000000000uchora --keyring-backend test
+RUN chora genesis add-genesis-account user2 1000000000uchora --keyring-backend test
 
 # add chora coop user accounts to genesis
-RUN chora add-genesis-account chora1jx34255cgvxpthkg572ma6rhq6crwl6xh7g0md 1000000000uchora
-RUN chora add-genesis-account chora19gayv6d9zx27hs4gfk344wxf3mdx9s2w3vqvr0 1000000000uchora
-RUN chora add-genesis-account chora1k50tgf3jcjjaa6dz63tml7fy8n7wl8v44rpd60 1000000000uchora
-RUN chora add-genesis-account chora1eute2zprd6w0y9apcm6e2gj5exkj3jgzazf7rj 1000000000uchora
+RUN chora genesis add-genesis-account chora1jx34255cgvxpthkg572ma6rhq6crwl6xh7g0md 1000000000uchora
+RUN chora genesis add-genesis-account chora19gayv6d9zx27hs4gfk344wxf3mdx9s2w3vqvr0 1000000000uchora
+RUN chora genesis add-genesis-account chora1k50tgf3jcjjaa6dz63tml7fy8n7wl8v44rpd60 1000000000uchora
+RUN chora genesis add-genesis-account chora1eute2zprd6w0y9apcm6e2gj5exkj3jgzazf7rj 1000000000uchora
 
 # generate validator genesis transaction
-RUN chora gentx validator 1000000uchora
+RUN chora genesis gentx validator 1000000uchora
 
 # prepare genesis file
-RUN chora collect-gentxs
+RUN chora genesis collect-gentxs
 
 # set minimum gas price
 RUN sed -i "s/minimum-gas-prices = \"\"/minimum-gas-prices = \"0uchora\"/" /root/.chora/config/app.toml

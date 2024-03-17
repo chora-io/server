@@ -1,6 +1,6 @@
 module github.com/chora-io/server/idx
 
-go 1.20
+go 1.21
 
 require (
 	github.com/chora-io/server/db v0.0.0

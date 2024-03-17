@@ -5,7 +5,7 @@
         "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
         "msg": "/cosmos.bank.v1beta1.MsgSend"
       },
-      "expiration": "2024-01-01T08:00:00Z",
+      "expiration": "2025-01-01T08:00:00Z",
       "grantee": "chora1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsdnjkmu",
       "granter": "chora1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08eshlxmc0"
     },
@@ -14,7 +14,7 @@
         "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
         "msg": "/cosmos.bank.v1beta1.MsgSend"
       },
-      "expiration": "2024-01-01T08:00:00Z",
+      "expiration": "2025-01-01T08:00:00Z",
       "grantee": "chora1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsdnjkmu",
       "granter": "chora1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvslw4vrd"
     },
@@ -23,7 +23,7 @@
         "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
         "msg": "/cosmos.bank.v1beta1.MsgSend"
       },
-      "expiration": "2024-01-01T08:00:00Z",
+      "expiration": "2025-01-01T08:00:00Z",
       "grantee": "chora1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsdnjkmu",
       "granter": "chora1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqfg0fd7"
     },
@@ -32,7 +32,7 @@
         "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
         "msg": "/cosmos.bank.v1beta1.MsgSend"
       },
-      "expiration": "2024-01-01T08:00:00Z",
+      "expiration": "2025-01-01T08:00:00Z",
       "grantee": "chora1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsdnjkmu",
       "granter": "chora17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtpsy33hf9"
     }

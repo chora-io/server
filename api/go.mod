@@ -1,9 +1,8 @@
 module github.com/chora-io/server/api
 
-go 1.20
+go 1.21
 
 require (
-	github.com/chora-io/server/auth v0.0.0
 	github.com/chora-io/server/db v0.0.0
 	github.com/cosmos/btcutil v1.0.5
 	github.com/gorilla/handlers v1.5.1
@@ -43,6 +42,5 @@ require (
 )
 
 replace (
-	github.com/chora-io/server/auth => ../auth
 	github.com/chora-io/server/db => ../db
 )

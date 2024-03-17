@@ -1,10 +1,12 @@
 package app
 
 import (
+	"io"
 	"log"
 	"net/http"
 	"strings"
 
+	"github.com/chora-io/server/api/html"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog"
@@ -40,6 +42,8 @@ func Initialize(cfg Config, log zerolog.Logger) *App {
 		log: log,
 	}
 
+	app.get("/", app.handleIndexRequest())
+
 	// auth requests
 	app.post("/auth", app.handleAuthRequest(PostAuth))
 	app.post("/auth/email", app.handleAuthRequest(PostAuthEmail))
@@ -62,9 +66,6 @@ func Initialize(cfg Config, log zerolog.Logger) *App {
 // Run blocks the current thread of execution and serves the API.
 func (a *App) Run(host string) {
 
-	// add handler for static app index request
-	a.rtr.HandleFunc("/", a.handleIndexRequest())
-
 	// add allowed origins for get and post requests
 	origins := handlers.AllowedOrigins(strings.Split(a.aos, ","))
 
@@ -86,8 +87,13 @@ func (a *App) post(path string, f func(w http.ResponseWriter, r *http.Request)) 
 }
 
 func (a *App) handleIndexRequest() http.HandlerFunc {
+	bz, err := html.Html.ReadFile("index.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./html/index.html")
+		io.WriteString(w, string(bz))
 	}
 }
 

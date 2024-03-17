@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/chora-io/server/auth"
+	"github.com/chora-io/server/api/auth"
 	db "github.com/chora-io/server/db/client"
 )
 

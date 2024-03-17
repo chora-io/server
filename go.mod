@@ -1,6 +1,6 @@
 module github.com/chora-io/server
 
-go 1.20
+go 1.21
 
 require (
 	github.com/chora-io/server/api v0.0.0
@@ -23,7 +23,6 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
-	github.com/chora-io/server/auth v0.0.0 // indirect
 	github.com/chora-io/server/db v0.0.0 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
@@ -136,7 +135,6 @@ require (
 
 replace (
 	github.com/chora-io/server/api => ./api
-	github.com/chora-io/server/auth => ./auth
 	github.com/chora-io/server/db => ./db
 	github.com/chora-io/server/idx => ./idx
 )
