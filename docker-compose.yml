@@ -16,7 +16,7 @@ services:
       timeout: 10s
       retries: 100
 
-  rdf:
+  fuseki:
     image: stain/jena-fuseki:jena4
     environment:
       ADMIN_PASSWORD: fuseki

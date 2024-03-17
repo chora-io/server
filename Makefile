@@ -32,10 +32,10 @@ db:
 ###                                 Fuseki                                  ###
 ###############################################################################
 
-rdf:
-	@docker-compose up rdf
+fuseki:
+	@docker-compose up fuseki
 
-.PHONY: rdf
+.PHONY: fuseki
 
 ###############################################################################
 ###                                  Chora                                  ###
@@ -160,10 +160,6 @@ test-idx:
 	@echo "Testing Module ./idx"
 	@cd idx && go test ./... -coverprofile=../coverage-idx.out -covermode=atomic
 
-test-rdf:
-	@echo "Testing Module ./rdf"
-	@cd rdf && go test ./... -coverprofile=../coverage-rdf.out -covermode=atomic
-
 test-coverage:
 	@cat coverage*.out | grep -v "mode: atomic" >> coverage.txt
 
@@ -172,7 +168,7 @@ test-clean:
 	@find . -name 'coverage.txt' -delete
 	@find . -name 'coverage*.out' -delete
 
-.PHONY: test test-all test-api test-db test-idx test-rdf test-coverage test-clean
+.PHONY: test test-all test-api test-db test-idx test-coverage test-clean
 
 ###############################################################################
 ###                               Go Version                                ###
@@ -181,7 +177,7 @@ test-clean:
 GO_MAJOR_VERSION = $(shell go version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f1)
 GO_MINOR_VERSION = $(shell go version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f2)
 MIN_GO_MAJOR_VERSION = 1
-MIN_GO_MINOR_VERSION = 20
+MIN_GO_MINOR_VERSION = 21
 GO_VERSION_ERROR = Golang version $(GO_MAJOR_VERSION).$(GO_MINOR_VERSION) is not supported, \
 please update to at least $(MIN_GO_MAJOR_VERSION).$(MIN_GO_MINOR_VERSION)
 

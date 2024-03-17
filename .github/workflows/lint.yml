@@ -28,7 +28,7 @@ jobs:
       pull-requests: read  # for technote-space/get-diff-action to get git reference
     strategy:
       matrix:
-        module: ["api", "db", "idx", "rdf"]
+        module: ["api", "db", "idx"]
     steps:
       - uses: actions/checkout@v3
 
@@ -87,23 +87,4 @@ jobs:
       - uses: golangci/golangci-lint-action@v3
         with:
           working-directory: idx
-        if: steps.git-diff-api.outputs.diff
-
-      # rdf module
-
-      - uses: technote-space/get-diff-action@v6
-        id: git-diff-rdf
-        with:
-          PATTERNS: |
-            rdf/**/**.go
-            rdf/go.mod
-            rdf/go.sum
-        if: matrix.module == 'rdf'
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: rdf/go.mod
-        if: env.GIT_DIFF
-      - uses: golangci/golangci-lint-action@v3
-        with:
-          working-directory: rdf
         if: steps.git-diff-api.outputs.diff

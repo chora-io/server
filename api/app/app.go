@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/chora-io/server/api/html"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog"
 	_ "golang.org/x/crypto/blake2b"
+
+	"github.com/chora-io/server/api/html"
 
 	db "github.com/chora-io/server/db/client"
 )
@@ -93,7 +94,10 @@ func (a *App) handleIndexRequest() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, string(bz))
+		_, err = io.WriteString(w, string(bz))
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
