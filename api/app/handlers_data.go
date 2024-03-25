@@ -22,6 +22,9 @@ func GetData(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
 
 	iri := vars["iri"]
 
+	// other prefixes ok but stored with chora prefix on chora server
+	iri = "chora:" + strings.Split(iri, ":")[1]
+
 	_, err := regen.ParseIRI(iri)
 	if err != nil {
 		respondError(
@@ -119,6 +122,7 @@ func PostData(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 		MerkleTree:                regen.GraphMerkleTree_GRAPH_MERKLE_TREE_NONE_UNSPECIFIED,
 	}
 
+	// use chora prefix when stored on chora server
 	iri, err := ch.ToIRI("chora")
 	if err != nil {
 		respondError(rw, http.StatusInternalServerError, err.Error())

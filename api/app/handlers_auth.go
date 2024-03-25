@@ -74,6 +74,8 @@ func PostAuthEmail(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 	//	return
 	//}
 
+	// TODO: validate email access code
+
 	// declare auth user
 	var user db.AuthUser
 
@@ -86,8 +88,6 @@ func PostAuthEmail(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 			respondError(rw, http.StatusUnauthorized, err.Error())
 			return
 		}
-
-		// TODO: validate email access code
 
 		// add or update email address for authenticated user
 		err = dbw.UpdateAuthUserEmail(r.Context(), sub, req.Email)
@@ -166,6 +166,8 @@ func PostAuthKeplr(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 		return
 	}
 
+	// TODO: validate keplr account signature
+
 	// address must be a chora address
 	if !strings.Contains(req.Address, "chora") {
 		respondError(rw, http.StatusBadRequest, "address must be a chora address")
@@ -184,8 +186,6 @@ func PostAuthKeplr(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 			respondError(rw, http.StatusUnauthorized, err.Error())
 			return
 		}
-
-		// TODO: validate keplr account signature
 
 		// add or update chora address for authenticated user
 		err = dbw.UpdateAuthUserAddress(r.Context(), sub, req.Address)
@@ -281,10 +281,8 @@ func PostAuthLogin(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 			return
 		}
 
-		// TODO: validate hashed password
-
 		// add or update username for authenticated user
-		err = dbw.UpdateAuthUserUsername(r.Context(), sub, req.Username)
+		err = dbw.UpdateAuthUserUsername(r.Context(), sub, req.Username) // TODO: include hashed password
 		if err != nil {
 			respondError(rw, http.StatusInternalServerError, err.Error())
 			return
@@ -304,7 +302,7 @@ func PostAuthLogin(jsk string, dbr db.Reader, dbw db.Writer, rw http.ResponseWri
 		if err != nil {
 
 			// insert auth user with username
-			err = dbw.InsertAuthUserWithUsername(r.Context(), req.Username)
+			err = dbw.InsertAuthUserWithUsername(r.Context(), req.Username) // TODO: include hashed password
 			if err != nil {
 				respondError(rw, http.StatusInternalServerError, err.Error())
 				return

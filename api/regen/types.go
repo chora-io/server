@@ -2,7 +2,7 @@
 // https://github.com/regen-network/regen-ledger/tree/v5.1.2/x/data
 //
 // This version modifies the original to support custom prefixes and
-// limits the amount of dependencies required in chora server.
+// reduces the amount of dependencies required by the api module.
 package regen
 
 import (
