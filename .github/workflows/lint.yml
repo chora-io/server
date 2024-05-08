@@ -30,7 +30,7 @@ jobs:
       matrix:
         module: ["api", "db", "idx"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # api module
 

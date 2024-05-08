@@ -26,7 +26,7 @@ jobs:
     permissions:
       pull-requests: read  # for technote-space/get-diff-action to get git reference
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
@@ -60,7 +60,7 @@ jobs:
       matrix:
         module: ["api", "db", "idx"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # api module
 
@@ -140,7 +140,7 @@ jobs:
       pull-requests: read  # for technote-space/get-diff-action to get git reference
     needs: [unit]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
