@@ -13,18 +13,18 @@ coverage:
     project:
       default:
         threshold: 1%
-      app:
+      api:
         paths:
-          - "app/"
+          - "api/"
       db:
         paths:
           - "db/"
+      idx:
+        paths:
+          - "idx/"
     changes: false
 
 comment:
   layout: "diff, flags, files"
   behavior: default
   require_changes: true
-
-ignore:
-  - "**/mocks"
