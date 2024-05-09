@@ -70,7 +70,7 @@ jobs:
             api/**/**.go
             api/go.mod
             api/go.sum
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: 'api/go.mod'
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
@@ -94,7 +94,7 @@ jobs:
             db/**/**.go
             db/go.mod
             db/go.sum
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: 'db/go.mod'
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
@@ -118,7 +118,7 @@ jobs:
             idx/**/**.go
             idx/go.mod
             idx/go.sum
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: 'idx/go.mod'
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
