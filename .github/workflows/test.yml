@@ -82,6 +82,7 @@ jobs:
         with:
           name: coverage-api
           path: coverage-api.out
+          overwrite: true
         if: |
           (env.GIT_DIFF && matrix.module == 'api') ||
           github.ref == 'refs/heads/main'
@@ -106,6 +107,7 @@ jobs:
         with:
           name: coverage-db
           path: coverage-db.out
+          overwrite: true
         if: |
           (env.GIT_DIFF && matrix.module == 'db') ||
           github.ref == 'refs/heads/main'
@@ -130,6 +132,7 @@ jobs:
         with:
           name: coverage-idx
           path: coverage-idx.out
+          overwrite: true
         if: |
           (env.GIT_DIFF && matrix.module == 'idx') ||
           github.ref == 'refs/heads/main'
