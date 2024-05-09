@@ -78,7 +78,7 @@ jobs:
         if: |
           (env.GIT_DIFF && matrix.module == 'api') ||
           github.ref == 'refs/heads/main'
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage-api
           path: coverage-api.out
@@ -102,7 +102,7 @@ jobs:
         if: |
           (env.GIT_DIFF && matrix.module == 'db') ||
           github.ref == 'refs/heads/main'
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage-db
           path: coverage-db.out
@@ -126,7 +126,7 @@ jobs:
         if: |
           (env.GIT_DIFF && matrix.module == 'idx') ||
           github.ref == 'refs/heads/main'
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage-idx
           path: coverage-idx.out
