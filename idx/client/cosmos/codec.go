@@ -3,17 +3,19 @@ package cosmos
 import (
 	"fmt"
 
+	"github.com/cosmos/gogoproto/proto"
+
+	feegrantmodule "cosmossdk.io/x/feegrant/module"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
-
 	authmodule "github.com/cosmos/cosmos-sdk/x/auth"
 	vestingmodule "github.com/cosmos/cosmos-sdk/x/auth/vesting"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 	bankmodule "github.com/cosmos/cosmos-sdk/x/bank"
 	distrmodule "github.com/cosmos/cosmos-sdk/x/distribution"
-	feegrantmodule "github.com/cosmos/cosmos-sdk/x/feegrant/module"
 	govmodule "github.com/cosmos/cosmos-sdk/x/gov"
 	groupmodule "github.com/cosmos/cosmos-sdk/x/group/module"
 	stakingmodule "github.com/cosmos/cosmos-sdk/x/staking"
@@ -96,7 +98,7 @@ func (c Codec) Name() string {
 
 func (c Codec) Marshal(v interface{}) ([]byte, error) {
 	switch x := v.(type) {
-	case codec.ProtoMarshaler:
+	case proto.Message:
 		return c.ProtoCodec.Marshal(x)
 	default:
 		return nil, fmt.Errorf("cannot marshal type %T", v)
@@ -105,7 +107,7 @@ func (c Codec) Marshal(v interface{}) ([]byte, error) {
 
 func (c Codec) Unmarshal(data []byte, v interface{}) error {
 	switch x := v.(type) {
-	case codec.ProtoMarshaler:
+	case proto.Message:
 		return c.ProtoCodec.Unmarshal(data, x)
 	default:
 		return fmt.Errorf("cannot unmarshal type %T", v)

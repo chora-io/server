@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
+	"github.com/cosmos/cosmos-sdk/client/grpc/cmtservice"
 	"github.com/cosmos/cosmos-sdk/types"
 	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
 	sdktx "github.com/cosmos/cosmos-sdk/types/tx"
@@ -277,7 +277,7 @@ func (c Client) GetGroupVote(height uint64, proposalId uint64, voter string) (js
 func (c Client) GetLatestBlockHeight() (uint64, error) {
 
 	// get latest block
-	res, err := tmservice.NewServiceClient(c.conn).GetLatestBlock(c.ctx, &tmservice.GetLatestBlockRequest{})
+	res, err := cmtservice.NewServiceClient(c.conn).GetLatestBlock(c.ctx, &cmtservice.GetLatestBlockRequest{})
 	if err != nil {
 		return 0, err
 	}
