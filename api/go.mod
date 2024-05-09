@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/chora-io/server/db v0.0.0
 	github.com/cosmos/btcutil v1.0.5
-	github.com/golang-jwt/jwt/v5 v5.0.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/piprate/json-gold v0.5.0
