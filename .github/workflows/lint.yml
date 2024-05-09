@@ -46,7 +46,7 @@ jobs:
         with:
           go-version-file: api/go.mod
         if: env.GIT_DIFF
-      - uses: golangci/golangci-lint-action@v3
+      - uses: golangci/golangci-lint-action@v6
         with:
           working-directory: api
         if: steps.git-diff-api.outputs.diff
@@ -65,7 +65,7 @@ jobs:
         with:
           go-version-file: db/go.mod
         if: env.GIT_DIFF
-      - uses: golangci/golangci-lint-action@v3
+      - uses: golangci/golangci-lint-action@v6
         with:
           working-directory: db
         if: steps.git-diff-api.outputs.diff
@@ -84,7 +84,7 @@ jobs:
         with:
           go-version-file: idx/go.mod
         if: env.GIT_DIFF
-      - uses: golangci/golangci-lint-action@v3
+      - uses: golangci/golangci-lint-action@v6
         with:
           working-directory: idx
         if: steps.git-diff-api.outputs.diff
