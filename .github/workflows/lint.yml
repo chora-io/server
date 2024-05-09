@@ -30,7 +30,7 @@ jobs:
       matrix:
         module: ["api", "db", "idx"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # api module
 
@@ -42,11 +42,11 @@ jobs:
             api/go.mod
             api/go.sum
         if: matrix.module == 'api'
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: api/go.mod
         if: env.GIT_DIFF
-      - uses: golangci/golangci-lint-action@v3
+      - uses: golangci/golangci-lint-action@v6
         with:
           working-directory: api
         if: steps.git-diff-api.outputs.diff
@@ -61,11 +61,11 @@ jobs:
             db/go.mod
             db/go.sum
         if: matrix.module == 'db'
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: db/go.mod
         if: env.GIT_DIFF
-      - uses: golangci/golangci-lint-action@v3
+      - uses: golangci/golangci-lint-action@v6
         with:
           working-directory: db
         if: steps.git-diff-api.outputs.diff
@@ -80,11 +80,11 @@ jobs:
             idx/go.mod
             idx/go.sum
         if: matrix.module == 'idx'
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: idx/go.mod
         if: env.GIT_DIFF
-      - uses: golangci/golangci-lint-action@v3
+      - uses: golangci/golangci-lint-action@v6
         with:
           working-directory: idx
         if: steps.git-diff-api.outputs.diff
