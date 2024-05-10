@@ -61,6 +61,10 @@ func Initialize(cfg Config, log zerolog.Logger) *App {
 	app.get("/idx/{chain_id}/group-vote/{proposal_id}/{voter}", app.handleGetRequest(GetIdxGroupVote))
 	app.get("/idx/{chain_id}/group-votes/{proposal_id}", app.handleGetRequest(GetIdxGroupVotes))
 
+	// ipfs requests
+	app.get("/ipfs/{cid}", app.handleGetRequest(GetIpfs))
+	app.post("/ipfs", app.handlePostRequest(PostIpfs))
+
 	return app
 }
 
