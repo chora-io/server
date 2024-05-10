@@ -30,6 +30,19 @@ services:
       timeout: 10s
       retries: 100
 
+  ipfs:
+    image: ipfs/kubo
+    environment:
+      IPFS_PROFILE: server
+    network_mode: host
+    expose:
+      - 8080
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 100
+
   chora:
     build:
       context: .
