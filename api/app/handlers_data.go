@@ -22,8 +22,18 @@ func GetData(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
 
 	iri := vars["iri"]
 
+	split := strings.Split(iri, ":")
+	if len(split) == 1 {
+		respondError(
+			rw,
+			http.StatusBadRequest,
+			fmt.Sprintf("invalid iri: %s is not a valid iri", iri),
+		)
+		return
+	}
+
 	// other prefixes ok but stored with chora prefix on chora server
-	iri = "chora:" + strings.Split(iri, ":")[1]
+	iri = "chora:" + split[1]
 
 	_, err := regen.ParseIRI(iri)
 	if err != nil {

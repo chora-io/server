@@ -1,26 +1,41 @@
 package app
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
+
+	"github.com/gorilla/mux"
+	shell "github.com/ipfs/go-ipfs-api"
 
 	db "github.com/chora-io/server/db/client"
-	"github.com/gorilla/mux"
 )
 
-func GetIpfs(dbr db.Reader, rw http.ResponseWriter, r *http.Request) {
+func GetIpfs(_ db.Reader, rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	cid := vars["cid"]
 
-	// TODO: get content from local ipfs node
-	var content = ""
+	sh := shell.NewShell("http://127.0.0.1:5001")
+
+	rdr, err := sh.Cat(cid)
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(rdr)
+	rdr.Close()
+
+	content := buf.String()
 
 	respondJSON(rw, http.StatusOK, NewGetIpfsResponse(cid, content))
 }
 
-func PostIpfs(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
+func PostIpfs(_ db.Writer, rw http.ResponseWriter, r *http.Request) {
 	var req PostIpfsRequest
 
 	bz, err := io.ReadAll(r.Body)
@@ -35,10 +50,15 @@ func PostIpfs(dbw db.Writer, rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sh := shell.NewShell("http://127.0.0.1:5001")
+
 	content := compactJSONString(req.Content)
 
-	// TODO: pin content to local ipfs node
-	var cid = ""
+	cid, err := sh.Add(strings.NewReader(content))
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	respondJSON(rw, http.StatusOK, NewPostIpfsResponse(cid, content))
+	respondJSON(rw, http.StatusOK, NewPostIpfsResponse(cid, req.Content))
 }
