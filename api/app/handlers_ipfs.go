@@ -27,9 +27,11 @@ func GetIpfs(_ db.Reader, rw http.ResponseWriter, r *http.Request) {
 	}
 
 	buf := new(bytes.Buffer)
-	buf.ReadFrom(rdr)
-	rdr.Close()
-
+	_, err = buf.ReadFrom(rdr)
+	if err != nil {
+		respondError(rw, http.StatusInternalServerError, err.Error())
+		return
+	}
 	content := buf.String()
 
 	respondJSON(rw, http.StatusOK, NewGetIpfsResponse(cid, content))
