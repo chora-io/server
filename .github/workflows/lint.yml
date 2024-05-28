@@ -68,7 +68,7 @@ jobs:
       - uses: golangci/golangci-lint-action@v6
         with:
           working-directory: db
-        if: steps.git-diff-api.outputs.diff
+        if: steps.git-diff-db.outputs.diff
 
       # idx module
 
@@ -87,4 +87,4 @@ jobs:
       - uses: golangci/golangci-lint-action@v6
         with:
           working-directory: idx
-        if: steps.git-diff-api.outputs.diff
+        if: steps.git-diff-idx.outputs.diff

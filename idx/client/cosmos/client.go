@@ -35,7 +35,7 @@ func NewClient(rpcUrl string) (Client, error) {
 	c.cdc = CustomCodec()
 
 	// make rpc connection
-	conn, err := grpc.Dial(
+	conn, err := grpc.NewClient(
 		rpcUrl,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithDefaultCallOptions(grpc.ForceCodec(c.cdc)),
