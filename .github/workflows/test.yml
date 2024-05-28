@@ -154,6 +154,14 @@ jobs:
         with:
           name: coverage-api
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-db
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-idx
+        if: env.GIT_DIFF || github.ref == 'refs/heads/main'
       - run: make test-coverage
         if: env.GIT_DIFF || github.ref == 'refs/heads/main'
       - uses: codecov/codecov-action@v4
